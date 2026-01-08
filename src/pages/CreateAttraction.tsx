@@ -1,10 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { tokens } from '../theme/tokens';
+import { designTokens } from '@/lib/design-tokens';
+
+interface FormData {
+  name: string;
+  location: string;
+  description: string;
+  rating: number;
+  visitedDate: string;
+  notes: string;
+}
 
 export default function CreateAttraction() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     name: '',
     location: '',
     description: '',
@@ -13,7 +22,7 @@ export default function CreateAttraction() {
     notes: '',
   });
 
-  const handleChange = (
+  const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
@@ -23,24 +32,26 @@ export default function CreateAttraction() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     // TODO: Save to backend
     console.log('Form data:', formData);
     navigate('/');
   };
 
+  const handleCancel = () => navigate('/');
+
   return (
-    <div className="max-w-2xl mx-auto">
+    <div className="mx-auto max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-neutral-900 mb-2">Nova Atração</h1>
+        <h1 className="mb-2 text-3xl font-bold text-neutral-900">Nova Atração</h1>
         <p className="text-neutral-600">Adicione um novo ponto de interesse para sua viagem</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-lg shadow-md">
+      <form onSubmit={handleSubmit} className="space-y-6 rounded-lg bg-white p-8 shadow-md">
         {/* Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="name" className="block mb-2 text-sm font-semibold text-neutral-900">
             Nome da Atração *
           </label>
           <input
@@ -48,16 +59,16 @@ export default function CreateAttraction() {
             id="name"
             name="name"
             value={formData.name}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             placeholder="Ex: Grande Muralha da China"
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
         {/* Location */}
         <div>
-          <label htmlFor="location" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="location" className="block mb-2 text-sm font-semibold text-neutral-900">
             Localização *
           </label>
           <input
@@ -65,40 +76,40 @@ export default function CreateAttraction() {
             id="location"
             name="location"
             value={formData.location}
-            onChange={handleChange}
+            onChange={handleInputChange}
             required
             placeholder="Ex: Beijing, China"
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="description" className="block mb-2 text-sm font-semibold text-neutral-900">
             Descrição
           </label>
           <textarea
             id="description"
             name="description"
             value={formData.description}
-            onChange={handleChange}
+            onChange={handleInputChange}
             placeholder="Descreva a atração..."
             rows={4}
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
         {/* Rating */}
         <div>
-          <label htmlFor="rating" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="rating" className="block mb-2 text-sm font-semibold text-neutral-900">
             Avaliação (1-5 estrelas)
           </label>
           <select
             id="rating"
             name="rating"
             value={formData.rating}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            onChange={handleInputChange}
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             {[1, 2, 3, 4, 5].map((star) => (
               <option key={star} value={star}>
@@ -110,7 +121,7 @@ export default function CreateAttraction() {
 
         {/* Visited Date */}
         <div>
-          <label htmlFor="visitedDate" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="visitedDate" className="block mb-2 text-sm font-semibold text-neutral-900">
             Data da Visita
           </label>
           <input
@@ -118,24 +129,24 @@ export default function CreateAttraction() {
             id="visitedDate"
             name="visitedDate"
             value={formData.visitedDate}
-            onChange={handleChange}
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            onChange={handleInputChange}
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
         {/* Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-semibold text-neutral-900 mb-2">
+          <label htmlFor="notes" className="block mb-2 text-sm font-semibold text-neutral-900">
             Anotações
           </label>
           <textarea
             id="notes"
             name="notes"
             value={formData.notes}
-            onChange={handleChange}
+            onChange={handleInputChange}
             placeholder="Adicione observações pessoais..."
             rows={3}
-            className="w-full px-4 py-3 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
           />
         </div>
 
@@ -143,22 +154,23 @@ export default function CreateAttraction() {
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
-            className="flex-1 py-3 rounded-lg text-white font-semibold transition-opacity hover:opacity-90"
-            style={{ backgroundColor: tokens.colors.primary[600] }}
+            className="flex-1 rounded-lg py-3 font-semibold text-white transition-opacity hover:opacity-90"
+            style={{ backgroundColor: designTokens.colors.primary[600] }}
           >
             Salvar Atração
           </button>
 
           <button
             type="button"
-            onClick={() => navigate('/')}
-            className="flex-1 py-3 rounded-lg border-2 font-semibold transition-colors"
+            onClick={handleCancel}
+            className="flex-1 rounded-lg border-2 font-semibold transition-colors"
             style={{
-              borderColor: tokens.colors.neutral[300],
-              color: tokens.colors.neutral[700],
+              borderColor: designTokens.colors.neutral[300],
+              color: designTokens.colors.neutral[700],
             }}
             onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.backgroundColor = tokens.colors.neutral[100];
+              (e.target as HTMLButtonElement).style.backgroundColor =
+                designTokens.colors.neutral[100];
             }}
             onMouseLeave={(e) => {
               (e.target as HTMLButtonElement).style.backgroundColor = 'transparent';

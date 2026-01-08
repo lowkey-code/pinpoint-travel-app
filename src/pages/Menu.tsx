@@ -1,61 +1,68 @@
 import { Link } from 'react-router-dom';
-import { tokens } from '../theme/tokens';
+import { designTokens } from '@/lib/design-tokens';
+
+interface MenuItem {
+  label: string;
+  href: string;
+  icon: string;
+  description: string;
+}
+
+const MENU_ITEMS: MenuItem[] = [
+  {
+    label: 'Minhas Atrações',
+    href: '/',
+    icon: '📍',
+    description: 'Veja todas as suas atrações salvas',
+  },
+  {
+    label: 'Nova Atração',
+    href: '/nova',
+    icon: '➕',
+    description: 'Adicione uma nova atração',
+  },
+  {
+    label: 'Configurações',
+    href: '#',
+    icon: '⚙️',
+    description: 'Ajuste suas preferências',
+  },
+  {
+    label: 'Sobre',
+    href: '#',
+    icon: 'ℹ️',
+    description: 'Informações sobre o app',
+  },
+  {
+    label: 'Ajuda',
+    href: '#',
+    icon: '❓',
+    description: 'Central de ajuda',
+  },
+];
 
 export default function Menu() {
-  const menuItems = [
-    {
-      label: 'Minhas Atrações',
-      href: '/',
-      icon: '📍',
-      description: 'Veja todas as suas atrações salvas',
-    },
-    {
-      label: 'Nova Atração',
-      href: '/nova',
-      icon: '➕',
-      description: 'Adicione uma nova atração',
-    },
-    {
-      label: 'Configurações',
-      href: '#',
-      icon: '⚙️',
-      description: 'Ajuste suas preferências',
-    },
-    {
-      label: 'Sobre',
-      href: '#',
-      icon: 'ℹ️',
-      description: 'Informações sobre o app',
-    },
-    {
-      label: 'Ajuda',
-      href: '#',
-      icon: '❓',
-      description: 'Central de ajuda',
-    },
-  ];
-
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold text-neutral-900 mb-2">Menu</h1>
-      <p className="text-neutral-600 mb-8">Navegue pelas funcionalidades do Pinpoint 🇨🇳</p>
+    <div className="mx-auto max-w-2xl">
+      <h1 className="mb-2 text-3xl font-bold text-neutral-900">Menu</h1>
+      <p className="mb-8 text-neutral-600">Navegue pelas funcionalidades do Pinpoint 🇨🇳</p>
 
       <div className="space-y-3">
-        {menuItems.map((item) => (
+        {MENU_ITEMS.map((item) => (
           <Link
             key={item.label}
             to={item.href}
-            className="flex items-center gap-4 p-4 rounded-lg border border-neutral-200 hover:border-primary-300 hover:bg-neutral-50 transition-colors group"
+            className="group flex items-center gap-4 rounded-lg border border-neutral-200 p-4 transition-colors hover:border-primary-300 hover:bg-neutral-50"
           >
             <div className="text-3xl flex-shrink-0">{item.icon}</div>
             <div className="flex-1">
-              <h3 className="font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors">
+              <h3 className="font-semibold text-neutral-900 transition-colors group-hover:text-primary-600">
                 {item.label}
               </h3>
               <p className="text-sm text-neutral-600">{item.description}</p>
             </div>
             <svg
-              className="w-5 h-5 text-neutral-400 group-hover:text-primary-600 transition-colors"
+              className="w-5 h-5 text-neutral-400 transition-colors group-hover:text-primary-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -68,15 +75,15 @@ export default function Menu() {
 
       {/* App Info Section */}
       <div
-        className="mt-12 p-6 rounded-lg"
-        style={{ backgroundColor: tokens.colors.primary[50] }}
+        className="mt-12 rounded-lg p-6"
+        style={{ backgroundColor: designTokens.colors.primary[50] }}
       >
-        <h2 className="font-semibold text-neutral-900 mb-2">Sobre Pinpoint 🇨🇳</h2>
-        <p className="text-sm text-neutral-700 leading-relaxed">
+        <h2 className="mb-2 font-semibold text-neutral-900">Sobre Pinpoint 🇨🇳</h2>
+        <p className="text-sm leading-relaxed text-neutral-700">
           Pinpoint é sua aplicação perfeita para organizar e gerenciar pontos de interesse durante
           suas viagens. Salve atrações, avalie-as, e mantenha suas memorias de viagem organizadas!
         </p>
-        <p className="text-xs text-neutral-600 mt-4">Versão 1.0.0</p>
+        <p className="mt-4 text-xs text-neutral-600">Versão 1.0.0</p>
       </div>
     </div>
   );

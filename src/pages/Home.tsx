@@ -1,19 +1,24 @@
 import { Link } from 'react-router-dom';
-import { tokens } from '../theme/tokens';
+import { designTokens } from '@/lib/design-tokens';
+
+interface Attraction {
+  id: number;
+  name: string;
+  location: string;
+}
+
+const MOCK_ATTRACTIONS: Attraction[] = [
+  { id: 1, name: 'Grande Muralha da China', location: 'Beijing' },
+  { id: 2, name: 'Cidade Proibida', location: 'Beijing' },
+  { id: 3, name: 'Terra Roxa', location: 'Xi\'an' },
+];
 
 export default function Home() {
-  // Mock data - será substituído por dados reais
-  const attractions = [
-    { id: 1, name: 'Grande Muralha da China', location: 'Beijing' },
-    { id: 2, name: 'Cidade Proibida', location: 'Beijing' },
-    { id: 3, name: 'Terra Roxa', location: 'Xi\'an' },
-  ];
-
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-3xl font-bold text-neutral-900 mb-2">
+          <h2 className="mb-2 text-3xl font-bold text-neutral-900">
             Minhas Atrações
           </h2>
           <p className="text-neutral-600">
@@ -23,44 +28,44 @@ export default function Home() {
 
         <Link
           to="/nova"
-          className="px-6 py-3 rounded-lg text-white font-semibold hover:opacity-90 transition-opacity"
-          style={{ backgroundColor: tokens.colors.primary[600] }}
+          className="px-6 py-3 rounded-lg font-semibold text-white transition-opacity hover:opacity-90"
+          style={{ backgroundColor: designTokens.colors.primary[600] }}
         >
           + Nova Atração
         </Link>
       </div>
 
       {/* Attractions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {attractions.map((attraction) => (
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {MOCK_ATTRACTIONS.map((attraction) => (
           <Link
             key={attraction.id}
             to={`/atração/${attraction.id}`}
-            className="group rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all border border-neutral-200 hover:border-neutral-300 cursor-pointer"
+            className="group overflow-hidden rounded-lg border border-neutral-200 shadow-md transition-all hover:border-neutral-300 hover:shadow-xl"
           >
             <div
-              className="h-48 bg-gradient-to-br flex items-center justify-center text-white font-semibold"
-              style={{ background: tokens.colors.gradient.blue }}
+              className="flex items-center justify-center h-48 font-semibold text-white"
+              style={{ background: designTokens.gradients.primary }}
             >
-              <span className="text-center px-4">{attraction.name}</span>
+              <span className="px-4 text-center">{attraction.name}</span>
             </div>
             <div className="p-4">
-              <h3 className="font-semibold text-neutral-900 group-hover:text-primary-600 transition-colors">
+              <h3 className="font-semibold text-neutral-900 transition-colors group-hover:text-primary-600">
                 {attraction.name}
               </h3>
-              <p className="text-sm text-neutral-600 mt-1">{attraction.location}</p>
+              <p className="mt-1 text-sm text-neutral-600">{attraction.location}</p>
             </div>
           </Link>
         ))}
       </div>
 
-      {attractions.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-neutral-600 mb-4">Nenhuma atração registrada ainda</p>
+      {MOCK_ATTRACTIONS.length === 0 && (
+        <div className="py-12 text-center">
+          <p className="mb-4 text-neutral-600">Nenhuma atração registrada ainda</p>
           <Link
             to="/nova"
-            className="inline-block px-6 py-3 rounded-lg text-white font-semibold"
-            style={{ backgroundColor: tokens.colors.primary[600] }}
+            className="inline-block px-6 py-3 rounded-lg font-semibold text-white"
+            style={{ backgroundColor: designTokens.colors.primary[600] }}
           >
             Criar Primeira Atração
           </Link>

@@ -1,11 +1,11 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { tokens } from '../theme/tokens';
+import { designTokens } from '@/lib/design-tokens';
 
 export default function AttractionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // Mock data - será substituído por dados reais
+  // Mock data
   const attraction = {
     id: id || '1',
     name: 'Grande Muralha da China',
@@ -18,12 +18,15 @@ export default function AttractionDetail() {
     notes: 'Vista espetacular, muito bem preservada.',
   };
 
+  const handleGoBack = () => navigate(-1);
+
   return (
     <div>
       {/* Back Button */}
       <button
-        onClick={() => navigate(-1)}
-        className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-semibold mb-6"
+        onClick={handleGoBack}
+        className="flex items-center gap-2 mb-6 font-semibold text-primary-600 hover:text-primary-700"
+        type="button"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -33,21 +36,21 @@ export default function AttractionDetail() {
 
       {/* Hero Section */}
       <div
-        className="h-64 rounded-lg shadow-lg mb-8 flex items-center justify-center"
-        style={{ background: tokens.colors.gradient.blue }}
+        className="mb-8 flex items-center justify-center rounded-lg h-64 shadow-lg"
+        style={{ background: designTokens.gradients.primary }}
       >
-        <h1 className="text-4xl font-bold text-white text-center px-4">
+        <h1 className="px-4 text-4xl font-bold text-center text-white">
           {attraction.name}
         </h1>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
         {/* Main Content */}
         <div className="lg:col-span-2">
           {/* Location */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-2">Localização</h2>
-            <p className="text-neutral-600 flex items-center gap-2">
+            <h2 className="mb-2 text-xl font-semibold text-neutral-900">Localização</h2>
+            <p className="flex items-center gap-2 text-neutral-600">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -68,13 +71,13 @@ export default function AttractionDetail() {
 
           {/* Description */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-3">Descrição</h2>
-            <p className="text-neutral-700 leading-relaxed">{attraction.description}</p>
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Descrição</h2>
+            <p className="leading-relaxed text-neutral-700">{attraction.description}</p>
           </div>
 
           {/* Rating */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-3">Avaliação</h2>
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Avaliação</h2>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1">
                 {[...Array(5)].map((_, i) => (
@@ -85,7 +88,9 @@ export default function AttractionDetail() {
                     stroke="currentColor"
                     viewBox="0 0 24 24"
                     style={{
-                      color: i < Math.floor(attraction.rating) ? tokens.colors.warning : tokens.colors.neutral[300],
+                      color: i < Math.floor(attraction.rating)
+                        ? designTokens.colors.warning
+                        : designTokens.colors.neutral[300],
                     }}
                   >
                     <path
@@ -104,8 +109,8 @@ export default function AttractionDetail() {
 
           {/* Notes */}
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-neutral-900 mb-3">Anotações</h2>
-            <p className="text-neutral-700 italic">{attraction.notes}</p>
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Anotações</h2>
+            <p className="italic text-neutral-700">{attraction.notes}</p>
           </div>
         </div>
 
@@ -113,11 +118,11 @@ export default function AttractionDetail() {
         <div>
           {/* Visited Date Card */}
           <div
-            className="p-6 rounded-lg mb-6"
-            style={{ backgroundColor: tokens.colors.primary[50] }}
+            className="mb-6 rounded-lg p-6"
+            style={{ backgroundColor: designTokens.colors.primary[50] }}
           >
-            <h3 className="font-semibold text-neutral-900 mb-2">Data da Visita</h3>
-            <p className="text-primary-600 font-semibold mb-4">
+            <h3 className="mb-2 font-semibold text-neutral-900">Data da Visita</h3>
+            <p className="font-semibold text-primary-600 mb-4">
               {new Date(attraction.visitedDate).toLocaleDateString('pt-BR')}
             </p>
           </div>
@@ -125,29 +130,33 @@ export default function AttractionDetail() {
           {/* Action Buttons */}
           <div className="space-y-3">
             <button
-              className="w-full py-3 rounded-lg font-semibold transition-colors"
+              className="w-full rounded-lg py-3 font-semibold text-white transition-colors"
               style={{
-                backgroundColor: tokens.colors.primary[600],
-                color: 'white',
+                backgroundColor: designTokens.colors.primary[600],
               }}
+              type="button"
               onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = tokens.colors.primary[700];
+                (e.target as HTMLButtonElement).style.backgroundColor =
+                  designTokens.colors.primary[700];
               }}
               onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = tokens.colors.primary[600];
+                (e.target as HTMLButtonElement).style.backgroundColor =
+                  designTokens.colors.primary[600];
               }}
             >
               Editar
             </button>
 
             <button
-              className="w-full py-3 rounded-lg font-semibold border-2 transition-colors"
+              className="w-full rounded-lg border-2 py-3 font-semibold transition-colors"
               style={{
-                borderColor: tokens.colors.error,
-                color: tokens.colors.error,
+                borderColor: designTokens.colors.error,
+                color: designTokens.colors.error,
               }}
+              type="button"
               onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = tokens.colors.neutral[50];
+                (e.target as HTMLButtonElement).style.backgroundColor =
+                  designTokens.colors.neutral[50];
               }}
               onMouseLeave={(e) => {
                 (e.target as HTMLButtonElement).style.backgroundColor = 'transparent';

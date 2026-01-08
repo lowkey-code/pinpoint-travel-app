@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import Container from './Container';
-import { tokens } from '../theme/tokens';
+import Container from '@/components/Container';
+import { designTokens } from '@/lib/design-tokens';
 
 interface LayoutProps {
   children: ReactNode;
@@ -9,19 +9,19 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-neutral-50">
+    <div className="flex flex-col min-h-screen bg-neutral-50">
       {/* Header with Gradient */}
       <header
-        className="sticky top-0 z-30 text-white shadow-lg"
-        style={{ background: tokens.colors.gradient.blue }}
+        className="sticky top-0 z-30 w-full text-white shadow-lg"
+        style={{ background: designTokens.gradients.primary }}
       >
-        <Container className="py-4 flex items-center justify-between">
+        <Container className="flex items-center justify-between py-4">
           {/* Logo and Title */}
           <Link
             to="/"
-            className="flex items-center gap-2 hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 transition-opacity hover:opacity-90"
           >
-            <h1 className="text-2xl font-bold" style={tokens.typography.h1}>
+            <h1 className="text-2xl font-bold font-heading">
               Pinpoint 🇨🇳
             </h1>
           </Link>
@@ -29,9 +29,10 @@ export default function Layout({ children }: LayoutProps) {
           {/* Navigation Buttons */}
           <nav className="flex items-center gap-2">
             <button
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20"
               aria-label="Search"
               title="Search attractions"
+              type="button"
             >
               <svg
                 className="w-6 h-6"
@@ -50,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <Link
               to="/menu"
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-lg transition-colors"
+              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20"
               title="Menu"
             >
               <svg
@@ -72,7 +73,7 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 w-full">
+      <main className="w-full flex-1">
         <Container className="py-6">
           {children}
         </Container>
