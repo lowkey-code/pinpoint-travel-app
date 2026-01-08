@@ -81,7 +81,7 @@ export default function Menu() {
         <h2 className="mb-2 font-semibold text-neutral-900">Sobre Pinpoint 🇨🇳</h2>
         <p className="text-sm leading-relaxed text-neutral-700">
           Pinpoint é sua aplicação perfeita para organizar e gerenciar pontos de interesse durante
-          suas viagens. Salve atrações, avalie-as, e mantenha suas memorias de viagem organizadas!
+          suas viagens. Salve atrações, avalie-as, e mantenha suas memórias de viagem organizadas!
         </p>
         <p className="mt-4 text-xs text-neutral-600">Versão 1.0.0</p>
       </div>
