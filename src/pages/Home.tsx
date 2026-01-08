@@ -49,7 +49,7 @@ export default function Home() {
               className="group overflow-hidden rounded-lg border border-neutral-200 shadow-md transition-all hover:border-neutral-300 hover:shadow-xl focus-within:ring-2 focus-within:ring-primary-600"
             >
               <Link
-                to={`/atração/${attraction.id}`}
+                to={`/attraction/${attraction.id}`}
                 className="block focus:outline-none"
                 aria-label={`${attraction.name} em ${attraction.location}`}
               >

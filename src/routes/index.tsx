@@ -18,7 +18,7 @@ export const router = createBrowserRouter([
         element: <PageWithSuspense Page={Home} />,
       },
       {
-        path: '/atração/:id',
+        path: '/attraction/:id',
         element: <PageWithSuspense Page={AttractionDetail} />,
       },
       {
