@@ -42,7 +42,6 @@ export default function Home() {
         <section
           className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
           aria-label="Lista de atrações"
-          role="region"
         >
           {MOCK_ATTRACTIONS.map((attraction) => (
             <article

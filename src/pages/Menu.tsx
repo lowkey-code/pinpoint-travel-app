@@ -81,7 +81,6 @@ export default function Menu() {
       <section
         className="mt-12 rounded-lg p-6 bg-primary-50"
         aria-label="Informações sobre o Pinpoint"
-        role="region"
       >
         <h2 className="mb-2 font-semibold text-neutral-900">Sobre Pinpoint 🇨🇳</h2>
         <p className="text-sm leading-relaxed text-neutral-700">
