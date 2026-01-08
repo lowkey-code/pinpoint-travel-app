@@ -348,6 +348,265 @@ export const router = createBrowserRouter([
 ]);
 ```
 
+## ✅ Melhores Práticas - WAI-ARIA e Acessibilidade
+
+### Princípios Fundamentais
+- **Semântica HTML** - usar tags apropriadas (button, nav, section, article, aside) ao invés de divs genéricos
+- **Aria quando necessário** - ARIA é suplemento a HTML semântico, não substituto
+- **Keyboard accessible** - todas as funcionalidades devem funcionar via teclado
+- **Focus visible** - sempre fornecer indicadores visuais de foco
+- **Screen reader friendly** - conteúdo deve ser compreensível para leitores de tela
+
+### Elementos Semânticos
+```typescript
+// ✅ BOM - usar tags semânticas apropriadas
+<header role="banner">
+  <nav aria-label="Navegação principal">
+    <Link>Home</Link>
+  </nav>
+</header>
+
+<main>
+  <article>
+    <section aria-labelledby="section-title">
+      <h2 id="section-title">Título da Seção</h2>
+    </section>
+  </article>
+</main>
+
+<aside aria-label="Informações adicionais">
+  Conteúdo supplementar
+</aside>
+
+// ❌ RUIM - divs genéricos sem semântica
+<div>
+  <div>
+    <a>Home</a>
+  </div>
+</div>
+```
+
+### ARIA Labels
+- **aria-label** - descrevê elemento quando não há texto visível
+- **aria-labelledby** - referencia elemento de ID que rotula o container
+- **aria-describedby** - adiciona descrição supplementar
+- **aria-hidden** - oculta elementos decorativos de leitores de tela
+
+```typescript
+// ✅ BOM - labels descritivos
+<button aria-label="Abrir menu de opções">
+  <MenuIcon />
+</button>
+
+<section aria-label="Lista de atrações">
+  {attractions.map(attraction => (
+    <article key={attraction.id} aria-label={`${attraction.name}: Avaliação ${attraction.rating} de 5`}>
+      {/* ... */}
+    </article>
+  ))}
+</section>
+
+<div aria-hidden="true">
+  {/* SVG decorativo, ícone visual apenas */}
+</div>
+
+// ❌ RUIM - sem labels
+<button>
+  <MenuIcon />
+</button>
+
+<div>
+  {attractions.map(attraction => (
+    <div>
+      {/* ... */}
+    </div>
+  ))}
+</div>
+```
+
+### Estados de Foco e Keyboard Navigation
+- **focus:ring-2 focus:ring-offset-2** - indicador visual de foco claro
+- **focus:outline-none** - remover outline padrão ao usar ring
+- **Ordem de tabulação lógica** - ordem visual deve corresponder a DOM order
+- **Teclado deve navegar** - Enter/Space em botões, arrows em menus
+
+```typescript
+// ✅ BOM - foco acessível
+<button className="bg-primary-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2">
+  Clique-me
+</button>
+
+<Link
+  to="/"
+  className="text-blue-600 hover:underline focus:outline-none focus:ring-2 focus:ring-blue-600"
+>
+  Link acessível
+</Link>
+
+// ❌ RUIM - foco invisível
+<button className="bg-primary-600 px-4 py-2 rounded-lg">
+  Clique-me
+</button>
+```
+
+### Formulários Acessíveis
+- **label associado** - sempre usar <label> com atributo `for` vinculado ao `id` do input
+- **aria-required** - indicar campos obrigatórios
+- **aria-describedby** - vincular hints e mensagens de erro
+- **Estrutura fieldset/legend** - para grupos de inputs relacionados
+- **aria-invalid** - indicar estado de validação
+
+```typescript
+// ✅ BOM - formulário acessível
+<form aria-label="Formulário de criação de atração">
+  <fieldset>
+    <legend className="sr-only">Informações da Atração</legend>
+
+    <div>
+      <label htmlFor="name">
+        Nome <span aria-label="campo obrigatório">*</span>
+      </label>
+      <input
+        id="name"
+        type="text"
+        aria-required="true"
+        aria-describedby="name-hint"
+        className="border border-neutral-300 focus:ring-2 focus:ring-primary-600"
+      />
+      <div id="name-hint" className="sr-only">
+        Digite o nome da atração (máximo 100 caracteres)
+      </div>
+    </div>
+
+    <div>
+      <label htmlFor="description">Descrição</label>
+      <textarea
+        id="description"
+        aria-describedby="description-hint"
+        className="border border-neutral-300 focus:ring-2 focus:ring-primary-600"
+      />
+      <div id="description-hint" className="sr-only">
+        Descreva a atração (até 500 caracteres)
+      </div>
+    </div>
+
+    <button type="submit" className="focus:ring-2 focus:ring-offset-2 focus:ring-primary-600">
+      Salvar Atração
+    </button>
+  </fieldset>
+</form>
+
+// ❌ RUIM - inputs sem labels ou aria
+<form>
+  <input type="text" placeholder="Nome" />
+  <textarea placeholder="Descrição" />
+  <button>Salvar</button>
+</form>
+```
+
+### Regions e Live Areas
+- **role="region"** - marcar áreas de conteúdo importante
+- **aria-label** - nomear a region para contexto
+- **aria-live="polite"** - anunciar atualizações de conteúdo dinâmico
+- **aria-live="assertive"** - para mensagens críticas de erro/warning
+
+```typescript
+// ✅ BOM - regions e live areas
+<section aria-label="Lista de atrações" role="region">
+  {attractions.length === 0 && (
+    <div aria-live="polite" className="text-center py-8">
+      Nenhuma atração salva ainda. Clique em "Nova Atração" para começar!
+    </div>
+  )}
+  {attractions.map(attraction => (
+    <article key={attraction.id}>
+      {/* ... */}
+    </article>
+  ))}
+</section>
+
+<div aria-live="assertive" aria-label="Mensagens de erro">
+  {formError && <p className="text-red-600">{formError}</p>}
+</div>
+```
+
+### Rating e Indicadores Visuais
+- **aria-label** - descrever valor numérico em palavras
+- **role="progressbar"** - para indicadores visuais de progresso
+- **aria-valuenow/aria-valuemin/aria-valuemax** - valores numéricos do progresso
+
+```typescript
+// ✅ BOM - rating acessível
+<div className="flex items-center gap-2">
+  <div
+    role="progressbar"
+    aria-valuenow={rating}
+    aria-valuemin={0}
+    aria-valuemax={5}
+    aria-label={`Avaliação: ${rating.toFixed(1)} de 5 estrelas`}
+    className="w-32 h-2 bg-neutral-200 rounded-full overflow-hidden"
+  >
+    <div
+      className="h-full bg-yellow-400 transition-all"
+      style={{ width: `${(rating / 5) * 100}%` }}
+    />
+  </div>
+  <span aria-hidden="true">{rating.toFixed(1)}</span>
+</div>
+```
+
+### Skip Links e Navegação
+- **skip-to-content** - link invisível para pular header
+- **sr-only class** - ocultar visualmente mas manter acessível
+- **Link nav e estrutura clara** - hierarquia de navegação óbvia
+
+```typescript
+// ✅ BOM - skip link
+export default function Layout() {
+  return (
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:bg-blue-600 focus:text-white focus:p-2"
+      >
+        Pular para conteúdo principal
+      </a>
+
+      <header role="banner">
+        {/* ... */}
+      </header>
+
+      <main id="main-content">
+        {/* ... */}
+      </main>
+    </>
+  );
+}
+```
+
+### Screen Reader Only Content
+- **sr-only class** - conteúdo só para leitores de tela
+- **Adicionar contexto** - complementar texto visual quando necessário
+- **Evitar redundância** - não duplicar informações já visíveis
+
+```typescript
+// ✅ BOM - sr-only content
+<div>
+  <label htmlFor="location" className="sr-only">
+    Localização: (Endereço em chinês)
+  </label>
+  <div id="location">
+    <span aria-hidden="true">📍</span>
+    {attraction.chineseAddress}
+  </div>
+</div>
+
+<button>
+  ❤️
+  <span className="sr-only">Adicionar aos favoritos</span>
+</button>
+```
+
 ## ✅ Melhores Práticas - Gerais
 
 ### Nomenclatura

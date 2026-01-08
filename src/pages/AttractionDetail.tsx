@@ -18,16 +18,24 @@ export default function AttractionDetail() {
   };
 
   const handleGoBack = () => navigate(-1);
+  const ratingPercentage = (attraction.rating / 5) * 100;
 
   return (
-    <div>
+    <article>
       {/* Back Button */}
       <button
         onClick={handleGoBack}
-        className="flex items-center gap-2 mb-6 font-semibold text-primary-600 hover:text-primary-700"
+        className="flex items-center gap-2 mb-6 font-semibold text-primary-600 hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 rounded-lg transition-colors"
         type="button"
+        aria-label="Voltar para página anterior"
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          aria-hidden="true"
+        >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
         Voltar
@@ -42,12 +50,20 @@ export default function AttractionDetail() {
 
       <div className="gap-8 grid grid-cols-1 lg:grid-cols-3">
         {/* Main Content */}
-        <div className="lg:col-span-2">
+        <section className="lg:col-span-2">
           {/* Location */}
-          <div className="mb-8">
-            <h2 className="mb-2 text-xl font-semibold text-neutral-900">Localização</h2>
+          <div className="mb-8" role="region" aria-labelledby="location-heading">
+            <h2 className="mb-2 text-xl font-semibold text-neutral-900" id="location-heading">
+              Localização
+            </h2>
             <p className="flex items-center gap-2 text-neutral-600">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-5 h-5 flex-shrink-0"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -61,21 +77,25 @@ export default function AttractionDetail() {
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              {attraction.location}
+              <span>{attraction.location}</span>
             </p>
           </div>
 
           {/* Description */}
-          <div className="mb-8">
-            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Descrição</h2>
+          <div className="mb-8" role="region" aria-labelledby="description-heading">
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900" id="description-heading">
+              Descrição
+            </h2>
             <p className="leading-relaxed text-neutral-700">{attraction.description}</p>
           </div>
 
           {/* Rating */}
-          <div className="mb-8">
-            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Avaliação</h2>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-1">
+          <div className="mb-8" role="region" aria-labelledby="rating-heading">
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900" id="rating-heading">
+              Avaliação
+            </h2>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-1" aria-label={`Avaliação: ${attraction.rating} de 5 estrelas`}>
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
@@ -85,6 +105,7 @@ export default function AttractionDetail() {
                         : 'fill-none stroke-neutral-300'
                     }`}
                     viewBox="0 0 24 24"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -95,46 +116,67 @@ export default function AttractionDetail() {
                   </svg>
                 ))}
               </div>
-              <span className="font-semibold">{attraction.rating}</span>
-              <span className="text-neutral-600">({attraction.reviews} avaliações)</span>
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-semibold" aria-live="polite">
+                  {attraction.rating}
+                </span>
+                <span className="text-sm text-neutral-600">
+                  ({attraction.reviews} avaliação{attraction.reviews !== 1 ? 'ões' : ''})
+                </span>
+              </div>
+              <div className="flex-1 h-2 rounded-full bg-neutral-200 overflow-hidden">
+                <div
+                  className="h-full bg-amber-400"
+                  style={{ width: `${ratingPercentage}%` }}
+                  role="progressbar"
+                  aria-valuenow={ratingPercentage}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-label="Barra de avaliação"
+                />
+              </div>
             </div>
           </div>
 
           {/* Notes */}
-          <div className="mb-8">
-            <h2 className="mb-3 text-xl font-semibold text-neutral-900">Anotações</h2>
+          <div className="mb-8" role="region" aria-labelledby="notes-heading">
+            <h2 className="mb-3 text-xl font-semibold text-neutral-900" id="notes-heading">
+              Anotações
+            </h2>
             <p className="italic text-neutral-700">{attraction.notes}</p>
           </div>
-        </div>
+        </section>
 
         {/* Sidebar */}
-        <div>
+        <aside aria-label="Informações adicionais">
           {/* Visited Date Card */}
           <div className="mb-6 rounded-lg bg-primary-50 p-6">
             <h3 className="mb-2 font-semibold text-neutral-900">Data da Visita</h3>
-            <p className="mb-4 font-semibold text-primary-600">
+            <time className="mb-4 font-semibold text-primary-600" dateTime={attraction.visitedDate}>
               {new Date(attraction.visitedDate).toLocaleDateString('pt-BR')}
-            </p>
+            </time>
           </div>
 
           {/* Action Buttons */}
           <div className="space-y-3">
             <button
-              className="w-full rounded-lg bg-primary-600 py-3 font-semibold text-white transition-all hover:bg-primary-700 active:bg-primary-800"
+              className="w-full rounded-lg bg-primary-600 py-3 font-semibold text-white transition-all hover:bg-primary-700 active:bg-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600"
               type="button"
+              aria-label="Editar atração"
             >
               Editar
             </button>
 
             <button
-              className="w-full rounded-lg border-2 border-red-500 py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 active:bg-red-100"
+              className="w-full rounded-lg border-2 border-red-500 py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 active:bg-red-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               type="button"
+              aria-label="Deletar atração"
             >
               Deletar
             </button>
           </div>
-        </div>
+        </aside>
       </div>
-    </div>
+    </article>
   );
 }

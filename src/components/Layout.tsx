@@ -14,12 +14,14 @@ export default function Layout({ children }: LayoutProps) {
       <header
         className="sticky top-0 z-30 w-full text-white shadow-lg"
         style={{ background: designTokens.gradients.primary }}
+        role="banner"
       >
         <Container className="flex items-center justify-between py-4">
           {/* Logo and Title */}
           <Link
             to="/"
-            className="flex items-center gap-2 transition-opacity hover:opacity-90"
+            className="flex items-center gap-2 transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white rounded-lg"
+            aria-label="Pinpoint - Voltar para home"
           >
             <h1 className="text-2xl font-bold font-heading">
               Pinpoint 🇨🇳
@@ -27,11 +29,10 @@ export default function Layout({ children }: LayoutProps) {
           </Link>
 
           {/* Navigation Buttons */}
-          <nav className="flex items-center gap-2">
+          <nav className="flex items-center gap-2" aria-label="Navegação secundária">
             <button
-              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20"
-              aria-label="Search"
-              title="Search attractions"
+              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-white"
+              aria-label="Buscar atrações"
               type="button"
             >
               <svg
@@ -39,6 +40,7 @@ export default function Layout({ children }: LayoutProps) {
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -51,14 +53,15 @@ export default function Layout({ children }: LayoutProps) {
 
             <Link
               to="/menu"
-              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20"
-              title="Menu"
+              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-white rounded-lg"
+              aria-label="Menu de navegação"
             >
               <svg
                 className="w-6 h-6"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -73,11 +76,19 @@ export default function Layout({ children }: LayoutProps) {
       </header>
 
       {/* Main Content */}
-      <main className="w-full flex-1">
+      <main className="w-full flex-1" id="main-content">
         <Container className="py-6">
           {children}
         </Container>
       </main>
+
+      {/* Skip to main content link (for accessibility) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:p-4 focus:bg-blue-600 focus:text-white focus:rounded-lg"
+      >
+        Pular para conteúdo principal
+      </a>
     </div>
   );
 }
