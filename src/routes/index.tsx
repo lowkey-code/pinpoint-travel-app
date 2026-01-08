@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Layout from '@/components/Layout';
+import LayoutRoute from '@/routes/LayoutRoute';
 
 // Lazy load pages for better performance
 const Home = lazy(() => import('@/pages/Home'));
@@ -8,7 +8,7 @@ const AttractionDetail = lazy(() => import('@/pages/AttractionDetail'));
 const CreateAttraction = lazy(() => import('@/pages/CreateAttraction'));
 const Menu = lazy(() => import('@/pages/Menu'));
 
-// Loading fallback
+// Loading fallback component
 function PageLoader() {
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -20,45 +20,35 @@ function PageLoader() {
   );
 }
 
+// Wrapper component for lazy-loaded pages with Suspense
+function PageWithSuspense({ Page }: { Page: React.ComponentType }) {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Page />
+    </Suspense>
+  );
+}
+
 export const router = createBrowserRouter([
   {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Layout>
-          <Home />
-        </Layout>
-      </Suspense>
-    ),
-    path: '/',
-  },
-  {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Layout>
-          <AttractionDetail />
-        </Layout>
-      </Suspense>
-    ),
-    path: '/atração/:id',
-  },
-  {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Layout>
-          <CreateAttraction />
-        </Layout>
-      </Suspense>
-    ),
-    path: '/nova',
-  },
-  {
-    element: (
-      <Suspense fallback={<PageLoader />}>
-        <Layout>
-          <Menu />
-        </Layout>
-      </Suspense>
-    ),
-    path: '/menu',
+    element: <LayoutRoute />,
+    children: [
+      {
+        path: '/',
+        element: <PageWithSuspense Page={Home} />,
+      },
+      {
+        path: '/atração/:id',
+        element: <PageWithSuspense Page={AttractionDetail} />,
+      },
+      {
+        path: '/nova',
+        element: <PageWithSuspense Page={CreateAttraction} />,
+      },
+      {
+        path: '/menu',
+        element: <PageWithSuspense Page={Menu} />,
+      },
+    ],
   },
 ]);

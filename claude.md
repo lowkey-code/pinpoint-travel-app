@@ -229,6 +229,125 @@ className="hover:shadow-md p-4 rounded-lg gap-4 flex w-full shadow-sm items-cent
 </button>
 ```
 
+## ✅ Melhores Práticas - React Router v7
+
+### Estrutura de Rotas
+- **Layout Routes com Outlet** - use parent routes para layouts compartilhados
+- **Children routes** - agrupe rotas relacionadas under a parent layout
+- **Lazy loading** - use `React.lazy()` para code splitting de pages
+- **Suspense boundaries** - sempre envolver lazy-loaded components
+- **Basename aware** - considerar apps em subpaths
+
+```typescript
+// ✅ BOM - layout route pattern (React Router v7)
+import { Outlet } from 'react-router-dom';
+import Layout from '@/components/Layout';
+
+function LayoutRoute() {
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
+}
+
+export const router = createBrowserRouter([
+  {
+    element: <LayoutRoute />,
+    children: [
+      {
+        path: '/',
+        element: <PageWithSuspense Page={Home} />,
+      },
+      {
+        path: '/atração/:id',
+        element: <PageWithSuspense Page={AttractionDetail} />,
+      },
+      // ... mais rotas
+    ],
+  },
+]);
+
+// ❌ RUIM - repetindo Layout em cada rota
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <Layout>
+        <Home />
+      </Layout>
+    ),
+  },
+  {
+    path: '/atração/:id',
+    element: (
+      <Layout>
+        <AttractionDetail />
+      </Layout>
+    ),
+  },
+  // ... repetição para cada rota
+]);
+```
+
+### Lazy Loading Pages
+- **Dynamic imports** - carregar pages sob demanda
+- **Suspense fallback** - mostrar loader durante carregamento
+- **Componentes wrapper** - para DRY (evitar repetição de Suspense)
+
+```typescript
+// ✅ BOM - lazy loading com wrapper
+const Home = lazy(() => import('@/pages/Home'));
+
+function PageWithSuspense({ Page }: { Page: React.ComponentType }) {
+  return (
+    <Suspense fallback={<PageLoader />}>
+      <Page />
+    </Suspense>
+  );
+}
+
+// ❌ RUIM - repetir Suspense em cada rota
+{
+  path: '/',
+  element: (
+    <Suspense fallback={<PageLoader />}>
+      <Home />
+    </Suspense>
+  ),
+},
+```
+
+### Error Boundaries em Rotas
+- **errorElement** - para tratar erros de rotas e componentes
+- **useRouteError** - acessar informações do erro
+- **Recovery options** - botão para voltar ou home
+
+```typescript
+// ✅ BOM - error boundary
+function ErrorBoundary() {
+  const error = useRouteError();
+
+  return (
+    <Layout>
+      <div className="p-8 text-center">
+        <h1>Algo deu errado</h1>
+        <p>{error?.message || 'Erro desconhecido'}</p>
+        <Link to="/">Voltar para Home</Link>
+      </div>
+    </Layout>
+  );
+}
+
+export const router = createBrowserRouter([
+  {
+    element: <LayoutRoute />,
+    errorElement: <ErrorBoundary />,
+    children: [/* ... */],
+  },
+]);
+```
+
 ## ✅ Melhores Práticas - Gerais
 
 ### Nomenclatura
