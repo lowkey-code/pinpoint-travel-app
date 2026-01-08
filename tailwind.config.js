@@ -67,6 +67,10 @@ export default {
         primary: '0 10px 20px -5px rgba(59, 130, 246, 0.3)',
         accent: '0 10px 20px -5px rgba(245, 158, 11, 0.3)',
       },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+        'gradient-secondary': 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)',
+      },
     },
   },
   plugins: [],

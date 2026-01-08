@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { designTokens } from '@/lib/design-tokens';
 
 interface MenuItem {
   label: string;
@@ -50,7 +49,6 @@ export default function Menu() {
       <nav
         className="space-y-3"
         aria-label="Funcionalidades principais"
-        role="navigation"
       >
         {MENU_ITEMS.map((item) => (
           <Link
@@ -81,8 +79,7 @@ export default function Menu() {
 
       {/* App Info Section */}
       <section
-        className="mt-12 rounded-lg p-6"
-        style={{ backgroundColor: designTokens.colors.primary[50] }}
+        className="mt-12 rounded-lg p-6 bg-primary-50"
         aria-label="Informações sobre o Pinpoint"
         role="region"
       >

@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import Container from '@/components/Container';
-import { designTokens } from '@/lib/design-tokens';
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,8 +11,7 @@ export default function Layout({ children }: LayoutProps) {
     <div className="flex flex-col min-h-screen bg-neutral-50">
       {/* Header with Gradient */}
       <header
-        className="sticky top-0 z-30 w-full text-white shadow-lg"
-        style={{ background: designTokens.gradients.primary }}
+        className="sticky top-0 z-30 w-full text-white shadow-lg bg-gradient-primary"
         role="banner"
       >
         <Container className="flex items-center justify-between py-4">
@@ -53,7 +51,7 @@ export default function Layout({ children }: LayoutProps) {
 
             <Link
               to="/menu"
-              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-white rounded-lg"
+              className="p-2 rounded-lg transition-colors hover:bg-white hover:bg-opacity-20 focus:outline-none focus:ring-2 focus:ring-white"
               aria-label="Menu de navegação"
             >
               <svg

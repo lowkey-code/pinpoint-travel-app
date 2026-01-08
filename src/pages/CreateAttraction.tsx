@@ -33,8 +33,8 @@ export default function CreateAttraction() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // TODO: Save to backend
-    console.log('Form data:', formData);
+    // TODO: Implement backend save functionality
+    // For now, navigate back to home
     navigate('/');
   };
 

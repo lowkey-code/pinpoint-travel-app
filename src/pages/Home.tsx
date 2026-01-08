@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import { designTokens } from '@/lib/design-tokens';
 
 interface Attraction {
   id: number;
@@ -31,8 +30,7 @@ export default function Home() {
 
         <Link
           to="/nova"
-          className="px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 active:opacity-75"
-          style={{ backgroundColor: designTokens.colors.primary[600] }}
+          className="px-6 py-3 rounded-lg font-semibold text-white bg-primary-600 transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 active:bg-primary-800"
           aria-label="Criar nova atração"
         >
           + Nova Atração
@@ -57,8 +55,7 @@ export default function Home() {
                 aria-label={`${attraction.name} em ${attraction.location}`}
               >
                 <div
-                  className="flex items-center justify-center h-48 font-semibold text-white"
-                  style={{ background: designTokens.gradients.primary }}
+                  className="flex items-center justify-center h-48 font-semibold text-white bg-gradient-primary"
                   role="img"
                   aria-label={`Imagem da atração: ${attraction.name}`}
                 >
@@ -82,8 +79,7 @@ export default function Home() {
           <p className="mb-4 text-neutral-600">Nenhuma atração registrada ainda</p>
           <Link
             to="/nova"
-            className="inline-block px-6 py-3 rounded-lg font-semibold text-white transition-all hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 active:opacity-75"
-            style={{ backgroundColor: designTokens.colors.primary[600] }}
+            className="inline-block px-6 py-3 rounded-lg font-semibold text-white bg-primary-600 transition-all hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 active:bg-primary-800"
             aria-label="Criar sua primeira atração"
           >
             Criar Primeira Atração
