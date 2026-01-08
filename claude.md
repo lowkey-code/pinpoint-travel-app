@@ -260,7 +260,7 @@ export const router = createBrowserRouter([
         element: <PageWithSuspense Page={Home} />,
       },
       {
-        path: '/atração/:id',
+        path: '/attraction/:id',
         element: <PageWithSuspense Page={AttractionDetail} />,
       },
       // ... mais rotas
@@ -279,7 +279,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: '/atração/:id',
+    path: '/attraction/:id',
     element: (
       <Layout>
         <AttractionDetail />
