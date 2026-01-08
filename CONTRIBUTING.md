@@ -73,6 +73,15 @@ docs: update setup instructions
 chore: update dependencies
 ```
 
+**⚠️ IMPORTANTE:** Git hooks automáticos validam seus commits:
+- **commit-msg hook**: Valida o formato da mensagem (Conventional Commits)
+- **pre-commit hook**: Executa ESLint antes de permitir o commit
+
+Os hooks rodarão automaticamente quando você fizer commit. Se precisar contorná-los (não recomendado):
+```bash
+git commit --no-verify
+```
+
 ## Process de Desenvolvimento
 
 1. **Crie uma feature branch**
@@ -85,17 +94,30 @@ chore: update dependencies
    - Use `npm run lint` para verificar
    - Use `npm run build` para testar o build
 
-3. **Faça commits atômicos**
+3. **Faça commits atômicos com Conventional Commits**
    ```bash
    git commit -m "feat: adicione nova funcionalidade"
    ```
 
+   ✨ **Dica**: Use `npx commitizen` para guia interativo (opcional):
+   ```bash
+   npx commitizen init cz-conventional-changelog --save-dev
+   npm run commit  # Substituir por npx cz commit
+   ```
+
 4. **Teste antes de fazer push**
    ```bash
-   npm run lint    # Verifica o código
+   npm run lint    # Verifica o código (também roda no git hook)
    npm run build   # Compila TypeScript e cria bundle
    npm run dev     # Testa localmente
    ```
+
+5. **Git hooks validam automaticamente**
+   ```
+   ✅ Pre-commit: ESLint passa
+   ✅ Commit-msg: Mensagem segue Conventional Commits
+   ```
+   Se houver erro, o commit será rejeitado e você poderá corrigir.
 
 5. **Faça push e crie um PR**
    ```bash
