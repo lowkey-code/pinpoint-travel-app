@@ -2,7 +2,12 @@
   "name": "pinpoint-travel-app",
   "private": true,
   "version": "0.0.0",
+  "description": "PWA offline-first para organizar atrações turísticas com endereços em chinês",
   "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
