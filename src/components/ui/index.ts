@@ -21,3 +21,6 @@ export type { InputProps, InputSize } from './Input';
 // Textarea
 export { Textarea } from './Textarea';
 export type { TextareaProps, TextareaSize } from './Textarea';
+
+// Toast
+export { ToastProvider, useToast } from './Toast';

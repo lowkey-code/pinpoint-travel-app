@@ -4,7 +4,7 @@ import LayoutRoute from '@/routes/LayoutRoute';
 import { PageWithSuspense } from '@/routes/RouteComponents';
 
 // Lazy load pages for better performance
-const Home = lazy(() => import('@/pages/Home'));
+const Attractions = lazy(() => import('@/pages/Attractions'));
 const AttractionDetail = lazy(() => import('@/pages/AttractionDetail'));
 const CreateAttraction = lazy(() => import('@/pages/CreateAttraction'));
 const Menu = lazy(() => import('@/pages/Menu'));
@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <PageWithSuspense Page={Home} />,
+        element: <PageWithSuspense Page={Attractions} />,
       },
       {
         path: '/attraction/:id',
