@@ -8,7 +8,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist', 'node_modules', '.vite']),
+  globalIgnores(['dist', 'node_modules', '.vite', '.husky']),
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
