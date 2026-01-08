@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
+import { cn } from '@/lib/cn';
 
 export default function AttractionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -99,11 +100,12 @@ export default function AttractionDetail() {
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className={`w-5 h-5 ${
+                    className={cn(
+                      'w-5 h-5',
                       i < Math.floor(attraction.rating)
                         ? 'fill-amber-400 stroke-amber-400'
                         : 'fill-none stroke-neutral-300'
-                    }`}
+                    )}
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                   >
