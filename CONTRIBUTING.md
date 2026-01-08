@@ -75,12 +75,29 @@ chore: update dependencies
 
 **⚠️ IMPORTANTE:** Git hooks automáticos validam seus commits:
 - **commit-msg hook**: Valida o formato da mensagem (Conventional Commits)
-- **pre-commit hook**: Executa ESLint antes de permitir o commit
+- **pre-commit hook**: Executa ESLint apenas em arquivos modificados via lint-staged
 
 Os hooks rodarão automaticamente quando você fizer commit. Se precisar contorná-los (não recomendado):
 ```bash
 git commit --no-verify
 ```
+
+**Como funciona o pre-commit hook:**
+```bash
+# Você faz suas mudanças
+git add .
+
+# Ao tentar commit:
+git commit -m "feat: sua feature"
+
+# O hook automáticamente:
+# 1. Roda ESLint apenas nos arquivos modificados (lint-staged)
+# 2. Se houver erros de linting → commit rejeitado
+# 3. Se houver warnings → commit pode prosseguir
+# 4. Se tudo passar → commit aceito
+```
+
+💡 Isso melhora performance pois não verifica todos os arquivos, apenas os que mudaram!
 
 ## Process de Desenvolvimento
 
