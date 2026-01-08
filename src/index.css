@@ -21,14 +21,14 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
 }
 
-/* Toast animation */
+/* Toast animation - slides down from top-right */
 @keyframes slide-in {
   from {
-    transform: translateX(100%);
+    transform: translateY(-100%);
     opacity: 0;
   }
   to {
-    transform: translateX(0);
+    transform: translateY(0);
     opacity: 1;
   }
 }

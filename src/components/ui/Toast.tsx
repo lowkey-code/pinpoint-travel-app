@@ -101,9 +101,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   return (
     <ToastContext.Provider value={{ showToast }}>
       {children}
-      {/* Toast Container */}
+      {/* Toast Container - positioned at top to avoid FAB overlap */}
       <div
-        className="fixed bottom-4 right-4 z-50 flex flex-col gap-2"
+        className="fixed top-20 right-4 z-50 flex flex-col gap-2"
         aria-label="Notificações"
       >
         {toasts.map((toast) => (
