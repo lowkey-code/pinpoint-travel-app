@@ -187,6 +187,48 @@ className="flex items-center gap-4 w-full p-4 bg-white border border-gray-200 ro
 className="hover:shadow-md p-4 rounded-lg gap-4 flex w-full shadow-sm items-center border-gray-200 bg-white border"
 ```
 
+### CSS States e Event Handling
+- **Usar variantes Tailwind** - `hover:`, `active:`, `focus:`, `disabled:` ao invés de manipular DOM
+- **Nunca manipular `style` direto** - evitar `onMouseEnter` com `style.backgroundColor = ...`
+- **Usar conditional classes** - template literals ou ternários para classes dinâmicas
+- **Transitions em Tailwind** - `transition-colors`, `transition-all` para animações suaves
+- **Estados compostos** - combinar variantes para diferentes estados (hover, active, disabled)
+
+```typescript
+// ✅ BOM - usar variantes Tailwind
+<button className="bg-primary-600 px-4 py-2 rounded-lg hover:bg-primary-700 active:bg-primary-800 transition-colors">
+  Clique aqui
+</button>
+
+// ✅ BOM - classes dinâmicas com template literals
+<div className={`p-4 rounded-lg ${isActive ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700'}`}>
+  Conteúdo
+</div>
+
+// ✅ BOM - states de inputs
+<input
+  className="border border-neutral-300 px-3 py-2 rounded-lg focus:border-primary-500 focus:ring-2 focus:ring-primary-200"
+  type="text"
+/>
+
+// ❌ RUIM - manipular DOM com JavaScript
+<button
+  onMouseEnter={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = '#1d4ed8';
+  }}
+  onMouseLeave={(e) => {
+    (e.target as HTMLButtonElement).style.backgroundColor = '#2563eb';
+  }}
+>
+  Não faça assim!
+</button>
+
+// ❌ RUIM - inline styles ao invés de Tailwind
+<button style={{ backgroundColor: '#2563eb', color: 'white', padding: '12px 24px' }}>
+  Evitar estilos inline
+</button>
+```
+
 ## ✅ Melhores Práticas - Gerais
 
 ### Nomenclatura

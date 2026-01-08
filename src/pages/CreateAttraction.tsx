@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { designTokens } from '@/lib/design-tokens';
 
 interface FormData {
   name: string;
@@ -154,8 +153,7 @@ export default function CreateAttraction() {
         <div className="flex gap-4 pt-4">
           <button
             type="submit"
-            className="flex-1 rounded-lg py-3 font-semibold text-white transition-opacity hover:opacity-90"
-            style={{ backgroundColor: designTokens.colors.primary[600] }}
+            className="flex-1 rounded-lg bg-primary-600 py-3 font-semibold text-white transition-all hover:bg-primary-700 active:bg-primary-800"
           >
             Salvar Atração
           </button>
@@ -163,18 +161,7 @@ export default function CreateAttraction() {
           <button
             type="button"
             onClick={handleCancel}
-            className="flex-1 rounded-lg border-2 font-semibold transition-colors"
-            style={{
-              borderColor: designTokens.colors.neutral[300],
-              color: designTokens.colors.neutral[700],
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.backgroundColor =
-                designTokens.colors.neutral[100];
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.backgroundColor = 'transparent';
-            }}
+            className="flex-1 rounded-lg border-2 border-neutral-300 py-3 font-semibold text-neutral-700 transition-colors hover:bg-neutral-100 active:bg-neutral-200"
           >
             Cancelar
           </button>

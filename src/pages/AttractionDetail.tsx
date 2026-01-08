@@ -1,5 +1,4 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { designTokens } from '@/lib/design-tokens';
 
 export default function AttractionDetail() {
   const { id } = useParams<{ id: string }>();
@@ -35,10 +34,7 @@ export default function AttractionDetail() {
       </button>
 
       {/* Hero Section */}
-      <div
-        className="mb-8 flex items-center justify-center rounded-lg h-64 shadow-lg"
-        style={{ background: designTokens.gradients.primary }}
-      >
+      <div className="mb-8 flex items-center justify-center rounded-lg h-64 shadow-lg bg-gradient-to-r from-primary-700 to-primary-500">
         <h1 className="px-4 text-4xl font-bold text-center text-white">
           {attraction.name}
         </h1>
@@ -83,15 +79,12 @@ export default function AttractionDetail() {
                 {[...Array(5)].map((_, i) => (
                   <svg
                     key={i}
-                    className="w-5 h-5"
-                    fill={i < Math.floor(attraction.rating) ? 'currentColor' : 'none'}
-                    stroke="currentColor"
+                    className={`w-5 h-5 ${
+                      i < Math.floor(attraction.rating)
+                        ? 'fill-amber-400 stroke-amber-400'
+                        : 'fill-none stroke-neutral-300'
+                    }`}
                     viewBox="0 0 24 24"
-                    style={{
-                      color: i < Math.floor(attraction.rating)
-                        ? designTokens.colors.warning
-                        : designTokens.colors.neutral[300],
-                    }}
                   >
                     <path
                       strokeLinecap="round"
@@ -117,12 +110,9 @@ export default function AttractionDetail() {
         {/* Sidebar */}
         <div>
           {/* Visited Date Card */}
-          <div
-            className="mb-6 rounded-lg p-6"
-            style={{ backgroundColor: designTokens.colors.primary[50] }}
-          >
+          <div className="mb-6 rounded-lg bg-primary-50 p-6">
             <h3 className="mb-2 font-semibold text-neutral-900">Data da Visita</h3>
-            <p className="font-semibold text-primary-600 mb-4">
+            <p className="mb-4 font-semibold text-primary-600">
               {new Date(attraction.visitedDate).toLocaleDateString('pt-BR')}
             </p>
           </div>
@@ -130,37 +120,15 @@ export default function AttractionDetail() {
           {/* Action Buttons */}
           <div className="space-y-3">
             <button
-              className="w-full rounded-lg py-3 font-semibold text-white transition-colors"
-              style={{
-                backgroundColor: designTokens.colors.primary[600],
-              }}
+              className="w-full rounded-lg bg-primary-600 py-3 font-semibold text-white transition-all hover:bg-primary-700 active:bg-primary-800"
               type="button"
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor =
-                  designTokens.colors.primary[700];
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor =
-                  designTokens.colors.primary[600];
-              }}
             >
               Editar
             </button>
 
             <button
-              className="w-full rounded-lg border-2 py-3 font-semibold transition-colors"
-              style={{
-                borderColor: designTokens.colors.error,
-                color: designTokens.colors.error,
-              }}
+              className="w-full rounded-lg border-2 border-red-500 py-3 font-semibold text-red-500 transition-colors hover:bg-red-50 active:bg-red-100"
               type="button"
-              onMouseEnter={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor =
-                  designTokens.colors.neutral[50];
-              }}
-              onMouseLeave={(e) => {
-                (e.target as HTMLButtonElement).style.backgroundColor = 'transparent';
-              }}
             >
               Deletar
             </button>
