@@ -25,10 +25,20 @@ export default function CreateAttraction() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'rating' ? parseInt(value) : value,
-    }));
+    setFormData((prev) => {
+      if (name === 'rating') {
+        const parsedRating = parseInt(value, 10);
+        return {
+          ...prev,
+          rating: Number.isNaN(parsedRating) ? prev.rating : parsedRating,
+        };
+      }
+
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -180,6 +190,7 @@ export default function CreateAttraction() {
               onChange={handleInputChange}
               className="w-full rounded-lg border border-neutral-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
               aria-describedby="visitedDate-hint"
+              max={new Date().toISOString().split('T')[0]}
             />
             <span id="visitedDate-hint" className="sr-only">
               Selecione a data em que você visitou a atração
