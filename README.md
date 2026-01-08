@@ -2,6 +2,16 @@
 
 Aplicativo PWA para organizar pontos de interesse de viagem.
 
+## Requisitos
+
+- **Node.js**: >= 20.0.0 (LTS)
+- **npm**: >= 10.0.0
+
+Recomenda-se usar um gerenciador de versões Node:
+- **nvm** (Linux/macOS): `nvm use` (lê automático de `.nvmrc`)
+- **fnm** (Multi-plataforma): `fnm use` (lê automático de `.nvmrc`)
+- **nvm-windows** (Windows): Use `.nvmrc` manualmente ou `.node-version`
+
 ## Tecnologias
 
 - **React** 19 + **TypeScript**
@@ -31,6 +41,39 @@ O projeto utiliza um design system customizado com:
 - **Tokens**: Espaçamento, bordas, sombras, componentes
 
 Consulte `/src/lib/design-tokens.js` para todos os tokens disponíveis.
+
+## Instalação e Setup
+
+### 1. Clone o repositório
+```bash
+git clone https://github.com/mcsolha/pinpoint-travel-app.git
+cd pinpoint-travel-app
+```
+
+### 2. Verifique a versão do Node.js
+```bash
+# Com nvm
+nvm use
+
+# Com fnm
+fnm use
+
+# Ou manualmente
+node --version  # Deve ser >= 20.0.0
+npm --version   # Deve ser >= 10.0.0
+```
+
+### 3. Instale as dependências
+```bash
+npm install
+```
+
+### 4. Inicie o servidor de desenvolvimento
+```bash
+npm run dev
+```
+
+Acesse `http://localhost:5173` no seu navegador.
 
 ## Scripts Disponíveis
 
