@@ -98,52 +98,64 @@ All commits follow semantic versioning prefixes:
 ## Performance Impact
 
 **Positive:**
-- Lint-staged runs only on modified files (~80% faster)
-- Code quality improvements reduce future bugs
-- WAI-ARIA support without performance cost
+```markdown
+# Pull Request - Focused Summary
 
-## Breaking Changes
+Keep this PR description concise and focused on the actual changes. The goal is to make reviews fast and clear.
 
-None - All changes are additive and non-breaking
+## Scope
+- One-line summary of the change (what and why).
+- Related issue(s): # (optional)
 
-## Related Commits
+Example:
+- "Fix: prevent crash when saving attraction without coordinates (resolves #123)"
 
-1. `d5ac5a3` feat: implement comprehensive WAI-ARIA accessibility
-2. `3390791` chore: upgrade ESLint with comprehensive rules
-3. `8d78229` refactor: improve code quality and remove inline styles
-4. `ddf075a` chore: configure Husky and Commitlint
-5. `49b33a2` refactor: simplify pre-commit hook
-6. `3e7ed20` docs: update CONTRIBUTING.md
-7. `6281ce1` chore: add lint-staged for optimized linting
+## Context / Motivation
+- Short context that motivated this change (user bug, refactor, dependency update, etc.).
 
-## Deployment Notes
+## Design & Implementation Notes
+- Key decisions made and why (trade-offs, alternative approaches considered).
+- Note any new libraries, large structural changes, or user-visible behavior changes.
 
-Developers must run `npm install` to set up git hooks automatically via the prepare script.
+Example:
+- "Used local `getStored` helper for safe localStorage reads instead of adding a new dependency. Chose try/catch + fallback pattern for resilience."
 
-## Checklist
+## Files Changed (high level)
+- List important files or modules modified (not a full diff). Example:
+	- `src/pages/CreateAttraction.tsx` — form validation
+	- `src/lib/design-tokens.js` — new spacing tokens
 
-- [x] Code follows project standards (claude.md)
-- [x] TypeScript types are correct
-- [x] ESLint passes with 0 errors
-- [x] Build succeeds
-- [x] Accessibility standards met (WAI-ARIA)
-- [x] Conventional Commits followed
-- [x] Documentation updated
-- [x] No inline styles or console.logs
-- [x] Git hooks configured and tested
+Example:
+- `src/hooks/useAttractions.ts` — add save/load helpers
+- `src/pages/Home.tsx` — update list rendering to use new hook
 
-## Summary of Changes
+## How to test / Validation steps
+- Steps to verify locally (commands + short manual checks):
+```bash
+npm install
+npm run dev
+# open http://localhost:5173 and perform the manual steps below
+```
+- Manual checks (example):
+	- Create a new attraction without coordinates and ensure app does not crash.
+	- Copy an address and verify clipboard toast appears.
+	- Toggle visited state and confirm UI updates and persistence across reload.
+- Include data/setup steps if needed (seed, env vars, mock files).
 
-| Category | Count | Details |
-|----------|-------|---------|
-| New Files | 5 | Husky hooks, commitlint config, route components |
-| Modified Files | 10+ | ESLint, package.json, documentation, components |
-| Lines Added | 1500+ | ESLint config, WAI-ARIA docs, git hooks |
-| ESLint Rules | 25+ | TypeScript, React, A11y, Code Quality |
-| Commits | 7 | All following Conventional Commits |
+## Risks & Rollback
+- Potential risks, edge-cases, or performance implications.
+- Rollback plan or mitigation steps.
 
----
+## Accessibility & QA notes
+- Note accessibility considerations and QA steps (keyboard, screenreader, color contrast).
 
-**Ready for merge** ✅
+## Checklist (required)
+- [ ] Builds (`npm run build`) and runs locally
+- [ ] Lint passes (`npm run lint`) or autofix applied
+- [ ] TypeScript types updated (no `any` introduced)
+- [ ] Changes covered by tests or manual validation steps documented
+- [ ] Documentation updated if behavior/API changed
 
-All standards implemented, tested, and documented.
+-- Optional: Add screenshots or brief demo notes below --
+
+``` 
