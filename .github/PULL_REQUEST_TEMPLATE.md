@@ -132,8 +132,8 @@ Example:
 ## How to test / Validation steps
 - Steps to verify locally (commands + short manual checks):
 ```bash
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 # open http://localhost:5173 and perform the manual steps below
 ```
 - Manual checks (example):
@@ -150,8 +150,8 @@ npm run dev
 - Note accessibility considerations and QA steps (keyboard, screenreader, color contrast).
 
 ## Checklist (required)
-- [ ] Builds (`npm run build`) and runs locally
-- [ ] Lint passes (`npm run lint`) or autofix applied
+- [ ] Builds (`pnpm run build`) and runs locally
+- [ ] Lint passes (`pnpm run lint`) or autofix applied
 - [ ] TypeScript types updated (no `any` introduced)
 - [ ] Changes covered by tests or manual validation steps documented
 - [ ] Documentation updated if behavior/API changed

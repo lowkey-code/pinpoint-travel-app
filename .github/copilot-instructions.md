@@ -9,11 +9,11 @@ Quick, actionable guidance so an AI agent can be immediately productive in this 
  - The app is designed as an offline-first PWA; data persistence uses `localStorage` via custom hooks (see `claude.md`).
 
 2. Developer workflows (commands you will run)
- - Install: `npm install` (project requires Node >=20 and npm >=10; `.nvmrc` sets a recommended version).
- - Dev server: `npm run dev` (Vite at localhost:5173)
- - Build: `npm run build` (runs `tsc -b` then `vite build`)
- - Preview: `npm run preview`
- - Lint: `npm run lint` (ESLint, pre-commit hooks run lint-staged)
+ - Install: `pnpm install` (project requires Node >=20 and pnpm >=10; `.nvmrc` sets a recommended version).
+ - Dev server: `pnpm run dev` (Vite at localhost:5173)
+ - Build: `pnpm run build` (runs `tsc -b` then `vite build`)
+ - Preview: `pnpm run preview`
+ - Lint: `pnpm run lint` (ESLint, pre-commit hooks run lint-staged)
  - Husky hooks: `prepare` script runs `husky install`; avoid skipping hooks unless necessary.
 
 3. Important files and where to look
@@ -36,7 +36,7 @@ Quick, actionable guidance so an AI agent can be immediately productive in this 
  - Persisted data: add helpers under `src/utils` and update localStorage access with try/catch (pattern in `claude.md`).
 
 6. Tests & quality gates
- - There are no test scripts by default; focus on lint and build verification (`npm run lint`, `npm run build`).
+ - There are no test scripts by default; focus on lint and build verification (`pnpm run lint`, `pnpm run build`).
  - Commits must follow Conventional Commits — hooks (husky + commitlint) validate messages.
 
 7. Integration points & external dependencies
@@ -46,7 +46,7 @@ Quick, actionable guidance so an AI agent can be immediately productive in this 
 
 8. When making pull requests
  - Follow Conventional Commits and branch naming (`feat/`, `fix/`).
- - Run `npm run lint` and `npm run build` locally before pushing.
+ - Run `pnpm run lint` and `pnpm run build` locally before pushing.
  - Include visual diffs/screenshots for UI changes; mention accessibility considerations.
 
 9. Quick reference snippets (copyable)
