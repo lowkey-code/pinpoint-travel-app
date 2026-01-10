@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Badge, IconButton, useToast } from '@/components/ui';
 import { cn } from '@/lib/cn';
 import type { Attraction } from '@/types/attraction';
@@ -20,8 +21,24 @@ const categoryLabels: Record<string, string> = {
 
 export function AttractionCard({ attraction, className }: AttractionCardProps) {
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
-  const handleCopyAddress = useCallback(async () => {
+  const handleCardClick = useCallback(() => {
+    navigate(`/attraction/${attraction.id}`);
+  }, [attraction.id, navigate]);
+
+  const handleCardKeyDown = useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        navigate(`/attraction/${attraction.id}`);
+      }
+    },
+    [attraction.id, navigate]
+  );
+
+  const handleCopyAddress = useCallback(async (event: React.MouseEvent) => {
+    event.stopPropagation();
     try {
       await navigator.clipboard.writeText(attraction.address);
       showToast('Endereço copiado!', 'success');
@@ -30,7 +47,8 @@ export function AttractionCard({ attraction, className }: AttractionCardProps) {
     }
   }, [attraction.address, showToast]);
 
-  const handleOpenMaps = useCallback(() => {
+  const handleOpenMaps = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
     const { latitude, longitude } = attraction.coordinates;
     // Try to detect platform and open appropriate maps app
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -51,6 +69,10 @@ export function AttractionCard({ attraction, className }: AttractionCardProps) {
     <Card
       variant="default"
       className={cn('flex flex-col gap-3', className)}
+      role="link"
+      tabIndex={0}
+      onClick={handleCardClick}
+      onKeyDown={handleCardKeyDown}
     >
       {/* Header: Name and Badge */}
       <div className="flex items-start justify-between gap-2">

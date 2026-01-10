@@ -6,6 +6,8 @@ Aplicativo PWA para organizar pontos de interesse de viagem.
 
 - **Node.js**: >= 20.0.0 (LTS)
 - **pnpm**: >= 10.0.0
+ - **Node.js**: >= 20.19.0 (LTS)
+ - **yarn**: >= 1.22.0
 
 Recomenda-se usar um gerenciador de versões Node:
 - **nvm** (Linux/macOS): `nvm use` (lê automático de `.nvmrc`)
@@ -60,23 +62,22 @@ fnm use
 
 # Ou manualmente
 node --version   # Deve ser >= 20.0.0
-pnpm --version   # Deve ser >= 10.0.0
+yarn --version   # Deve ser >= 1.22.0
 ```
 
-### 3. Instale o pnpm (se necessario)
+### 3. Instale o yarn (se necessario)
 ```bash
-corepack enable
-corepack prepare pnpm@10.0.0 --activate
+npm i -g yarn@latest
 ```
 
 ### 4. Instale as dependencias
 ```bash
-pnpm install
+yarn install
 ```
 
 ### 5. Inicie o servidor de desenvolvimento
 ```bash
-pnpm run dev
+yarn dev
 ```
 
 Acesse `http://localhost:5173` no seu navegador.
@@ -85,19 +86,19 @@ Acesse `http://localhost:5173` no seu navegador.
 
 ```bash
 # Instalar dependências
-pnpm install
+yarn install
 
 # Desenvolvimento
-pnpm run dev
+yarn dev
 
 # Build para produção
-pnpm run build
+yarn build
 
 # Preview do build
-pnpm run preview
+yarn preview
 
 # Lint
-pnpm run lint
+yarn lint
 ```
 
 ## Fontes

@@ -118,7 +118,7 @@ export default function AttractionDetail() {
     if (!attraction) {
       return;
     }
-    navigate('/nova');
+    navigate(`/attraction/${attraction.id}/edit`);
   }, [attraction, navigate]);
 
   const handleDelete = useCallback(() => {
