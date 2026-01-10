@@ -52,7 +52,7 @@ export function AttractionsProvider({ children }: { children: React.ReactNode })
           if (item.id !== id) {
             return item;
           }
-          return { ...item, ...updates, id: item.id };
+          return { ...item, ...updates };
         })
       );
     },
