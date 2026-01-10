@@ -66,15 +66,20 @@ export function AttractionsProvider({ children }: { children: React.ReactNode })
     [setAttractions]
   );
 
+  const getAttractionById = useCallback(
+    (id: string) => attractions.find((item) => item.id === id),
+    [attractions]
+  );
+
   const value = useMemo(
     () => ({
       attractions,
       createAttraction,
       updateAttraction,
       deleteAttraction,
-      getAttractionById: (id: string) => attractions.find((item) => item.id === id),
+      getAttractionById,
     }),
-    [attractions, createAttraction, deleteAttraction, updateAttraction]
+    [attractions, createAttraction, deleteAttraction, getAttractionById, updateAttraction]
   );
 
   return (
