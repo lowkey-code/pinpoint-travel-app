@@ -4,10 +4,11 @@ export interface Attraction {
   id: string;
   name: string;
   address: string;
-  coordinates: {
+  coordinates?: {
     latitude: number;
     longitude: number;
   };
   category: BadgeCategory;
   notes?: string;
+  visited?: boolean;
 }

@@ -2,24 +2,25 @@ import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { SearchBar } from '@/components/SearchBar';
 import { AttractionCard } from '@/components/AttractionCard';
-import { mockAttractions } from '@/data/attractions';
+import { useAttractions } from '@/context/AttractionsContext';
 
 export default function Attractions() {
   const [searchQuery, setSearchQuery] = useState('');
+  const { attractions } = useAttractions();
 
   const filteredAttractions = useMemo(() => {
     if (!searchQuery.trim()) {
-      return mockAttractions;
+      return attractions;
     }
 
     const query = searchQuery.toLowerCase();
-    return mockAttractions.filter(
+    return attractions.filter(
       (attraction) =>
         attraction.name.toLowerCase().includes(query) ||
         attraction.address.toLowerCase().includes(query) ||
         attraction.notes?.toLowerCase().includes(query)
     );
-  }, [searchQuery]);
+  }, [attractions, searchQuery]);
 
   return (
     <div className="relative min-h-[calc(100vh-120px)]">

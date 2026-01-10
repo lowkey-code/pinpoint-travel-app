@@ -49,6 +49,12 @@ export function AttractionCard({ attraction, className }: AttractionCardProps) {
 
   const handleOpenMaps = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
+    if (!attraction.coordinates) {
+      const query = attraction.address || attraction.name;
+      const fallbackUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+      window.open(fallbackUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
     const { latitude, longitude } = attraction.coordinates;
     // Try to detect platform and open appropriate maps app
     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);

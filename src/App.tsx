@@ -1,11 +1,14 @@
 import { RouterProvider } from 'react-router-dom';
 import { router } from '@/routes';
 import { ToastProvider } from '@/components/ui';
+import { AttractionsProvider } from '@/context/AttractionsContext';
 
 function App() {
   return (
     <ToastProvider>
-      <RouterProvider router={router} />
+      <AttractionsProvider>
+        <RouterProvider router={router} />
+      </AttractionsProvider>
     </ToastProvider>
   );
 }
