@@ -1,23 +1,9 @@
 import { Badge, Button, Card, type BadgeCategory } from '@/components/ui';
+import type { Attraction } from '@/types/attraction';
 import { cn } from '@/lib/cn';
 
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
-
-export interface AttractionDetailData {
-  id: string;
-  name: string;
-  chineseAddress: string;
-  coordinates?: Coordinates;
-  category: BadgeCategory;
-  notes?: string;
-  visited: boolean;
-}
-
 interface DetailViewProps {
-  attraction: AttractionDetailData;
+  attraction: Attraction;
   isVisited: boolean;
   statusMessage?: string;
   onBack: () => void;
@@ -191,7 +177,7 @@ export default function DetailView({
                 Endereço em chinês
               </p>
               <p className="mt-2 px-4 py-3 rounded-md bg-accent-50 text-2xl font-semibold font-heading text-neutral-900">
-                {attraction.chineseAddress}
+                {attraction.address}
               </p>
             </div>
 

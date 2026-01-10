@@ -2,20 +2,27 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AttractionForm, { type AttractionFormValues } from '@/components/AttractionForm';
 import { Button } from '@/components/ui';
-import { mockAttractions } from '@/data/attractions';
+import { useAttractions } from '@/context/AttractionsContext';
 
 export default function EditAttraction() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { getAttractionById, updateAttraction } = useAttractions();
 
   const attraction = useMemo(
-    () => mockAttractions.find((item) => item.id === id),
-    [id]
+    () => (id ? getAttractionById(id) : undefined),
+    [getAttractionById, id]
   );
 
-  const handleSave = (_values: AttractionFormValues) => {
-    // TODO: Implement backend update functionality
+  const handleSave = (values: AttractionFormValues) => {
     if (id) {
+      updateAttraction(id, {
+        name: values.name,
+        address: values.address,
+        coordinates: values.coordinates,
+        category: values.category,
+        notes: values.notes,
+      });
       navigate(`/attraction/${id}`);
       return;
     }
@@ -52,7 +59,7 @@ export default function EditAttraction() {
       submitLabel="Salvar alterações"
       initialValues={{
         name: attraction.name,
-        chineseAddress: attraction.address,
+        address: attraction.address,
         coordinates: attraction.coordinates,
         category: attraction.category,
         notes: attraction.notes,

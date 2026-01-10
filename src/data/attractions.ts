@@ -1,6 +1,6 @@
 import type { Attraction } from '@/types/attraction';
 
-export const mockAttractions: Attraction[] = [
+export const seedAttractions: Attraction[] = [
   {
     id: '1',
     name: '故宫博物院',

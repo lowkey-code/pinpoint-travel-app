@@ -1,42 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import DetailView, { type AttractionDetailData } from '@/components/DetailView';
+import DetailView from '@/components/DetailView';
 import { Button } from '@/components/ui';
-
-const MOCK_ATTRACTIONS: AttractionDetailData[] = [
-  {
-    id: '1',
-    name: 'Grande Muralha da China',
-    chineseAddress: '北京市怀柔区慕田峪长城',
-    coordinates: { latitude: 40.43191, longitude: 116.57037 },
-    category: 'monument',
-    notes: 'Chegue cedo para pegar pouca fila e melhor luz para fotos.',
-    visited: true,
-  },
-  {
-    id: '2',
-    name: 'Cidade Proibida',
-    chineseAddress: '北京市东城区景山前街4号',
-    coordinates: { latitude: 39.91635, longitude: 116.39715 },
-    category: 'museum',
-    notes: 'Reserve pelo menos meio dia para explorar com calma.',
-    visited: false,
-  },
-  {
-    id: '3',
-    name: 'Terra Roxa',
-    chineseAddress: '陕西省西安市临潼区秦始皇陵东侧',
-    coordinates: { latitude: 34.3853, longitude: 109.2732 },
-    category: 'monument',
-    notes: 'Leve água e prepare-se para caminhar bastante.',
-    visited: false,
-  },
-];
+import { useAttractions } from '@/context/AttractionsContext';
 
 export default function AttractionDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const attraction = MOCK_ATTRACTIONS.find((item) => item.id === id);
+  const { getAttractionById, deleteAttraction, updateAttraction } = useAttractions();
+  const attraction = useMemo(
+    () => (id ? getAttractionById(id) : undefined),
+    [getAttractionById, id]
+  );
 
   const [isVisited, setIsVisited] = useState(attraction?.visited ?? false);
   const [statusMessage, setStatusMessage] = useState('');
@@ -46,7 +21,7 @@ export default function AttractionDetail() {
     if (!attraction) {
       return;
     }
-    setIsVisited(attraction.visited);
+    setIsVisited(attraction.visited ?? false);
     setStatusMessage('');
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
@@ -80,11 +55,14 @@ export default function AttractionDetail() {
   const handleVisitedChange = useCallback(
     (nextValue: boolean) => {
       setIsVisited(nextValue);
+      if (attraction) {
+        updateAttraction(attraction.id, { visited: nextValue });
+      }
       pushStatusMessage(
         nextValue ? 'Marcada como visitada.' : 'Marcada como não visitada.'
       );
     },
-    [pushStatusMessage]
+    [attraction, pushStatusMessage, updateAttraction]
   );
 
   const handleCopyAddress = useCallback(async () => {
@@ -95,7 +73,7 @@ export default function AttractionDetail() {
       if (!navigator.clipboard?.writeText) {
         throw new Error('Clipboard not supported');
       }
-      await navigator.clipboard.writeText(attraction.chineseAddress);
+      await navigator.clipboard.writeText(attraction.address);
       pushStatusMessage('Endereço copiado para a área de transferência.');
     } catch {
       pushStatusMessage('Não foi possível copiar o endereço.');
@@ -108,7 +86,7 @@ export default function AttractionDetail() {
     }
     const query = attraction.coordinates
       ? `${attraction.coordinates.latitude},${attraction.coordinates.longitude}`
-      : attraction.chineseAddress;
+      : attraction.address;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     window.open(mapUrl, '_blank', 'noopener,noreferrer');
     pushStatusMessage('Abrindo mapa...');
@@ -131,8 +109,9 @@ export default function AttractionDetail() {
     if (!confirmed) {
       return;
     }
+    deleteAttraction(attraction.id);
     navigate('/');
-  }, [attraction, navigate]);
+  }, [attraction, deleteAttraction, navigate]);
 
   if (!attraction) {
     return (

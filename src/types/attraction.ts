@@ -4,10 +4,14 @@ export interface Attraction {
   id: string;
   name: string;
   address: string;
-  coordinates: {
+  /**
+   * Optional: users can save attractions without coordinates, so consumers must handle fallbacks.
+   */
+  coordinates?: {
     latitude: number;
     longitude: number;
   };
   category: BadgeCategory;
   notes?: string;
+  visited?: boolean;
 }

@@ -1,12 +1,20 @@
 import { useNavigate } from 'react-router-dom';
 import AttractionForm, { type AttractionFormValues } from '@/components/AttractionForm';
+import { useAttractions } from '@/context/AttractionsContext';
 
 export default function CreateAttraction() {
   const navigate = useNavigate();
+  const { createAttraction } = useAttractions();
 
-  const handleSave = (_values: AttractionFormValues) => {
-    // TODO: Implement backend save functionality
-    // For now, navigate back to home
+  const handleSave = (values: AttractionFormValues) => {
+    createAttraction({
+      name: values.name,
+      address: values.address,
+      coordinates: values.coordinates,
+      category: values.category,
+      notes: values.notes,
+      visited: false,
+    });
     navigate('/');
   };
 
