@@ -5,7 +5,7 @@ Aplicativo PWA para organizar pontos de interesse de viagem.
 ## Requisitos
 
 - **Node.js**: >= 20.0.0 (LTS)
-- **npm**: >= 10.0.0
+- **pnpm**: >= 10.0.0
 
 Recomenda-se usar um gerenciador de versões Node:
 - **nvm** (Linux/macOS): `nvm use` (lê automático de `.nvmrc`)
@@ -59,18 +59,24 @@ nvm use
 fnm use
 
 # Ou manualmente
-node --version  # Deve ser >= 20.0.0
-npm --version   # Deve ser >= 10.0.0
+node --version   # Deve ser >= 20.0.0
+pnpm --version   # Deve ser >= 10.0.0
 ```
 
-### 3. Instale as dependências
+### 3. Instale o pnpm (se necessario)
 ```bash
-npm install
+corepack enable
+corepack prepare pnpm@10.0.0 --activate
 ```
 
-### 4. Inicie o servidor de desenvolvimento
+### 4. Instale as dependencias
 ```bash
-npm run dev
+pnpm install
+```
+
+### 5. Inicie o servidor de desenvolvimento
+```bash
+pnpm run dev
 ```
 
 Acesse `http://localhost:5173` no seu navegador.
@@ -79,19 +85,19 @@ Acesse `http://localhost:5173` no seu navegador.
 
 ```bash
 # Instalar dependências
-npm install
+pnpm install
 
 # Desenvolvimento
-npm run dev
+pnpm run dev
 
 # Build para produção
-npm run build
+pnpm run build
 
 # Preview do build
-npm run preview
+pnpm run preview
 
 # Lint
-npm run lint
+pnpm run lint
 ```
 
 ## Fontes

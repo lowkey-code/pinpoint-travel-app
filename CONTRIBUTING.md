@@ -7,7 +7,7 @@ Obrigado por seu interesse em contribuir com o Pinpoint! 🎉
 Antes de começar, certifique-se de ter instalado:
 
 - **Node.js** >= 20.0.0 (recomendado: LTS mais recente)
-- **npm** >= 10.0.0
+- **pnpm** >= 10.0.0
 - **Git**
 
 ### Configurar ambiente local
@@ -27,18 +27,24 @@ Antes de começar, certifique-se de ter instalado:
    fnm use
 
    # Verifique
-   node --version  # >= 20.0.0
-   npm --version   # >= 10.0.0
+   node --version   # >= 20.0.0
+   pnpm --version   # >= 10.0.0
    ```
 
-3. **Instale dependências**
+3. **Instale o pnpm (se necessario)**
    ```bash
-   npm install
+   corepack enable
+   corepack prepare pnpm@10.0.0 --activate
    ```
 
-4. **Inicie o servidor de desenvolvimento**
+4. **Instale dependencias**
    ```bash
-   npm run dev
+   pnpm install
+   ```
+
+5. **Inicie o servidor de desenvolvimento**
+   ```bash
+   pnpm run dev
    ```
 
 ## Padrões de Código
@@ -108,8 +114,8 @@ git commit -m "feat: sua feature"
 
 2. **Implemente as mudanças**
    - Siga os padrões em `claude.md`
-   - Use `npm run lint` para verificar
-   - Use `npm run build` para testar o build
+   - Use `pnpm run lint` para verificar
+   - Use `pnpm run build` para testar o build
 
 3. **Faça commits atômicos com Conventional Commits**
    ```bash
@@ -118,15 +124,15 @@ git commit -m "feat: sua feature"
 
    ✨ **Dica**: Use `npx commitizen` para guia interativo (opcional):
    ```bash
-   npx commitizen init cz-conventional-changelog --save-dev
-   npm run commit  # Substituir por npx cz commit
+   pnpm dlx commitizen init cz-conventional-changelog --save-dev
+   pnpm run commit  # Substituir por pnpm dlx cz commit
    ```
 
 4. **Teste antes de fazer push**
    ```bash
-   npm run lint    # Verifica o código (também roda no git hook)
-   npm run build   # Compila TypeScript e cria bundle
-   npm run dev     # Testa localmente
+   pnpm run lint    # Verifica o código (também roda no git hook)
+   pnpm run build   # Compila TypeScript e cria bundle
+   pnpm run dev     # Testa localmente
    ```
 
 5. **Git hooks validam automaticamente**
