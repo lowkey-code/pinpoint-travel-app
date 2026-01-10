@@ -23,6 +23,9 @@ const AttractionsContext = createContext<AttractionsContextValue | undefined>(
 
 const STORAGE_KEY = 'attractions';
 
+/**
+ * Generate a unique ID using crypto.randomUUID when available, falling back to timestamp + random for older browsers.
+ */
 function generateId() {
   if (typeof crypto !== 'undefined' && crypto.randomUUID) {
     return crypto.randomUUID();
