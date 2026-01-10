@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
   getStorageKeyForEvents,
   readFromStorage,
@@ -10,15 +10,14 @@ type UseLocalStorageOptions = {
   sync?: boolean;
 };
 
+const DEFAULT_OPTIONS: UseLocalStorageOptions = {};
+
 export function useLocalStorage<T>(
   key: string,
   initialValue: T,
   options?: UseLocalStorageOptions
 ) {
-  const normalizedOptions = useMemo(
-    () => options ?? {},
-    [options]
-  );
+  const normalizedOptions = options ?? DEFAULT_OPTIONS;
 
   const [storedValue, setStoredValue] = useState<T>(() => {
     const existing = readFromStorage<T>(key, normalizedOptions);
