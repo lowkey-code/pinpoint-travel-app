@@ -2,11 +2,6 @@ import { Badge, Button, Card, type BadgeCategory } from '@/components/ui';
 import type { Attraction } from '@/types/attraction';
 import { cn } from '@/lib/cn';
 
-export interface Coordinates {
-  latitude: number;
-  longitude: number;
-}
-
 interface DetailViewProps {
   attraction: Attraction;
   isVisited: boolean;
