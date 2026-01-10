@@ -1,4 +1,1 @@
-#!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
-
 # Commitlint removed: using Commitizen (`yarn commit`) to create messages
