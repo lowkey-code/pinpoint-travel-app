@@ -25,6 +25,10 @@ export function readFromStorage<T>(key: string, options?: StorageOptions) {
   }
 }
 
+/**
+ * Persist a value in localStorage under a namespaced key.
+ * Serializes the value with JSON and swallows serialization/quota errors to avoid crashing callers.
+ */
 export function writeToStorage<T>(key: string, value: T, options?: StorageOptions) {
   if (typeof window === 'undefined' || !window.localStorage) {
     return;
