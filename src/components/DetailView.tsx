@@ -1,4 +1,5 @@
 import { Badge, Button, Card, type BadgeCategory } from '@/components/ui';
+import type { Attraction } from '@/types/attraction';
 import { cn } from '@/lib/cn';
 
 export interface Coordinates {
@@ -6,18 +7,8 @@ export interface Coordinates {
   longitude: number;
 }
 
-export interface AttractionDetailData {
-  id: string;
-  name: string;
-  address: string;
-  coordinates?: Coordinates;
-  category: BadgeCategory;
-  notes?: string;
-  visited?: boolean;
-}
-
 interface DetailViewProps {
-  attraction: AttractionDetailData;
+  attraction: Attraction;
   isVisited: boolean;
   statusMessage?: string;
   onBack: () => void;
