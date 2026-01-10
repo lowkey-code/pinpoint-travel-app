@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   getStorageKeyForEvents,
   readFromStorage,
@@ -15,12 +15,17 @@ export function useLocalStorage<T>(
   initialValue: T,
   options?: UseLocalStorageOptions
 ) {
+  const normalizedOptions = useMemo(
+    () => options ?? {},
+    [options]
+  );
+
   const [storedValue, setStoredValue] = useState<T>(() => {
-    const existing = readFromStorage<T>(key, options);
+    const existing = readFromStorage<T>(key, normalizedOptions);
     if (existing !== undefined) {
       return existing;
     }
-    writeToStorage(key, initialValue, options);
+    writeToStorage(key, initialValue, normalizedOptions);
     return initialValue;
   });
 
@@ -28,18 +33,18 @@ export function useLocalStorage<T>(
     (value: T | ((prev: T) => T)) => {
       setStoredValue((prev) => {
         const nextValue = value instanceof Function ? value(prev) : value;
-        writeToStorage(key, nextValue, options);
+        writeToStorage(key, nextValue, normalizedOptions);
         return nextValue;
       });
     },
-    [key, options]
+    [key, normalizedOptions]
   );
 
   useEffect(() => {
-    if (options?.sync === false) {
+    if (normalizedOptions.sync === false) {
       return;
     }
-    const storageKey = getStorageKeyForEvents(key, options);
+    const storageKey = getStorageKeyForEvents(key, normalizedOptions);
     const handleStorage = (event: StorageEvent) => {
       if (event.key !== storageKey) {
         return;
@@ -56,7 +61,7 @@ export function useLocalStorage<T>(
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, [initialValue, key, options]);
+  }, [initialValue, key, normalizedOptions]);
 
   return [storedValue, setValue] as const;
 }
