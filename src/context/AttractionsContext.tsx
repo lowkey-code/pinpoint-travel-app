@@ -9,7 +9,7 @@ type AttractionUpdate = Partial<AttractionInput>;
 type AttractionsContextValue = {
   attractions: Attraction[];
   createAttraction: (input: AttractionInput) => Attraction;
-  updateAttraction: (id: string, updates: AttractionUpdate) => Attraction | null;
+  updateAttraction: (id: string, updates: AttractionUpdate) => void;
   deleteAttraction: (id: string) => void;
   getAttractionById: (id: string) => Attraction | undefined;
 };
@@ -47,17 +47,14 @@ export function AttractionsProvider({ children }: { children: React.ReactNode })
 
   const updateAttraction = useCallback(
     (id: string, updates: AttractionUpdate) => {
-      let updated: Attraction | null = null;
       setAttractions((prev) =>
         prev.map((item) => {
           if (item.id !== id) {
             return item;
           }
-          updated = { ...item, ...updates, id: item.id };
-          return updated;
+          return { ...item, ...updates, id: item.id };
         })
       );
-      return updated;
     },
     [setAttractions]
   );
