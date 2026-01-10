@@ -12,6 +12,14 @@ type UseLocalStorageOptions = {
 
 const DEFAULT_OPTIONS: UseLocalStorageOptions = {};
 
+/**
+ * React hook to persist state in localStorage with optional namespacing and cross-tab sync.
+ *
+ * @param key Storage key (namespaced via `prefix`).
+ * @param initialValue Value to seed when no storage entry exists.
+ * @param options Optional prefix override and cross-tab sync toggle (`sync === false` disables listeners).
+ * @returns Tuple with current value and a setter that also writes to localStorage.
+ */
 export function useLocalStorage<T>(
   key: string,
   initialValue: T,
