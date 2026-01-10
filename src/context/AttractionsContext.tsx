@@ -14,6 +14,9 @@ type AttractionsContextValue = {
   getAttractionById: (id: string) => Attraction | undefined;
 };
 
+/**
+ * CRUD context for attractions persisted in localStorage.
+ */
 const AttractionsContext = createContext<AttractionsContextValue | undefined>(
   undefined
 );
@@ -27,6 +30,9 @@ function generateId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
+/**
+ * Provide attraction data and CRUD operations backed by localStorage.
+ */
 export function AttractionsProvider({ children }: { children: React.ReactNode }) {
   const [attractions, setAttractions] = useLocalStorage<Attraction[]>(
     STORAGE_KEY,
