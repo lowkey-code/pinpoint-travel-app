@@ -30,7 +30,12 @@ export function writeToStorage<T>(key: string, value: T, options?: StorageOption
     return;
   }
   const storageKey = getStorageKey(key, options);
-  window.localStorage.setItem(storageKey, JSON.stringify(value));
+  try {
+    const serialized = JSON.stringify(value);
+    window.localStorage.setItem(storageKey, serialized);
+  } catch {
+    // Swallow write errors (serialization or quota) to avoid crashing the app
+  }
 }
 
 export function removeFromStorage(key: string, options?: StorageOptions) {
