@@ -20,18 +20,9 @@ export function useLocalStorage<T>(
     if (existing !== undefined) {
       return existing;
     }
+    writeToStorage(key, initialValue, options);
     return initialValue;
   });
-
-  useEffect(() => {
-    const existing = readFromStorage<T>(key, options);
-    if (existing === undefined) {
-      writeToStorage(key, storedValue, options);
-    } else {
-      setStoredValue(existing);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const setValue = useCallback(
     (value: T | ((prev: T) => T)) => {
