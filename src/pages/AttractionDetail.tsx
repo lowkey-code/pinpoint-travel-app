@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import DetailView, { type AttractionDetailData } from '@/components/DetailView';
+import DetailView from '@/components/DetailView';
 import { Button } from '@/components/ui';
 import { useAttractions } from '@/context/AttractionsContext';
 
@@ -13,36 +13,21 @@ export default function AttractionDetail() {
     [getAttractionById, id]
   );
 
-  const detailAttraction = useMemo<AttractionDetailData | null>(() => {
-    if (!attraction) {
-      return null;
-    }
-    return {
-      id: attraction.id,
-      name: attraction.name,
-      address: attraction.address,
-      coordinates: attraction.coordinates,
-      category: attraction.category,
-      notes: attraction.notes,
-      visited: attraction.visited ?? false,
-    };
-  }, [attraction]);
-
   const [isVisited, setIsVisited] = useState(attraction?.visited ?? false);
   const [statusMessage, setStatusMessage] = useState('');
   const statusTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!detailAttraction) {
+    if (!attraction) {
       return;
     }
-    setIsVisited(detailAttraction.visited);
+    setIsVisited(attraction.visited ?? false);
     setStatusMessage('');
     if (statusTimeoutRef.current) {
       window.clearTimeout(statusTimeoutRef.current);
       statusTimeoutRef.current = null;
     }
-  }, [detailAttraction]);
+  }, [attraction]);
 
   useEffect(() => {
     return () => {
@@ -70,65 +55,65 @@ export default function AttractionDetail() {
   const handleVisitedChange = useCallback(
     (nextValue: boolean) => {
       setIsVisited(nextValue);
-      if (detailAttraction) {
-        updateAttraction(detailAttraction.id, { visited: nextValue });
+      if (attraction) {
+        updateAttraction(attraction.id, { visited: nextValue });
       }
       pushStatusMessage(
         nextValue ? 'Marcada como visitada.' : 'Marcada como não visitada.'
       );
     },
-    [detailAttraction, pushStatusMessage, updateAttraction]
+    [attraction, pushStatusMessage, updateAttraction]
   );
 
   const handleCopyAddress = useCallback(async () => {
-    if (!detailAttraction) {
+    if (!attraction) {
       return;
     }
     try {
       if (!navigator.clipboard?.writeText) {
         throw new Error('Clipboard not supported');
       }
-      await navigator.clipboard.writeText(detailAttraction.address);
+      await navigator.clipboard.writeText(attraction.address);
       pushStatusMessage('Endereço copiado para a área de transferência.');
     } catch {
       pushStatusMessage('Não foi possível copiar o endereço.');
     }
-  }, [detailAttraction, pushStatusMessage]);
+  }, [attraction, pushStatusMessage]);
 
   const handleOpenMap = useCallback(() => {
-    if (!detailAttraction) {
+    if (!attraction) {
       return;
     }
-    const query = detailAttraction.coordinates
-      ? `${detailAttraction.coordinates.latitude},${detailAttraction.coordinates.longitude}`
-      : detailAttraction.address;
+    const query = attraction.coordinates
+      ? `${attraction.coordinates.latitude},${attraction.coordinates.longitude}`
+      : attraction.address;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     window.open(mapUrl, '_blank', 'noopener,noreferrer');
     pushStatusMessage('Abrindo mapa...');
-  }, [detailAttraction, pushStatusMessage]);
+  }, [attraction, pushStatusMessage]);
 
   const handleEdit = useCallback(() => {
-    if (!detailAttraction) {
+    if (!attraction) {
       return;
     }
-    navigate(`/attraction/${detailAttraction.id}/edit`);
-  }, [detailAttraction, navigate]);
+    navigate(`/attraction/${attraction.id}/edit`);
+  }, [attraction, navigate]);
 
   const handleDelete = useCallback(() => {
-    if (!detailAttraction) {
+    if (!attraction) {
       return;
     }
     const confirmed = window.confirm(
-      `Tem certeza que deseja deletar "${detailAttraction.name}"?`
+      `Tem certeza que deseja deletar "${attraction.name}"?`
     );
     if (!confirmed) {
       return;
     }
-    deleteAttraction(detailAttraction.id);
+    deleteAttraction(attraction.id);
     navigate('/');
-  }, [deleteAttraction, detailAttraction, navigate]);
+  }, [attraction, deleteAttraction, navigate]);
 
-  if (!detailAttraction) {
+  if (!attraction) {
     return (
       <div className="flex flex-col gap-4 py-12">
         <Button variant="ghost" size="sm" onClick={handleBack}>
@@ -146,7 +131,7 @@ export default function AttractionDetail() {
 
   return (
     <DetailView
-      attraction={detailAttraction}
+      attraction={attraction}
       isVisited={isVisited}
       statusMessage={statusMessage}
       onBack={handleBack}

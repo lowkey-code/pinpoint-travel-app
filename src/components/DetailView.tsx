@@ -13,7 +13,7 @@ export interface AttractionDetailData {
   coordinates?: Coordinates;
   category: BadgeCategory;
   notes?: string;
-  visited: boolean;
+  visited?: boolean;
 }
 
 interface DetailViewProps {
