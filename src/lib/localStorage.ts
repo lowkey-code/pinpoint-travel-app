@@ -9,6 +9,10 @@ function getStorageKey(key: string, options?: StorageOptions) {
   return `${prefix}:${key}`;
 }
 
+/**
+ * Read a JSON-serialized value from localStorage using a namespaced key.
+ * Returns the parsed data or undefined if missing, unsupported, or on parse errors.
+ */
 export function readFromStorage<T>(key: string, options?: StorageOptions) {
   if (typeof window === 'undefined' || !window.localStorage) {
     return undefined;
