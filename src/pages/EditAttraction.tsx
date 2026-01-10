@@ -18,7 +18,7 @@ export default function EditAttraction() {
     if (id) {
       updateAttraction(id, {
         name: values.name,
-        address: values.chineseAddress,
+        address: values.address,
         coordinates: values.coordinates,
         category: values.category,
         notes: values.notes,
@@ -59,7 +59,7 @@ export default function EditAttraction() {
       submitLabel="Salvar alterações"
       initialValues={{
         name: attraction.name,
-        chineseAddress: attraction.address,
+        address: attraction.address,
         coordinates: attraction.coordinates,
         category: attraction.category,
         notes: attraction.notes,

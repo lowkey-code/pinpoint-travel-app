@@ -3,7 +3,7 @@ import { Button, Input, Textarea, type BadgeCategory } from '@/components/ui';
 
 export interface AttractionFormValues {
   name: string;
-  chineseAddress: string;
+  address: string;
   coordinates?: {
     latitude: number;
     longitude: number;
@@ -22,7 +22,7 @@ interface AttractionFormProps {
 
 type FormState = {
   name: string;
-  chineseAddress: string;
+  address: string;
   latitude: string;
   longitude: string;
   category: BadgeCategory;
@@ -44,7 +44,7 @@ const CATEGORY_OPTIONS: Array<{ value: BadgeCategory; label: string }> = [
 function getInitialState(initialValues?: Partial<AttractionFormValues>): FormState {
   return {
     name: initialValues?.name ?? '',
-    chineseAddress: initialValues?.chineseAddress ?? '',
+    address: initialValues?.address ?? '',
     latitude: initialValues?.coordinates?.latitude?.toString() ?? '',
     longitude: initialValues?.coordinates?.longitude?.toString() ?? '',
     category: initialValues?.category ?? 'other',
@@ -59,8 +59,8 @@ function validateForm(state: FormState): FormErrors {
     errors.name = 'Informe o nome da atração.';
   }
 
-  if (!state.chineseAddress.trim()) {
-    errors.chineseAddress = 'Informe o endereço em chinês.';
+  if (!state.address.trim()) {
+    errors.address = 'Informe o endereço em chinês.';
   }
 
   const hasLatitude = state.latitude.trim() !== '';
@@ -133,7 +133,7 @@ export default function AttractionForm({
 
     onSave({
       name: formState.name.trim(),
-      chineseAddress: formState.chineseAddress.trim(),
+      address: formState.address.trim(),
       coordinates,
       category: formState.category,
       notes: formState.notes.trim() || undefined,
@@ -170,14 +170,14 @@ export default function AttractionForm({
             aria-required="true"
           />
 
-          <Input
-            name="chineseAddress"
-            label="Endereço em chinês *"
-            value={formState.chineseAddress}
-            onChange={handleChange}
-            placeholder="Ex: 北京市东城区景山前街4号"
-            hasError={!!errors.chineseAddress}
-            errorMessage={errors.chineseAddress}
+        <Input
+          name="address"
+          label="Endereço em chinês *"
+          value={formState.address}
+          onChange={handleChange}
+          placeholder="Ex: 北京市东城区景山前街4号"
+          hasError={!!errors.address}
+          errorMessage={errors.address}
             fullWidth
             required
             aria-required="true"

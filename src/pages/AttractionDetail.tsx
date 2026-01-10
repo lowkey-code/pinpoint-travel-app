@@ -20,7 +20,7 @@ export default function AttractionDetail() {
     return {
       id: attraction.id,
       name: attraction.name,
-      chineseAddress: attraction.address,
+      address: attraction.address,
       coordinates: attraction.coordinates,
       category: attraction.category,
       notes: attraction.notes,
@@ -88,7 +88,7 @@ export default function AttractionDetail() {
       if (!navigator.clipboard?.writeText) {
         throw new Error('Clipboard not supported');
       }
-      await navigator.clipboard.writeText(detailAttraction.chineseAddress);
+      await navigator.clipboard.writeText(detailAttraction.address);
       pushStatusMessage('Endereço copiado para a área de transferência.');
     } catch {
       pushStatusMessage('Não foi possível copiar o endereço.');
@@ -101,7 +101,7 @@ export default function AttractionDetail() {
     }
     const query = detailAttraction.coordinates
       ? `${detailAttraction.coordinates.latitude},${detailAttraction.coordinates.longitude}`
-      : detailAttraction.chineseAddress;
+      : detailAttraction.address;
     const mapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
     window.open(mapUrl, '_blank', 'noopener,noreferrer');
     pushStatusMessage('Abrindo mapa...');

@@ -9,7 +9,7 @@ export default function CreateAttraction() {
   const handleSave = (values: AttractionFormValues) => {
     createAttraction({
       name: values.name,
-      address: values.chineseAddress,
+      address: values.address,
       coordinates: values.coordinates,
       category: values.category,
       notes: values.notes,

@@ -9,7 +9,7 @@ export interface Coordinates {
 export interface AttractionDetailData {
   id: string;
   name: string;
-  chineseAddress: string;
+  address: string;
   coordinates?: Coordinates;
   category: BadgeCategory;
   notes?: string;
@@ -191,7 +191,7 @@ export default function DetailView({
                 Endereço em chinês
               </p>
               <p className="mt-2 px-4 py-3 rounded-md bg-accent-50 text-2xl font-semibold font-heading text-neutral-900">
-                {attraction.chineseAddress}
+                {attraction.address}
               </p>
             </div>
 
