@@ -1,1 +1,1 @@
-# Commitlint removed: using Commitizen (`yarn commit`) to create messages
+npx --no -- commitlint --edit "$1"
