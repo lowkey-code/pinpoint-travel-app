@@ -1,0 +1,12 @@
+{
+  "commitizen.adapter": "cz-customizable",
+  "commitizen.customConfig": ".cz-config.js",
+  "git.enableSmartCommit": false,
+  "chat.mcp.serverSampling": {
+    "pinpoint-travel-app/.vscode/mcp.json: ds-mcp": {
+      "allowedModels": [
+        "copilot/gpt-5-mini"
+      ]
+    }
+  }
+}

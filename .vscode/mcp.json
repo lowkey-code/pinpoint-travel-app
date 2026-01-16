@@ -1,0 +1,15 @@
+{
+	"mcpServers": {
+		"design-systems": {
+			"url": "https://design-systems-mcp.southleft.com/mcp",
+			"type": "http",
+			"description": "Design Systems MCP - public endpoint"
+		},
+		"local-design-systems": {
+			"url": "http://localhost:8787/mcp",
+			"type": "http",
+			"description": "Local development MCP (run npm run dev in upstream repo)"
+		}
+	},
+	"inputs": []
+}
