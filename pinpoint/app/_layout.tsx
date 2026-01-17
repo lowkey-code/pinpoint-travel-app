@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { TamaguiProvider, Theme } from 'tamagui';
 import { useTheme } from '../hooks/useTheme';
 
@@ -29,21 +30,23 @@ export default function RootLayout() {
     }
 
     return (
-        <TamaguiProvider config={config} defaultTheme={resolvedTheme}>
-            <Theme name={resolvedTheme}>
-                <Stack
-                    screenOptions={{
-                        headerStyle: {
-                            backgroundColor: resolvedTheme === 'dark' ? '#111' : '#fff',
-                        },
-                        headerTintColor: resolvedTheme === 'dark' ? '#fff' : '#000',
-                    }}
-                >
-                    <Stack.Screen name="index" options={{ headerShown: false }} />
-                    <Stack.Screen name="test-storage" options={{ title: 'Teste de Storage' }} />
-                </Stack>
-                <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
-            </Theme>
-        </TamaguiProvider>
+        <SafeAreaProvider>
+            <TamaguiProvider config={config} defaultTheme={resolvedTheme}>
+                <Theme name={resolvedTheme}>
+                    <Stack
+                        screenOptions={{
+                            headerStyle: {
+                                backgroundColor: resolvedTheme === 'dark' ? '#111' : '#fff',
+                            },
+                            headerTintColor: resolvedTheme === 'dark' ? '#fff' : '#000',
+                        }}
+                    >
+                        <Stack.Screen name="index" options={{ headerShown: false }} />
+                        <Stack.Screen name="test-storage" options={{ title: 'Teste de Storage' }} />
+                    </Stack>
+                    <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />
+                </Theme>
+            </TamaguiProvider>
+        </SafeAreaProvider>
     );
 }
