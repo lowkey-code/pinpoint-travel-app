@@ -1,10 +1,15 @@
 import * as React from "react"
+import { ark } from "@ark-ui/react"
 
 import { cn } from "~/lib/utils"
 
-function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+function Input({
+  className,
+  type,
+  ...props
+}: React.ComponentProps<typeof ark.input>) {
   return (
-    <input
+    <ark.input
       type={type}
       data-slot="input"
       className={cn(
