@@ -51,6 +51,10 @@ const toastIcons: Record<ToastType, ReactNode> = {
   ),
 };
 
+/**
+ * Toast notification item component.
+ * Built on Ark UI with Tailwind styling.
+ */
 function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) => void }) {
   return (
     <div
@@ -79,6 +83,11 @@ function ToastItem({ toast, onRemove }: { toast: Toast; onRemove: (id: string) =
   );
 }
 
+/**
+ * Toast Provider component.
+ * Built on Ark UI with Tailwind styling.
+ * Provides toast notifications functionality to the application.
+ */
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 

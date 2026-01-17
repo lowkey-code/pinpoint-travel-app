@@ -51,6 +51,7 @@ const sizeStyles: Record<ButtonSize, string> = {
 
 /**
  * Button component with multiple variants and sizes.
+ * Built on Ark UI with Tailwind styling.
  * Follows the design system specifications.
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(

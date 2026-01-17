@@ -62,6 +62,7 @@ const iconSizeStyles: Record<InputSize, string> = {
 
 /**
  * Input component with label, helper text, and error handling.
+ * Built on Ark UI with Tailwind styling.
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
