@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { Header } from "~/components/header";
 import { AddPlaceSheet } from "~/features/places/components/add-place-sheet";
@@ -24,14 +24,17 @@ export default function IndexRoute() {
     }
   }, [searchParams]);
 
-  const filteredPlaces = places.filter((place) => {
-    const matchesSearch =
-      place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      place.address.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      place.note?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = !selectedCategory || place.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const normalizedQuery = useMemo(() => searchQuery.toLowerCase(), [searchQuery]);
+  const filteredPlaces = useMemo(() => {
+    return places.filter((place) => {
+      const matchesSearch =
+        place.name.toLowerCase().includes(normalizedQuery) ||
+        place.address.toLowerCase().includes(normalizedQuery) ||
+        place.note?.toLowerCase().includes(normalizedQuery);
+      const matchesCategory = !selectedCategory || place.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [places, normalizedQuery, selectedCategory]);
 
   return (
     <main className="min-h-screen flex flex-col bg-background safe-bottom">

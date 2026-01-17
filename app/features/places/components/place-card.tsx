@@ -1,9 +1,9 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Copy, Navigation, Trash2, MoreVertical, Check, Edit2 } from "lucide-react"
 import { Card } from "~/components/ui/card"
-import { CATEGORIES } from "~/features/places/lib/categories"
+import { CATEGORIES_BY_ID } from "~/features/places/lib/categories"
 import type { Place } from "~/features/places/lib/types"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
 import { EditPlaceSheet } from "~/features/places/components/edit-place-sheet"
@@ -17,13 +17,25 @@ interface PlaceCardProps {
 export function PlaceCard({ place, onDelete, onUpdate }: PlaceCardProps) {
   const [copied, setCopied] = useState(false)
   const [isEditOpen, setIsEditOpen] = useState(false)
-  const category = CATEGORIES.find((c) => c.id === place.category)
+  const copyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const category = CATEGORIES_BY_ID.get(place.category)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current)
+      }
+    }
+  }, [])
 
   const copyAddress = async () => {
     try {
       await navigator.clipboard.writeText(place.address)
       setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
+      if (copyTimeoutRef.current) {
+        clearTimeout(copyTimeoutRef.current)
+      }
+      copyTimeoutRef.current = setTimeout(() => setCopied(false), 2000)
     } catch (err) {
       console.error("Failed to copy:", err)
     }

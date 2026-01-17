@@ -12,3 +12,7 @@ export const CATEGORIES: Category[] = [
   { id: "shopping", label: "Shop", icon: "🛍️" },
   { id: "transport", label: "Transit", icon: "🚇" },
 ]
+
+export const CATEGORIES_BY_ID = new Map(
+  CATEGORIES.map((category) => [category.id, category])
+)

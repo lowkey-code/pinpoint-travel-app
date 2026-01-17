@@ -1,5 +1,6 @@
 "use client"
 
+import { useMemo } from "react"
 import { CATEGORIES } from "~/features/places/lib/categories"
 import type { Place } from "~/features/places/lib/types"
 
@@ -10,9 +11,13 @@ interface CategoryFilterProps {
 }
 
 export function CategoryFilter({ selectedCategory, onSelectCategory, places }: CategoryFilterProps) {
-  const getCategoryCount = (categoryId: string) => {
-    return places.filter((p) => p.category === categoryId).length
-  }
+  const categoryCounts = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const place of places) {
+      counts.set(place.category, (counts.get(place.category) ?? 0) + 1)
+    }
+    return counts
+  }, [places])
 
   return (
     <div className="mt-4 -mx-4 px-4 overflow-x-auto scrollbar-hide">
@@ -29,7 +34,7 @@ export function CategoryFilter({ selectedCategory, onSelectCategory, places }: C
           All ({places.length})
         </button>
         {CATEGORIES.map((category) => {
-          const count = getCategoryCount(category.id)
+          const count = categoryCounts.get(category.id) ?? 0
           if (count === 0) return null
           return (
             <button

@@ -16,7 +16,8 @@ export function usePlaces() {
       if (stored) {
         const parsed = JSON.parse(stored) as Place[]
         // Sort by most recent first
-        setPlaces(parsed.sort((a, b) => b.createdAt - a.createdAt))
+        const sorted = [...parsed].sort((a, b) => b.createdAt - a.createdAt)
+        setPlaces(sorted)
       }
     } catch (err) {
       console.error("Failed to load places:", err)
