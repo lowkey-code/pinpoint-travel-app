@@ -39,7 +39,7 @@ export default function RootLayout() {
                         headerTintColor: resolvedTheme === 'dark' ? '#fff' : '#000',
                     }}
                 >
-                    <Stack.Screen name="index" options={{ title: 'Pinpoint' }} />
+                    <Stack.Screen name="index" options={{ headerShown: false }} />
                     <Stack.Screen name="test-storage" options={{ title: 'Teste de Storage' }} />
                 </Stack>
                 <StatusBar style={resolvedTheme === 'dark' ? 'light' : 'dark'} />

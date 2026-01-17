@@ -1,176 +1,131 @@
-import { useState, useEffect } from 'react';
-import { Platform, StyleSheet, Text, TextInput, View, Pressable } from 'react-native';
-import { useTestStore } from '../lib/storage/test-store';
-import { storage } from '../lib/storage/universal-storage';
-import { Link } from 'expo-router';
+import React, { useState, useMemo } from 'react'
+import { FlatList } from 'react-native'
+import { YStack, View, styled, Theme } from 'tamagui'
+import { Plus } from '@tamagui/lucide-icons'
+
+import { Header } from '../components/domain/Header'
+import { SearchBar } from '../components/domain/SearchBar'
+import { CategoryFilter } from '../components/domain/CategoryFilter'
+import { PlaceCard } from '../components/domain/PlaceCard'
+import { EmptyState } from '../components/domain/EmptyState'
+import { AddPlaceSheet } from '../components/domain/AddPlaceSheet'
+import { EditPlaceSheet } from '../components/domain/EditPlaceSheet'
+import { Button } from '../components/ui/Button'
+
+import { usePlacesStore } from '../lib/stores/places.store'
+import type { Place } from '../lib/schemas/place.schema'
+
+/**
+ * Floating Action Button (FAB)
+ */
+const FAB = styled(Button, {
+    position: 'absolute',
+    bottom: '$6',
+    right: '$4',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    elevation: 5,
+    shadowColor: '$black',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    zIndex: 1000,
+})
 
 export default function Home() {
-    const { testValue, counter, setTestValue, incrementCounter, reset } = useTestStore();
-    const [inputValue, setInputValue] = useState('');
-    const [storageType, setStorageType] = useState('...');
+    // Store State and Actions
+    const { places, addPlace, updatePlace, deletePlace } = usePlacesStore()
 
-    useEffect(() => {
-        // Detect storage type from logs
-        const detectStorage = () => {
-            if (Platform.OS === 'web') {
-                setStorageType('localStorage');
-            } else {
-                // Check if MMKV actually works
-                try {
-                    const { MMKV } = require('react-native-mmkv');
-                    const testInstance = new MMKV();
-                    testInstance.set('__ui_test__', 'test');
-                    const testValue = testInstance.getString('__ui_test__');
-                    testInstance.delete('__ui_test__');
+    // UI State
+    const [searchQuery, setSearchQuery] = useState('')
+    const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+    const [isAddOpen, setIsAddOpen] = useState(false)
+    const [editingPlace, setEditingPlace] = useState<Place | null>(null)
 
-                    if (testValue === 'test') {
-                        setStorageType('MMKV (Production)');
-                    } else {
-                        setStorageType('AsyncStorage (Expo Go)');
-                    }
-                } catch {
-                    setStorageType('AsyncStorage (Expo Go)');
-                }
-            }
-        };
-        detectStorage();
-    }, []);
+    /**
+     * Filtered Places Logic
+     */
+    const filteredPlaces = useMemo(() => {
+        return places.filter((place) => {
+            const matchesSearch = place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                place.address.toLowerCase().includes(searchQuery.toLowerCase())
+            const matchesCategory = selectedCategory ? place.category === selectedCategory : true
+            return matchesSearch && matchesCategory
+        })
+    }, [places, searchQuery, selectedCategory])
 
-    const handleSave = () => {
-        setTestValue(inputValue);
-        setInputValue('');
-    };
-
-    const handleDirectTest = () => {
-        storage.set('direct-test', `Test at ${new Date().toISOString()}`);
-        const value = storage.getString('direct-test');
-        alert(`Direct storage test: ${value}`);
-    };
-
+    /**
+     * Render Content
+     */
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>📍 Pinpoint Universal App</Text>
-            <Text style={styles.subtitle}>
-                Storage Test ({storageType})
-            </Text>
+        <YStack flex={1} backgroundColor="$background">
+            {/* Main Header */}
+            <Header placesCount={places.length} />
 
-            <View style={styles.section}>
-                <Text style={styles.label}>Zustand Persist Test:</Text>
-                <Text style={styles.value}>Saved Value: {testValue || '(empty)'}</Text>
-                <Text style={styles.value}>Counter: {counter}</Text>
-
-                <TextInput
-                    style={styles.input}
-                    value={inputValue}
-                    onChangeText={setInputValue}
-                    placeholder="Enter test value"
-                    placeholderTextColor="#999"
+            {/* Content Container */}
+            <YStack flex={1}>
+                <FlatList
+                    data={filteredPlaces}
+                    keyExtractor={(item) => item.id}
+                    contentContainerStyle={{
+                        padding: 16,
+                        paddingBottom: 100, // Room for FAB
+                        gap: 16
+                    }}
+                    ListHeaderComponent={
+                        <YStack gap="$2" marginBottom="$4">
+                            <SearchBar value={searchQuery} onChange={setSearchQuery} />
+                            <CategoryFilter
+                                places={places}
+                                selectedCategory={selectedCategory}
+                                onSelectCategory={setSelectedCategory}
+                            />
+                        </YStack>
+                    }
+                    ListEmptyComponent={
+                        <EmptyState
+                            variant={
+                                places.length === 0 ? 'no-places' :
+                                    searchQuery ? 'no-results' : 'no-category-results'
+                            }
+                            searchQuery={searchQuery}
+                            onAction={places.length === 0 ? () => setIsAddOpen(true) : undefined}
+                        />
+                    }
+                    renderItem={({ item }) => (
+                        <PlaceCard
+                            place={item}
+                            onDelete={deletePlace}
+                            onEdit={setEditingPlace}
+                        />
+                    )}
                 />
+            </YStack>
 
-                <View style={styles.buttonRow}>
-                    <Pressable style={styles.button} onPress={handleSave}>
-                        <Text style={styles.buttonText}>Save</Text>
-                    </Pressable>
-                    <Pressable style={styles.button} onPress={incrementCounter}>
-                        <Text style={styles.buttonText}>Count +1</Text>
-                    </Pressable>
-                    <Pressable style={[styles.button, styles.buttonDanger]} onPress={reset}>
-                        <Text style={styles.buttonText}>Reset</Text>
-                    </Pressable>
-                </View>
-            </View>
+            {/* Addition FAB */}
+            <FAB
+                icon={<Plus size={28} color="white" />}
+                onPress={() => setIsAddOpen(true)}
+            />
 
-            <View style={styles.section}>
-                <Pressable style={styles.button} onPress={handleDirectTest}>
-                    <Text style={styles.buttonText}>Test Direct Storage</Text>
-                </Pressable>
-            </View>
+            {/* Modals/Sheets */}
+            <AddPlaceSheet
+                isOpen={isAddOpen}
+                onClose={() => setIsAddOpen(false)}
+                onAdd={addPlace}
+            />
 
-            <Link href="/test-storage" asChild>
-                <Pressable style={[styles.button, styles.buttonPrimary]}>
-                    <Text style={styles.buttonText}>🧪 Test Places Store</Text>
-                </Pressable>
-            </Link>
-
-            <Text style={styles.instruction}>
-                💡 Close and reopen the app to verify persistence
-            </Text>
-        </View>
-    );
+            <EditPlaceSheet
+                place={editingPlace}
+                isOpen={!!editingPlace}
+                onClose={() => setEditingPlace(null)}
+                onSave={(updates) => {
+                    if (editingPlace) {
+                        updatePlace(editingPlace.id, updates)
+                    }
+                }}
+            />
+        </YStack>
+    )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 20,
-        justifyContent: 'center',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 14,
-        color: '#666',
-        textAlign: 'center',
-        marginBottom: 32,
-    },
-    section: {
-        marginBottom: 24,
-        padding: 16,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 8,
-    },
-    label: {
-        fontSize: 16,
-        fontWeight: '600',
-        marginBottom: 8,
-    },
-    value: {
-        fontSize: 14,
-        color: '#333',
-        marginBottom: 4,
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 8,
-        padding: 12,
-        marginTop: 12,
-        marginBottom: 12,
-        fontSize: 16,
-        backgroundColor: '#fff',
-    },
-    buttonRow: {
-        flexDirection: 'row',
-        gap: 8,
-    },
-    button: {
-        flex: 1,
-        backgroundColor: '#007AFF',
-        padding: 12,
-        borderRadius: 8,
-        alignItems: 'center',
-    },
-    buttonDanger: {
-        backgroundColor: '#FF3B30',
-    },
-    buttonPrimary: {
-        backgroundColor: '#007AFF',
-        marginTop: 16,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    instruction: {
-        fontSize: 12,
-        color: '#666',
-        textAlign: 'center',
-        fontStyle: 'italic',
-    },
-});
