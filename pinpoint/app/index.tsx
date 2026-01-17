@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Platform, StyleSheet, Text, TextInput, View, Pressable } from 'react-native';
 import { useTestStore } from '../lib/storage/test-store';
 import { storage } from '../lib/storage/universal-storage';
+import { Link } from 'expo-router';
 
 export default function Home() {
     const { testValue, counter, setTestValue, incrementCounter, reset } = useTestStore();
@@ -85,6 +86,12 @@ export default function Home() {
                 </Pressable>
             </View>
 
+            <Link href="/test-storage" asChild>
+                <Pressable style={[styles.button, styles.buttonPrimary]}>
+                    <Text style={styles.buttonText}>🧪 Test Places Store</Text>
+                </Pressable>
+            </Link>
+
             <Text style={styles.instruction}>
                 💡 Close and reopen the app to verify persistence
             </Text>
@@ -150,6 +157,10 @@ const styles = StyleSheet.create({
     },
     buttonDanger: {
         backgroundColor: '#FF3B30',
+    },
+    buttonPrimary: {
+        backgroundColor: '#007AFF',
+        marginTop: 16,
     },
     buttonText: {
         color: '#fff',

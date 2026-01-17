@@ -29,6 +29,7 @@ export default function RootLayout() {
         <TamaguiProvider config={config} defaultTheme="light">
             <Stack>
                 <Stack.Screen name="index" options={{ title: 'Pinpoint' }} />
+                <Stack.Screen name="test-storage" options={{ title: 'Teste de Storage' }} />
             </Stack>
             <StatusBar style="auto" />
         </TamaguiProvider>
