@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
 import { Header } from "~/components/header";
 import { AddPlaceSheet } from "~/features/places/components/add-place-sheet";
 import { CategoryFilter } from "~/features/places/components/category-filter";
@@ -15,12 +16,13 @@ export default function IndexRoute() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
 
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    if (params.has("e2eError")) {
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.has("e2eError")) {
       throw new Error("E2E forced error");
     }
-  }
+  }, [searchParams]);
 
   const filteredPlaces = places.filter((place) => {
     const matchesSearch =
