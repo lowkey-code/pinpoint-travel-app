@@ -18,20 +18,22 @@ export type Category = z.infer<typeof CategorySchema>;
  * Constant list of categories based on the app's requirements
  */
 export const CATEGORIES: Category[] = [
-    { id: 'attraction', label: 'Atração', icon: 'MapPin' },
-    { id: 'restaurant', label: 'Restaurante', icon: 'Utensils' },
-    { id: 'hotel', label: 'Hospedagem', icon: 'Hotel' },
-    { id: 'shopping', label: 'Compras', icon: 'ShoppingBag' },
-    { id: 'transport', label: 'Transporte', icon: 'Car' },
-    { id: 'other', label: 'Outro', icon: 'MoreHorizontal' },
+    { id: 'food', label: 'Alimentação', icon: '🍜' },
+    { id: 'museum', label: 'Museu / Atração', icon: '🏛️' },
+    { id: 'viewpoint', label: 'Vista / Mirante', icon: '🌄' },
+    { id: 'hotel', label: 'Hospedagem', icon: '🏨' },
+    { id: 'shopping', label: 'Compras', icon: '🛍️' },
+    { id: 'transport', label: 'Transporte', icon: '🚇' },
+    { id: 'other', label: 'Outro', icon: '📍' },
 ];
 
 /**
  * Literal type for category IDs to be used in PlaceSchema
  */
 export const CategoryIdSchema = z.enum([
-    'attraction',
-    'restaurant',
+    'food',
+    'museum',
+    'viewpoint',
     'hotel',
     'shopping',
     'transport',
