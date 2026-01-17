@@ -48,6 +48,7 @@ const sizeStyles: Record<TextareaSize, string> = {
 
 /**
  * Textarea component with label, helper text, and error handling.
+ * Built on Ark UI with Tailwind styling.
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
