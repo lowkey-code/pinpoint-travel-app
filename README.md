@@ -1,108 +1,106 @@
-# Pinpoint - Travel App
+# PinPoint (Remix)
 
-Aplicativo PWA para organizar pontos de interesse de viagem.
+PinPoint is a client-first PWA to save and organize travel places. It supports categories, search, offline storage, and a light/dark theme.
 
-## Requisitos
+## Features
 
-- **Node.js**: >= 20.0.0 (LTS)
-- **pnpm**: >= 10.0.0
- - **Node.js**: >= 20.19.0 (LTS)
- - **yarn**: >= 1.22.0
+- Add, edit, delete, and filter places
+- Fast search by name, address, and notes
+- Light/dark theme with persistence
+- Offline-first storage via localStorage
+- Tailwind CSS styling and a polished UI
 
-Recomenda-se usar um gerenciador de versões Node:
-- **nvm** (Linux/macOS): `nvm use` (lê automático de `.nvmrc`)
-- **fnm** (Multi-plataforma): `fnm use` (lê automático de `.nvmrc`)
-- **nvm-windows** (Windows): Use `.nvmrc` manualmente ou `.node-version`
+## Stack
 
-## Tecnologias
+- React Router 7 (Remix-style app)
+- React 19
+- Tailwind CSS v4
+- Vite
 
-- **React** 19 + **TypeScript**
-- **Vite** 7 - Build tool
-- **Tailwind CSS** 4 - Estilização
-- Design System customizado com tokens reutilizáveis
+## Getting Started
 
-## Estrutura do Projeto
+### Installation
 
-```
-src/
-├── components/    # Componentes React reutilizáveis
-├── pages/         # Páginas da aplicação
-├── hooks/         # Custom hooks
-├── utils/         # Funções utilitárias
-├── lib/           # Bibliotecas e configurações
-│   └── design-tokens.js  # Tokens do design system
-└── index.css      # Estilos globais com Tailwind
-```
-
-## Design System
-
-O projeto utiliza um design system customizado com:
-
-- **Paleta de cores**: Primary (azul), Secondary (verde), Accent (âmbar)
-- **Tipografia**: Plus Jakarta Sans (headings) + Inter (body)
-- **Tokens**: Espaçamento, bordas, sombras, componentes
-
-Consulte `/src/lib/design-tokens.js` para todos os tokens disponíveis.
-
-## Instalação e Setup
-
-### 1. Clone o repositório
-```bash
-git clone https://github.com/mcsolha/pinpoint-travel-app.git
-cd pinpoint-travel-app
-```
-
-### 2. Verifique a versão do Node.js
-```bash
-# Com nvm
-nvm use
-
-# Com fnm
-fnm use
-
-# Ou manualmente
-node --version   # Deve ser >= 20.0.0
-yarn --version   # Deve ser >= 1.22.0
-```
-
-### 3. Instale o yarn (se necessario)
-```bash
-npm i -g yarn@latest
-```
-
-### 4. Instale as dependencias
-```bash
-yarn install
-```
-
-### 5. Inicie o servidor de desenvolvimento
-```bash
-yarn dev
-```
-
-Acesse `http://localhost:5173` no seu navegador.
-
-## Scripts Disponíveis
+Install the dependencies:
 
 ```bash
-# Instalar dependências
-yarn install
-
-# Desenvolvimento
-yarn dev
-
-# Build para produção
-yarn build
-
-# Preview do build
-yarn preview
-
-# Lint
-yarn lint
+npm install
 ```
 
-## Fontes
+### Development
 
-O projeto utiliza fontes do Google Fonts:
-- **Plus Jakarta Sans** (500, 600, 700, 800)
-- **Inter** (400, 500, 600, 700)
+Start the development server with HMR:
+
+```bash
+npm run dev
+```
+
+Your application will be available at `http://localhost:5173`.
+
+## Build and Run
+
+Create a production build:
+
+```bash
+npm run build
+```
+
+Run the production server:
+
+```bash
+npm run start
+```
+
+The server defaults to port 3000 in production.
+
+## Tests
+
+Run Playwright smoke tests:
+
+```bash
+npm run test:e2e
+```
+
+## Deployment
+
+### Docker Deployment
+
+To build and run using Docker:
+
+```bash
+docker build -t my-app .
+
+# Run the container
+docker run -p 3000:3000 my-app
+```
+
+The containerized application can be deployed to any platform that supports Docker, including:
+
+- AWS ECS
+- Google Cloud Run
+- Azure Container Apps
+- Digital Ocean App Platform
+- Fly.io
+- Railway
+
+### DIY Deployment
+
+If you're familiar with deploying Node applications, the built-in app server is production-ready.
+
+Make sure to deploy the output of `npm run build`
+
+```
+├── package.json
+├── package-lock.json (or pnpm-lock.yaml, or bun.lockb)
+├── build/
+│   ├── client/    # Static assets
+│   └── server/    # Server-side code
+```
+
+## Styling
+
+The UI is styled with Tailwind CSS v4 and a custom theme in `app/app.css`.
+
+---
+
+Built with ❤️ using React Router.
