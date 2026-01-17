@@ -38,6 +38,7 @@ const sizeStyles: Record<BadgeSize, string> = {
 
 /**
  * Badge component for displaying categories and labels.
+ * Built on Ark UI with Tailwind styling.
  * Color scheme is determined by the category prop.
  */
 export function Badge({

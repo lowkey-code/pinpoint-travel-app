@@ -45,6 +45,7 @@ const variantStyles: Record<CardVariant, string> = {
 
 /**
  * Card component for grouping related content.
+ * Built on Ark UI with Tailwind styling.
  * Supports header, body, and footer sub-components.
  */
 export const Card = forwardRef<HTMLDivElement, CardProps>(

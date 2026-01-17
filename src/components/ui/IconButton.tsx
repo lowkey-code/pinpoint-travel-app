@@ -45,6 +45,7 @@ const sizeStyles: Record<IconButtonSize, string> = {
 
 /**
  * Icon-only button component.
+ * Built on Ark UI with Tailwind styling.
  * Requires aria-label for accessibility.
  */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
