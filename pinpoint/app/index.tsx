@@ -1,8 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { FlatList, Platform } from 'react-native'
-import { YStack, View, styled } from 'tamagui'
-import { Plus } from '@tamagui/lucide-icons'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { YStack, View } from 'tamagui'
 
 import { Header } from '../components/domain/Header'
 import { SearchBar } from '../components/domain/SearchBar'
@@ -11,32 +9,10 @@ import { PlaceCard } from '../components/domain/PlaceCard'
 import { EmptyState } from '../components/domain/EmptyState'
 import { AddPlaceSheet } from '../components/domain/AddPlaceSheet'
 import { EditPlaceSheet } from '../components/domain/EditPlaceSheet'
-import { Button } from '../components/ui/Button'
+import { FAB } from '../components/ui/FAB'
 
 import { usePlacesStore } from '../lib/stores/places.store'
 import type { Place } from '../lib/schemas/place.schema'
-
-/**
- * Floating Action Button (FAB)
- * Positioned at bottom-right with elevation and safe area awareness
- */
-const FAB = styled(Button, {
-    position: 'absolute',
-    right: '$4',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    elevation: 8,
-    shadowColor: '$shadowColor',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    zIndex: 1000,
-    pressStyle: {
-        scale: 0.92,
-        opacity: 0.9,
-    },
-})
 
 /**
  * Home Screen - Complete Implementation
@@ -53,9 +29,6 @@ const FAB = styled(Button, {
  * - Safe area aware
  */
 export default function Home() {
-    // Safe area insets for FAB positioning
-    const insets = useSafeAreaInsets()
-
     // Store state and actions
     const { places, addPlace, updatePlace, deletePlace } = usePlacesStore()
 
@@ -141,15 +114,6 @@ export default function Home() {
         />
     ), [places.length, searchQuery, handleOpenAddSheet])
 
-    /**
-     * Dynamic FAB bottom position with safe area
-     */
-    const fabBottom = useMemo(() => {
-        const baseBottom = 24
-        const bottomInset = insets.bottom > 0 ? insets.bottom : 0
-        return baseBottom + bottomInset
-    }, [insets.bottom])
-
     return (
         <YStack flex={1} backgroundColor="$background">
             {/* Header */}
@@ -166,7 +130,7 @@ export default function Home() {
                     ListEmptyComponent={ListEmptyComponent}
                     contentContainerStyle={{
                         padding: 16,
-                        paddingBottom: fabBottom + 80, // Room for FAB
+                        paddingBottom: 100, // Room for FAB
                     }}
                     // Performance optimizations
                     removeClippedSubviews={Platform.OS === 'android'}
@@ -181,12 +145,7 @@ export default function Home() {
             </YStack>
 
             {/* Floating Action Button */}
-            <FAB
-                bottom={fabBottom}
-                icon={<Plus size={28} color="white" />}
-                onPress={handleOpenAddSheet}
-                aria-label="Adicionar lugar"
-            />
+            <FAB onPress={handleOpenAddSheet} />
 
             {/* Add Place Sheet */}
             <AddPlaceSheet
