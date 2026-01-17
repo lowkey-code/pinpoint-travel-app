@@ -48,7 +48,7 @@ const StyledInput = styled(TInput, {
     } as const,
 })
 
-export type InputProps = GetProps<typeof StyledInput> & {
+export type InputProps = Omit<GetProps<typeof StyledInput>, 'error'> & {
     label?: string
     error?: string
     icon?: React.ReactNode

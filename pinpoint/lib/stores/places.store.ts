@@ -181,33 +181,14 @@ export const usePlacesStore = create<PlacesStore>()(
         }),
         {
             name: 'places-storage',
-            storage: createJSONStorage(() => zustandStorage),
-            // Custom serialize/deserialize to handle Date objects
-            serialize: (state) => {
-                return JSON.stringify({
-                    ...state,
-                    state: {
-                        ...state.state,
-                        places: state.state.places.map((place) => ({
-                            ...place,
-                            createdAt: place.createdAt.toISOString(),
-                        })),
-                    },
-                });
-            },
-            deserialize: (str) => {
-                const parsed = JSON.parse(str);
-                return {
-                    ...parsed,
-                    state: {
-                        ...parsed.state,
-                        places: parsed.state.places.map((place: any) => ({
-                            ...place,
-                            createdAt: new Date(place.createdAt),
-                        })),
-                    },
-                };
-            },
+            storage: createJSONStorage(() => zustandStorage, {
+                reviver: (key, value) => {
+                    if (key === 'createdAt' && typeof value === 'string') {
+                        return new Date(value);
+                    }
+                    return value;
+                },
+            }),
         }
     )
 );
