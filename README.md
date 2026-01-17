@@ -1,18 +1,21 @@
-# Welcome to React Router!
+# PinPoint (Remix)
 
-A modern, production-ready template for building full-stack React applications using React Router.
-
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/remix-run/react-router-templates/tree/main/default)
+PinPoint is a client-first PWA to save and organize travel places. It supports categories, search, offline storage, and a light/dark theme.
 
 ## Features
 
-- 🚀 Server-side rendering
-- ⚡️ Hot Module Replacement (HMR)
-- 📦 Asset bundling and optimization
-- 🔄 Data loading and mutations
-- 🔒 TypeScript by default
-- 🎉 TailwindCSS for styling
-- 📖 [React Router docs](https://reactrouter.com/)
+- Add, edit, delete, and filter places
+- Fast search by name, address, and notes
+- Light/dark theme with persistence
+- Offline-first storage via localStorage
+- Tailwind CSS styling and a polished UI
+
+## Stack
+
+- React Router 7 (Remix-style app)
+- React 19
+- Tailwind CSS v4
+- Vite
 
 ## Getting Started
 
@@ -34,12 +37,28 @@ npm run dev
 
 Your application will be available at `http://localhost:5173`.
 
-## Building for Production
+## Build and Run
 
 Create a production build:
 
 ```bash
 npm run build
+```
+
+Run the production server:
+
+```bash
+npm run start
+```
+
+The server defaults to port 3000 in production.
+
+## Tests
+
+Run Playwright smoke tests:
+
+```bash
+npm run test:e2e
 ```
 
 ## Deployment
@@ -80,7 +99,7 @@ Make sure to deploy the output of `npm run build`
 
 ## Styling
 
-This template comes with [Tailwind CSS](https://tailwindcss.com/) already configured for a simple default starting experience. You can use whatever CSS framework you prefer.
+The UI is styled with Tailwind CSS v4 and a custom theme in `app/app.css`.
 
 ---
 

@@ -117,7 +117,7 @@ test("tema claro/escuro persiste em localStorage", async ({ page }) => {
 
   await page.reload()
   await expect.poll(async () => {
-    return page.evaluate(() => localStorage.getItem("tripstash_theme"))
+    return page.evaluate(() => localStorage.getItem("pinpoint_theme"))
   }).toBe("dark")
 })
 

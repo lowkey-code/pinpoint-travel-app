@@ -32,7 +32,7 @@ export function PlaceCard({ place, onDelete, onUpdate }: PlaceCardProps) {
   const openInAMap = () => {
     // AMap (Gaode) deep link with address search
     const encodedAddress = encodeURIComponent(place.address)
-    const amapUrl = `https://uri.amap.com/search?keyword=${encodedAddress}&src=tripstash`
+    const amapUrl = `https://uri.amap.com/search?keyword=${encodedAddress}&src=pinpoint`
     window.open(amapUrl, "_blank")
   }
 

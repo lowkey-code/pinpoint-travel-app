@@ -9,7 +9,7 @@ export function useTheme() {
 
   useEffect(() => {
     // Check localStorage first, then system preference
-    const stored = localStorage.getItem("tripstash_theme") as Theme | null
+    const stored = localStorage.getItem("pinpoint_theme") as Theme | null
     if (stored) {
       setTheme(stored)
       document.documentElement.classList.toggle("dark", stored === "dark")
@@ -22,7 +22,7 @@ export function useTheme() {
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
       const next = prev === "light" ? "dark" : "light"
-      localStorage.setItem("tripstash_theme", next)
+      localStorage.setItem("pinpoint_theme", next)
       document.documentElement.classList.toggle("dark", next === "dark")
       return next
     })

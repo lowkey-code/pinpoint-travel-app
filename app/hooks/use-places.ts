@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react"
 import type { Place } from "~/lib/types"
 
-const STORAGE_KEY = "tripstash_places"
+const STORAGE_KEY = "pinpoint_places"
 
 export function usePlaces() {
   const [places, setPlaces] = useState<Place[]>([])

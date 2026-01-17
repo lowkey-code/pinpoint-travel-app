@@ -20,7 +20,7 @@ export function Header({ theme, onToggleTheme, placesCount }: HeaderProps) {
             <MapPin className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
-            <h1 className="font-serif font-bold text-xl text-foreground">TripStash</h1>
+            <h1 className="font-serif font-bold text-xl text-foreground">PinPoint</h1>
             <p className="text-xs text-muted-foreground">
               {placesCount} {placesCount === 1 ? "place" : "places"} saved
             </p>
