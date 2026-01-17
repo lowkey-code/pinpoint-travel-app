@@ -1,7 +1,7 @@
 "use client"
 
-import { CATEGORIES } from "~/lib/categories"
-import type { Place } from "~/lib/types"
+import { CATEGORIES } from "~/features/places/lib/categories"
+import type { Place } from "~/features/places/lib/types"
 
 interface CategoryFilterProps {
   selectedCategory: string | null

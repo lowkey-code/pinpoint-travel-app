@@ -1,7 +1,7 @@
 "use client"
 
-import { PlaceCard } from "~/components/place-card"
-import type { Place } from "~/lib/types"
+import { PlaceCard } from "~/features/places/components/place-card"
+import type { Place } from "~/features/places/lib/types"
 
 interface PlacesListProps {
   places: Place[]

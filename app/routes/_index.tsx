@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Header } from "~/components/header";
-import { PlacesList } from "~/components/places-list";
-import { AddPlaceSheet } from "~/components/add-place-sheet";
-import { CategoryFilter } from "~/components/category-filter";
-import { SearchBar } from "~/components/search-bar";
-import { EmptyState } from "~/components/empty-state";
-import { usePlaces } from "~/hooks/use-places";
+import { AddPlaceSheet } from "~/features/places/components/add-place-sheet";
+import { CategoryFilter } from "~/features/places/components/category-filter";
+import { EmptyState } from "~/features/places/components/empty-state";
+import { PlacesList } from "~/features/places/components/places-list";
+import { SearchBar } from "~/features/places/components/search-bar";
+import { usePlaces } from "~/features/places/hooks/use-places";
 import { useTheme } from "~/hooks/use-theme";
 
 export default function IndexRoute() {

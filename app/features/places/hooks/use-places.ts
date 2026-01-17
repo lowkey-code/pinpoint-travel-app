@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import type { Place } from "~/lib/types"
+import type { Place } from "~/features/places/lib/types"
 
 const STORAGE_KEY = "pinpoint_places"
 

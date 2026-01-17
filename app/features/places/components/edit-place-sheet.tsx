@@ -6,8 +6,8 @@ import { useState, useEffect } from "react"
 import { X, Edit2 } from "lucide-react"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
-import { CATEGORIES } from "~/lib/categories"
-import type { Place } from "~/lib/types"
+import { CATEGORIES } from "~/features/places/lib/categories"
+import type { Place } from "~/features/places/lib/types"
 
 interface EditPlaceSheetProps {
   place: Place

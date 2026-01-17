@@ -3,10 +3,10 @@
 import { useState } from "react"
 import { Copy, Navigation, Trash2, MoreVertical, Check, Edit2 } from "lucide-react"
 import { Card } from "~/components/ui/card"
-import { CATEGORIES } from "~/lib/categories"
-import type { Place } from "~/lib/types"
+import { CATEGORIES } from "~/features/places/lib/categories"
+import type { Place } from "~/features/places/lib/types"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "~/components/ui/dropdown-menu"
-import { EditPlaceSheet } from "~/components/edit-place-sheet"
+import { EditPlaceSheet } from "~/features/places/components/edit-place-sheet"
 
 interface PlaceCardProps {
   place: Place
