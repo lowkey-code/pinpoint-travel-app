@@ -96,7 +96,7 @@ export function CategoryFilter({ selectedCategory, onSelectCategory, places }: C
                         fontWeight="600"
                         color={selectedCategory === null ? '$primaryForeground' : '$secondaryForeground'}
                     >
-                        Tudo
+                        All
                     </Text>
                     <Badge active={selectedCategory === null}>
                         <Text

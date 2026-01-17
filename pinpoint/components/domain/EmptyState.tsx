@@ -41,25 +41,25 @@ export function EmptyState({ variant, searchQuery, onAction, actionLabel }: Empt
             case 'no-results':
                 return {
                     icon: <Search size={32} color="$mutedForeground" />,
-                    title: 'Nenhum resultado encontrado',
+                    title: 'No results found',
                     description: searchQuery
-                        ? `Não encontramos lugares para "${searchQuery}"`
-                        : 'Não encontramos lugares com os filtros aplicados.',
+                        ? `We couldn't find any places for "${searchQuery}"`
+                        : 'No places found with the current filters.',
                     primaryIcon: false,
                 }
             case 'no-category-results':
                 return {
                     icon: <Filter size={32} color="$mutedForeground" />,
-                    title: 'Categoria vazia',
-                    description: 'Você ainda não salvou nenhum lugar nesta categoria.',
+                    title: 'Empty category',
+                    description: "You haven't saved any places in this category yet.",
                     primaryIcon: false,
                 }
             case 'no-places':
             default:
                 return {
                     icon: <MapPin size={40} color="$primary" />,
-                    title: 'Sua jornada começa aqui',
-                    description: 'Salve os lugares que deseja visitar ou lembrar. Eles estarão disponíveis mesmo offline!',
+                    title: 'Your journey starts here',
+                    description: 'Save places you want to visit. They will be available offline!',
                     primaryIcon: true,
                 }
         }
@@ -103,14 +103,15 @@ export function EmptyState({ variant, searchQuery, onAction, actionLabel }: Empt
                     onPress={onAction}
                     iconLeft={<Plus size={18} />}
                     size="md"
+                    borderRadius={12}
                 >
-                    {actionLabel || 'Adicionar Primeiro Lugar'}
+                    {actionLabel || 'Add First Place'}
                 </Button>
             )}
 
             {variant === 'no-places' && !onAction && (
                 <XStack marginTop="$4" gap="$2" alignItems="center" opacity={0.6}>
-                    <Text fontSize={14} color="$mutedForeground">Toque no botão</Text>
+                    <Text fontSize={14} color="$mutedForeground">Tap the button</Text>
                     <View
                         backgroundColor="$primary"
                         width={28}
@@ -121,7 +122,7 @@ export function EmptyState({ variant, searchQuery, onAction, actionLabel }: Empt
                     >
                         <Plus size={14} color="white" />
                     </View>
-                    <Text fontSize={14} color="$mutedForeground">para começar</Text>
+                    <Text fontSize={14} color="$mutedForeground">to get started</Text>
                 </XStack>
             )}
         </YStack>

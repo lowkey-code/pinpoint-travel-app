@@ -1,14 +1,29 @@
-import React, { useCallback } from 'react'
-import { Pressable, Platform } from 'react-native'
-import Animated, {
-    useSharedValue,
-    useAnimatedStyle,
-    withSpring,
-    withSequence,
-} from 'react-native-reanimated'
-import { XStack, useTheme } from 'tamagui'
+import React, { useCallback, useState } from 'react'
+import { Pressable, Platform, View } from 'react-native'
+import { useTheme } from 'tamagui'
 import { Plus } from '@tamagui/lucide-icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+// Conditional imports for Reanimated (only on native platforms)
+let useSharedValue: any = null
+let useAnimatedStyle: any = null
+let withSpring: any = null
+let withSequence: any = null
+let AnimatedView: any = View
+
+if (Platform.OS !== 'web') {
+    try {
+        const Reanimated = require('react-native-reanimated')
+        useSharedValue = Reanimated.useSharedValue
+        useAnimatedStyle = Reanimated.useAnimatedStyle
+        withSpring = Reanimated.withSpring
+        withSequence = Reanimated.withSequence
+        AnimatedView = Reanimated.default.View
+    } catch (e) {
+        // Reanimated not available, use fallback
+        console.warn('Reanimated not available, using fallback')
+    }
+}
 
 interface FABProps {
     onPress: () => void
@@ -42,32 +57,75 @@ export function FAB({
     testID = 'fab-button',
 }: FABProps) {
     const insets = useSafeAreaInsets()
-    const theme = useTheme()
+    const { theme } = useTheme()
+    const [isPressed, setIsPressed] = useState(false)
 
-    // Shared value for scale animation
-    const scale = useSharedValue(1)
+    // Get primary color with safe fallback
+    const primaryColor = theme?.primary?.val ?? '#e15e3c'
 
-    // Animated style for scale transformation
-    const animatedStyle = useAnimatedStyle(() => {
+    // Web fallback: simple CSS-based animation
+    if (Platform.OS === 'web') {
+        const fabBottom = 16 + (insets.bottom > 0 ? insets.bottom : 0)
+        const fabRight = 16
+
+        return (
+            <Pressable
+                onPress={() => {
+                    if (!disabled) {
+                        setIsPressed(true)
+                        setTimeout(() => setIsPressed(false), 200)
+                        onPress()
+                    }
+                }}
+                disabled={disabled}
+                style={{
+                    position: 'absolute',
+                    bottom: fabBottom,
+                    right: fabRight,
+                    width: 60,
+                    height: 60,
+                    borderRadius: 30,
+                    backgroundColor: primaryColor,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    opacity: disabled ? 0.5 : 1,
+                    transform: isPressed ? 'scale(0.92)' : 'scale(1)',
+                    transition: 'transform 150ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    cursor: disabled ? 'not-allowed' : 'pointer',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+                    zIndex: 1000,
+                } as any}
+                testID={testID}
+            >
+                {icon ? (
+                    icon
+                ) : (
+                    <Plus size={28} color="white" strokeWidth={3} />
+                )}
+            </Pressable>
+        )
+    }
+
+    // Native platforms: use Reanimated if available
+    const scale = useSharedValue ? useSharedValue(1) : null
+    const animatedStyle = useAnimatedStyle && scale ? useAnimatedStyle(() => {
         return {
             transform: [{ scale: scale.value }],
         }
-    }, [])
+    }, []) : {}
 
     /**
      * Handle press: animate scale down then back up
      */
     const handlePress = useCallback(() => {
-        if (disabled) return
+        if (disabled || !scale || !withSpring || !withSequence) return
 
         scale.value = withSequence(
-            // Press down: scale to 0.92
             withSpring(0.92, {
                 damping: 10,
                 mass: 0.9,
                 stiffness: 100,
             }),
-            // Release: scale back to 1
             withSpring(1, {
                 damping: 10,
                 mass: 0.9,
@@ -75,7 +133,6 @@ export function FAB({
             })
         )
 
-        // Call the callback
         onPress()
     }, [disabled, onPress, scale])
 
@@ -99,13 +156,11 @@ export function FAB({
         android: {
             elevation: 8,
         },
-        web: {
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-        } as any,
+        default: {},
     })
 
     return (
-        <Animated.View
+        <AnimatedView
             style={[
                 {
                     position: 'absolute',
@@ -127,7 +182,7 @@ export function FAB({
                 style={{
                     flex: 1,
                     borderRadius: 30,
-                    backgroundColor: theme.primary.val,
+                    backgroundColor: primaryColor,
                     justifyContent: 'center',
                     alignItems: 'center',
                     opacity: disabled ? 0.5 : 1,
@@ -143,6 +198,6 @@ export function FAB({
                     <Plus size={28} color="white" strokeWidth={3} />
                 )}
             </Pressable>
-        </Animated.View>
+        </AnimatedView>
     )
 }

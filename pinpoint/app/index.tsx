@@ -107,7 +107,7 @@ export default function Home() {
         <EmptyState
             variant={
                 places.length === 0 ? 'no-places' :
-                searchQuery ? 'no-results' : 'no-category-results'
+                    searchQuery ? 'no-results' : 'no-category-results'
             }
             searchQuery={searchQuery}
             onAction={places.length === 0 ? handleOpenAddSheet : undefined}
@@ -120,7 +120,12 @@ export default function Home() {
             <Header placesCount={places.length} />
 
             {/* Main Content List */}
-            <YStack flex={1}>
+            <YStack
+                flex={1}
+                width="100%"
+                maxWidth={Platform.OS === 'web' ? 512 : '100%'}
+                alignSelf="center"
+            >
                 <FlatList
                     data={filteredPlaces}
                     keyExtractor={keyExtractor}

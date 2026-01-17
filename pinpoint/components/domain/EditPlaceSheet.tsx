@@ -124,11 +124,11 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
                         <View backgroundColor="$secondary" padding="$2" borderRadius={8}>
                             <Pencil size={20} color="$primary" />
                         </View>
-                        <H2 fontSize={20} fontWeight="700">Editar Lugar</H2>
+                        <H2 fontSize={20} fontWeight="800">Edit Place</H2>
                     </XStack>
                     <Button
                         variant="ghost"
-                        circular
+                        borderRadius={10}
                         size="sm"
                         icon={<X size={20} />}
                         onPress={onClose}
@@ -145,8 +145,8 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
                             name="name"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <Input
-                                    label="Nome do Lugar *"
-                                    placeholder="Ex: Torre Eiffel"
+                                    label="Place Name *"
+                                    placeholder="e.g. Eiffel Tower"
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -161,8 +161,8 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
                             name="address"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextArea
-                                    label="Endereço Completo *"
-                                    placeholder="Ex: Champ de Mars, 5 Av. Anatole France..."
+                                    label="Full Address *"
+                                    placeholder="e.g. Champ de Mars, 5 Av. Anatole France..."
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -174,7 +174,7 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
 
                         {/* Category Field */}
                         <YStack gap="$2">
-                            <Text fontSize={14} fontWeight="600" marginLeft="$1">Categoria</Text>
+                            <Text fontSize={14} fontWeight="600" marginLeft="$1">Category</Text>
                             <Controller
                                 control={control}
                                 name="category"
@@ -232,8 +232,8 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
                             name="note"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextArea
-                                    label="Nota (opcional)"
-                                    placeholder="Dicas, horários ou lembretes..."
+                                    label="Note (optional)"
+                                    placeholder="Tips, opening hours or reminders..."
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -249,8 +249,9 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
                             onPress={handleSubmit(onSubmit)}
                             disabled={!isValid || !isDirty}
                             opacity={(!isValid || !isDirty) ? 0.5 : 1}
+                            borderRadius={12}
                         >
-                            Salvar Alterações
+                            Save Changes
                         </Button>
                     </YStack>
                 </ScrollView>

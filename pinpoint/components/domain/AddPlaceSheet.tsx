@@ -113,11 +113,11 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
                         <View backgroundColor="$secondary" padding="$2" borderRadius={8}>
                             <MapPin size={20} color="$primary" />
                         </View>
-                        <H2 fontSize={20} fontWeight="700">Adicionar Lugar</H2>
+                        <H2 fontSize={20} fontWeight="800">Add Place</H2>
                     </XStack>
                     <Button
                         variant="ghost"
-                        circular
+                        borderRadius={10}
                         size="sm"
                         icon={<X size={20} />}
                         onPress={onClose}
@@ -134,8 +134,8 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
                             name="name"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <Input
-                                    label="Nome do Lugar *"
-                                    placeholder="Ex: Torre Eiffel"
+                                    label="Place Name *"
+                                    placeholder="e.g. Eiffel Tower"
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -150,8 +150,8 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
                             name="address"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextArea
-                                    label="Endereço Completo *"
-                                    placeholder="Ex: Champ de Mars, 5 Av. Anatole France..."
+                                    label="Full Address *"
+                                    placeholder="e.g. Champ de Mars, 5 Av. Anatole France..."
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -163,7 +163,7 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
 
                         {/* Category Field */}
                         <YStack gap="$2">
-                            <Text fontSize={14} fontWeight="600" marginLeft="$1">Categoria</Text>
+                            <Text fontSize={14} fontWeight="600" marginLeft="$1">Category</Text>
                             <Controller
                                 control={control}
                                 name="category"
@@ -224,8 +224,8 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
                             name="note"
                             render={({ field: { onChange, onBlur, value } }) => (
                                 <TextArea
-                                    label="Nota (opcional)"
-                                    placeholder="Dicas, horários ou lembretes..."
+                                    label="Note (optional)"
+                                    placeholder="Tips, opening hours or reminders..."
                                     value={value}
                                     onChangeText={onChange}
                                     onBlur={onBlur}
@@ -241,8 +241,9 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
                             onPress={handleSubmit(onSubmit)}
                             disabled={!isValid}
                             opacity={!isValid ? 0.5 : 1}
+                            borderRadius={12}
                         >
-                            Salvar Lugar
+                            Save Place
                         </Button>
                     </YStack>
                 </ScrollView>

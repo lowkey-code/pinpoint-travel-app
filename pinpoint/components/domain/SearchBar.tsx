@@ -48,7 +48,7 @@ export function SearchBar({ value: externalValue, onChange }: SearchBarProps) {
     return (
         <XStack width="100%" position="relative" marginTop="$4">
             <Input
-                placeholder="Pesquisar lugares..."
+                placeholder="Search places..."
                 value={localValue}
                 onChangeText={setLocalValue}
                 icon={<Search size={20} color="$mutedForeground" />}
@@ -69,10 +69,10 @@ export function SearchBar({ value: externalValue, onChange }: SearchBarProps) {
                     alignItems="center"
                 >
                     <TButton
-                        size="$3"
+                        size="$2.5"
                         circular
                         chromeless
-                        backgroundColor="$secondary"
+                        backgroundColor="transparent"
                         onPress={handleClear}
                         icon={<X size={16} color="$mutedForeground" />}
                         pressStyle={{ opacity: 0.7, scale: 0.95 }}

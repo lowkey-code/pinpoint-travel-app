@@ -30,13 +30,22 @@ const useThemeStore = create<ThemeState>()(
     )
 )
 
+// Default theme values for fallback
+const defaultThemeTokens = {
+    primary: { val: '#e15e3c' },
+    primaryForeground: { val: '#ffffff' },
+    secondary: { val: '#f8eee3' },
+    background: { val: '#fefaf6' },
+    foreground: { val: '#3f3935' },
+}
+
 /**
  * Custom hook to manage and toggle themes with persistence and system preference support.
  */
 export function useTheme() {
-    const tamaguiTheme = useTamaguiTheme()
     const systemColorScheme = useColorScheme()
     const { themeSetting, setThemeSetting } = useThemeStore()
+    const tamaguiTheme = useTamaguiTheme()
 
     // Resolve the actual theme based on setting and system preference
     const resolvedTheme =
@@ -45,7 +54,7 @@ export function useTheme() {
             : themeSetting
 
     /**
-     * Toggles between light and dark. 
+     * Toggles between light and dark.
      * If it was 'system', it switches to the opposite of the current system theme.
      */
     const toggleTheme = () => {
@@ -53,9 +62,12 @@ export function useTheme() {
         setThemeSetting(nextTheme)
     }
 
+    // Ensure theme is always available with fallback
+    const theme = tamaguiTheme || defaultThemeTokens
+
     return {
-        // Tamagui theme object (tokens)
-        theme: tamaguiTheme,
+        // Tamagui theme object (tokens) - safe fallback included
+        theme,
         // The active theme name: 'light' | 'dark'
         resolvedTheme,
         // The saved setting: 'light' | 'dark' | 'system'

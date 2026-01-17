@@ -46,9 +46,19 @@ const size = {
     ...space,
 }
 
+const fontSize = {
+    xs: 12,
+    sm: 14,
+    md: 16,
+    lg: 18,
+    xl: 20,
+    '2xl': 24,
+}
+
 const tokens = createTokens({
     size,
     space,
+    fontSize,
     zIndex: { 0: 0, 1: 100, 2: 200 },
     color: {
         white: '#FFFFFF',
@@ -65,39 +75,41 @@ const tokens = createTokens({
 })
 
 const lightTheme = {
-    background: 'hsl(0, 0%, 100%)',
-    foreground: 'hsl(240, 10%, 3.9%)',
-    primary: 'hsl(240, 5.9%, 10%)',
-    primaryForeground: 'hsl(0, 0%, 98%)',
-    secondary: 'hsl(240, 4.8%, 95.9%)',
-    secondaryForeground: 'hsl(240, 5.9%, 10%)',
-    muted: 'hsl(240, 4.8%, 95.9%)',
-    mutedForeground: 'hsl(240, 3.8%, 46.1%)',
-    destructive: 'hsl(0, 84.2%, 60.2%)',
-    border: 'hsl(240, 5.9%, 90%)',
-    card: 'hsl(0, 0%, 100%)',
-    cardForeground: 'hsl(240, 10%, 3.9%)',
-    color: 'hsl(240, 10%, 3.9%)', // fallback text color
+    background: '#fefaf6',
+    backgroundHover: '#f5f0ed',
+    foreground: '#3f3935',
+    primary: '#e15e3c',
+    primaryForeground: '#ffffff',
+    secondary: '#f8eee3',
+    secondaryForeground: '#3f3935',
+    muted: '#f0e8e0',
+    mutedForeground: '#7a726a',
+    destructive: '#c2410c',
+    border: '#e8dfd5',
+    card: '#ffffff',
+    cardForeground: '#3f3935',
+    color: '#3f3935',
 }
 
 const darkTheme = {
-    background: 'hsl(240, 10%, 3.9%)',
-    foreground: 'hsl(0, 0%, 98%)',
-    primary: 'hsl(0, 0%, 98%)',
-    primaryForeground: 'hsl(240, 5.9%, 10%)',
-    secondary: 'hsl(240, 3.7%, 15.9%)',
-    secondaryForeground: 'hsl(0, 0%, 98%)',
-    muted: 'hsl(240, 3.7%, 15.9%)',
-    mutedForeground: 'hsl(240, 5%, 64.9%)',
-    destructive: 'hsl(0, 62.8%, 30.6%)',
-    border: 'hsl(240, 3.7%, 15.9%)',
-    card: 'hsl(240, 10%, 3.9%)',
-    cardForeground: 'hsl(0, 0%, 98%)',
-    color: 'hsl(0, 0%, 98%)', // fallback text color
+    background: '#241f1c',
+    backgroundHover: '#2c2622',
+    foreground: '#f5f0ed',
+    primary: '#f48c6a',
+    primaryForeground: '#241f1c',
+    secondary: '#352f2b',
+    secondaryForeground: '#f5f0ed',
+    muted: '#352f2b',
+    mutedForeground: '#a59b94',
+    destructive: '#991b1b',
+    border: '#453e3a',
+    card: '#2c2622',
+    cardForeground: '#f5f0ed',
+    color: '#f5f0ed',
 }
 
 const config = createTamagui({
-    animations,
+    // animations,
     defaultTheme: 'light',
     shouldAddPrefersColorOverride: true,
     themeClassNameOnRoot: !!process.env.TAMAGUI_TARGET,

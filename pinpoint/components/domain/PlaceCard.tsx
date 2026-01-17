@@ -83,7 +83,7 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
                                 {category && (
                                     <Text fontSize={20}>{category.icon}</Text>
                                 )}
-                                <H3 fontSize={18} fontWeight="700" color="$foreground" numberOfLines={1}>
+                                <H3 fontSize={19} fontWeight="800" color="$foreground" numberOfLines={1}>
                                     {place.name}
                                 </H3>
                             </XStack>
@@ -94,8 +94,10 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
 
                         <Button
                             size="sm"
-                            variant="ghost"
-                            circular
+                            variant="secondary"
+                            borderRadius={10}
+                            width={40}
+                            height={40}
                             onPress={() => setIsOptionsOpen(true)}
                             icon={<MoreVertical size={20} color="$mutedForeground" />}
                         />
@@ -103,7 +105,7 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
 
                     {/* Note Section */}
                     {place.note && (
-                        <Paragraph fontSize={13} color="$mutedForeground" fontStyle="italic" numberOfLines={1}>
+                        <Paragraph fontSize={13} color="$mutedForeground" fontStyle="italic" numberOfLines={1} opacity={0.8}>
                             💬 {place.note}
                         </Paragraph>
                     )}
@@ -114,20 +116,22 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
                             flex={1}
                             size="md"
                             variant="secondary"
+                            borderRadius={12}
                             onPress={copyAddress}
                             iconLeft={copied ? <Check size={18} color="$success" /> : <Copy size={18} />}
                         >
-                            {copied ? 'Copiado!' : 'Copiar'}
+                            {copied ? 'Copied!' : 'Copy'}
                         </Button>
 
                         <Button
                             flex={1}
                             size="md"
                             variant="default"
+                            borderRadius={12}
                             onPress={openInAMap}
                             iconLeft={<Navigation size={18} />}
                         >
-                            Abrir Mapa
+                            Open AMap
                         </Button>
                     </XStack>
                 </YStack>
@@ -152,11 +156,11 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
                     <Sheet.Handle />
                     <YStack gap="$2" marginTop="$2">
                         <XStack justifyContent="space-between" alignItems="center" marginBottom="$2">
-                            <H3 fontSize={16}>Opções do Lugar</H3>
+                            <H3 fontSize={16}>Place Options</H3>
                             <Button
                                 size="sm"
                                 variant="ghost"
-                                circular
+                                borderRadius={10}
                                 onPress={() => setIsOptionsOpen(false)}
                                 icon={<X size={18} />}
                             />
@@ -170,7 +174,7 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
                             onPress={handleEdit}
                             iconLeft={<Pencil size={18} />}
                         >
-                            Editar Lugar
+                            Edit Place
                         </Button>
 
                         <Button
@@ -180,7 +184,7 @@ export function PlaceCard({ place, onDelete, onEdit }: PlaceCardProps) {
                             color="$destructive"
                             iconLeft={<Trash2 size={18} color="$destructive" />}
                         >
-                            Deletar Lugar
+                            Delete Place
                         </Button>
                     </YStack>
                 </Sheet.Frame>
