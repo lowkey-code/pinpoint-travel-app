@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Menu } from "@ark-ui/react"
+import { Menu, Portal } from "@ark-ui/react"
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react"
 
 import { cn } from "~/lib/utils"
@@ -14,8 +14,8 @@ function DropdownMenu({
 
 function DropdownMenuPortal({
   ...props
-}: React.ComponentProps<typeof Menu.Portal>) {
-  return <Menu.Portal data-slot="dropdown-menu-portal" {...props} />
+}: React.ComponentProps<typeof Portal>) {
+  return <Portal data-slot="dropdown-menu-portal" {...props} />
 }
 
 function DropdownMenuTrigger({
@@ -29,7 +29,7 @@ function DropdownMenuContent({
   ...props
 }: React.ComponentProps<typeof Menu.Content>) {
   return (
-    <Menu.Portal>
+    <Portal>
       <Menu.Positioner>
         <Menu.Content
           data-slot="dropdown-menu-content"
@@ -40,7 +40,7 @@ function DropdownMenuContent({
           {...props}
         />
       </Menu.Positioner>
-    </Menu.Portal>
+    </Portal>
   )
 }
 
