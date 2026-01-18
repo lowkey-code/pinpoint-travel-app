@@ -73,16 +73,17 @@ export function PlaceCard({ place, onDelete, onUpdate }: PlaceCardProps) {
             )}
           </div>
 
-          <DropdownMenu>
+          <DropdownMenu positioning={{ placement: "bottom-end", offset: { mainAxis: 4 } }}>
             <DropdownMenuTrigger asChild>
               <button
                 className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center tap-target hover:bg-secondary/80 transition-colors flex-shrink-0"
+                aria-label="Open place actions"
                 data-testid={`place-menu-${place.id}`}
               >
                 <MoreVertical className="w-5 h-5 text-secondary-foreground" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
+            <DropdownMenuContent className="w-48">
               <DropdownMenuItem onClick={() => setIsEditOpen(true)} data-testid={`place-edit-${place.id}`}>
                 <Edit2 className="w-4 h-4 mr-2" />
                 Edit place
