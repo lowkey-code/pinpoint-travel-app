@@ -3,20 +3,20 @@ import { ark } from "@ark-ui/react"
 
 import { cn } from "~/lib/utils"
 
-function Textarea({
-  className,
-  ...props
-}: React.ComponentProps<typeof ark.textarea>) {
-  return (
-    <ark.textarea
-      data-slot="textarea"
-      className={cn(
-        "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-        className
-      )}
-      {...props}
-    />
-  )
-}
+const Textarea = React.forwardRef<
+  React.ComponentRef<typeof ark.textarea>,
+  React.ComponentProps<typeof ark.textarea>
+>(({ className, ...props }, ref) => (
+  <ark.textarea
+    ref={ref}
+    data-slot="textarea"
+    className={cn(
+      "border-input placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+      className
+    )}
+    {...props}
+  />
+))
+Textarea.displayName = "Textarea"
 
 export { Textarea }
