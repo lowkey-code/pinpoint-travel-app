@@ -15,6 +15,8 @@ Quick, actionable guidance so an AI agent can be immediately productive in this 
  - Preview: `yarn preview`
  - Lint: `yarn lint` (ESLint, pre-commit hooks run lint-staged)
  - Husky hooks: `prepare` script runs `husky install`; avoid skipping hooks unless necessary.
+ - Preview: `yarn preview`
+ - Lint: `yarn lint`
 
 3. Important files and where to look
  - Project config: `package.json` (scripts, engines), `vite.config.ts` (alias `@` → `src`, `@vitejs/plugin-react`).
@@ -38,6 +40,7 @@ Quick, actionable guidance so an AI agent can be immediately productive in this 
 6. Tests & quality gates
  - There are no test scripts by default; focus on lint and build verification (`yarn lint`, `yarn build`).
  - Commits must follow Conventional Commits — hooks (husky + commitlint) validate messages.
+ - Commits should follow Conventional Commits. Commit message validation may be enforced by CI or local tooling.
 
 7. Integration points & external dependencies
  - Map/Open actions: app mentions opening Google/Apple/AMap via external links — verify platform behavior when adding map features.

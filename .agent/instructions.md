@@ -1,6 +1,6 @@
 # Commit Message Guidelines
 
-As an AI agent, you must follow these rules when suggesting or performing git commits in this repository. These rules are derived from the project's `commitlint.config.js`, `.cz-config.js`, and `claude.md`.
+As an AI agent, you must follow these rules when suggesting or performing git commits in this repository. These rules are derived from the Conventional Commits specification, the project's emoji mapping, and `claude.md`.
 
 ## Format
 Messages must follow the **Conventional Commits** specification:
@@ -8,7 +8,7 @@ Messages must follow the **Conventional Commits** specification:
 
 - **Type**: Must be one of the allowed types (see below).
 - **Scope**: Optional. Use when the change is specific to a component or module (e.g., `deps`, `auth`, `ui`).
-- **Emoji**: **MANDATORY**. You MUST include the exact emoji defined in `.cz-config.js` right after the colon (e.g., `feat: ✨ subject`).
+- **Emoji**: **MANDATORY**. You MUST include the exact project-mapped emoji right after the colon (e.g., `feat: ✨ subject`).
 - **Subject**: 
     - Use imperative, present tense (e.g., "add" not "added").
     - Case-insensitive (but meaningful).
@@ -36,4 +36,4 @@ Messages must follow the **Conventional Commits** specification:
 - `docs: 📚 update installation steps in README`
 
 ## Verification
-Before committing, ensure the message passes the rules defined in `commitlint.config.js`. Avoid generic messages like "update files" or "fix bugs".
+Before committing, ensure the message follows the Conventional Commits rules and the project's emoji guidelines. Avoid generic messages like "update files" or "fix bugs".
