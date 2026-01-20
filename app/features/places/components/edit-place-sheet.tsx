@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState, useEffect } from "react"
 import { X, Edit2 } from "lucide-react"
-import { Dialog } from "@ark-ui/react"
+import { Dialog, RadioGroup } from "@ark-ui/react"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
 import { CATEGORIES } from "~/features/places/lib/categories"
@@ -115,28 +115,29 @@ export function EditPlaceSheet({ place, isOpen, onClose, onSave }: EditPlaceShee
               />
             </div>
 
-            {/* Category */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-foreground">Category</label>
-              <div className="grid grid-cols-3 gap-2">
-                {CATEGORIES.map((cat) => (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setCategory(cat.id)}
-                    className={`h-14 rounded-xl flex items-center justify-center gap-2 text-sm font-medium transition-colors tap-target ${
-                      category === cat.id
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                    }`}
-                    data-testid={`edit-category-${cat.id}`}
-                  >
-                    <span>{cat.icon}</span>
-                    <span>{cat.label}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
+          {/* Category */}
+          <div className="space-y-2">
+            <RadioGroup.Root
+              className="grid grid-cols-3 gap-2"
+              value={category}
+              onValueChange={(details) => setCategory(details.value)}
+            >
+              <RadioGroup.Label className="col-span-3 text-sm font-medium text-foreground">
+                Category
+              </RadioGroup.Label>
+              {CATEGORIES.map((cat) => (
+                <RadioGroup.Item
+                  key={cat.id}
+                  value={cat.id}
+                  className="h-14 rounded-xl flex items-center justify-center gap-2 text-sm font-medium transition-colors tap-target bg-secondary text-secondary-foreground hover:bg-secondary/80 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                  data-testid={`edit-category-${cat.id}`}
+                >
+                  <span>{cat.icon}</span>
+                  <RadioGroup.ItemText>{cat.label}</RadioGroup.ItemText>
+                </RadioGroup.Item>
+              ))}
+            </RadioGroup.Root>
+          </div>
 
             {/* Note */}
             <div className="space-y-2">
