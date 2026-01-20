@@ -45,7 +45,7 @@ export function AddPlaceSheet({ isOpen, onClose, onAdd }: AddPlaceSheetProps) {
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50" data-testid="add-place-sheet">
+    <div className="fixed inset-0 z-[60]" data-testid="add-place-sheet">
       {/* Backdrop */}
       <div className="absolute inset-0 bg-foreground/20 backdrop-blur-sm" onClick={onClose} />
 
