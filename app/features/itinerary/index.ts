@@ -65,6 +65,8 @@ export {
   calculateTripCost,
   formatDuration,
   formatCost,
+  buildAMapUrl,
+  copyToClipboard,
   createItem,
   createDay,
   createTrip,

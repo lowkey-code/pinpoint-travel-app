@@ -4,6 +4,7 @@ import { ArrowLeft, Calendar, Grid3x3 } from "lucide-react"
 import { GridView } from "~/features/itinerary/components/GridView"
 import { UndoRedoBar } from "~/features/itinerary/components/UndoRedoBar"
 import { ExportImport } from "~/features/itinerary/components/ExportImport"
+import { ThemeToggle } from "~/components/ui/ThemeToggle"
 
 export default function TripGrid() {
   const { tripId } = useParams()
@@ -46,6 +47,7 @@ export default function TripGrid() {
             </div>
 
             <div className="flex items-center gap-2">
+              <ThemeToggle />
               <ExportImport tripId={trip.id} />
               <UndoRedoBar />
             </div>

@@ -23,6 +23,8 @@ export interface ItineraryItem {
   currency?: string
   city?: string
   addressText?: string
+  lat?: number
+  lng?: number
   links?: string[]
   notes?: string
   status: ItemStatus

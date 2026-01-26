@@ -1,27 +1,35 @@
 import type { ItineraryItem } from "~/features/itinerary"
-import { STATUS_LABELS, STATUS_COLORS, PRIORITY_COLORS } from "~/features/itinerary"
+import { STATUS_LABELS, STATUS_COLORS, PRIORITY_COLORS, buildAMapUrl, copyToClipboard } from "~/features/itinerary"
 import { Copy, MapPin } from "lucide-react"
 import { ItineraryMenu } from "./ItineraryMenu"
+import { useToast } from "~/hooks/use-toast"
 
 interface CardActionsProps {
   item: ItineraryItem
 }
 
 export function CardActions({ item }: CardActionsProps) {
+  const toast = useToast()
+
   const handleCopy = async () => {
     if (!item.addressText) return
-    try {
-      await navigator.clipboard.writeText(item.addressText)
-      // TODO: Show toast notification
-      console.log("Endereço copiado!")
-    } catch (err) {
-      console.error("Erro ao copiar:", err)
+    const success = await copyToClipboard(item.addressText)
+    if (success) {
+      toast.success("Endereço copiado!")
+    } else {
+      toast.error("Erro ao copiar endereço")
     }
   }
 
   const handleOpenMap = () => {
-    if (!item.addressText) return
-    const url = `https://uri.amap.com/search?query=${encodeURIComponent(item.addressText)}`
+    const url = buildAMapUrl(item)
+    if (!url) {
+      toast.error("Nenhum endereço ou coordenada disponível")
+      return
+    }
+    if (!item.lat || !item.lng) {
+      toast.info("Abrindo mapa com busca de texto")
+    }
     window.open(url, "_blank", "noopener,noreferrer")
   }
 
@@ -55,7 +63,7 @@ export function CardActions({ item }: CardActionsProps) {
         )}
 
         {/* AMap button */}
-        {item.addressText && (
+        {(item.addressText || (item.lat && item.lng)) && (
           <button
             onClick={handleOpenMap}
             className="p-2 hover:bg-secondary rounded-lg transition-colors tap-target"

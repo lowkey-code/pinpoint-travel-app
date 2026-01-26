@@ -75,7 +75,7 @@ export function ItineraryCard({
       <div className={cn("flex", compact ? "gap-2" : "gap-3", item.city && "pl-2")}>
         {/* Icon or type indicator */}
         {!compact && (
-          <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
+          <div className="shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
             {item.icon || ITEM_TYPE_ICONS[item.itemType]}
           </div>
         )}
@@ -85,7 +85,7 @@ export function ItineraryCard({
           {/* Title */}
           <div className="flex items-start gap-2">
             {compact && (
-              <span className="flex-shrink-0 text-base">
+              <span className="shrink-0 text-base">
                 {item.icon || ITEM_TYPE_ICONS[item.itemType]}
               </span>
             )}

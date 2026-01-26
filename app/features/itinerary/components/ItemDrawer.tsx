@@ -26,6 +26,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const [costText, setCostText] = useState("")
   const [city, setCity] = useState("")
   const [addressText, setAddressText] = useState("")
+  const [lat, setLat] = useState("")
+  const [lng, setLng] = useState("")
   const [links, setLinks] = useState<string[]>([])
   const [notes, setNotes] = useState("")
   const [status, setStatus] = useState<ItemStatus>("planned")
@@ -45,6 +47,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       setCostText(item.costText || "")
       setCity(item.city || "")
       setAddressText(item.addressText || "")
+      setLat(item.lat?.toString() || "")
+      setLng(item.lng?.toString() || "")
       setLinks(item.links || [])
       setNotes(item.notes || "")
       setStatus(item.status)
@@ -71,6 +75,9 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       return
     }
 
+    const parsedLat = lat ? parseFloat(lat) : undefined
+    const parsedLng = lng ? parseFloat(lng) : undefined
+
     const data = {
       itemType,
       title: title.trim() || "Item rápido",
@@ -80,6 +87,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       costText: costText || undefined,
       city: city || undefined,
       addressText: addressText || undefined,
+      lat: parsedLat && !isNaN(parsedLat) ? parsedLat : undefined,
+      lng: parsedLng && !isNaN(parsedLng) ? parsedLng : undefined,
       links: links.filter((l) => l.trim()).length > 0 ? links.filter((l) => l.trim()) : undefined,
       notes: notes || undefined,
       status,
@@ -110,6 +119,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     setCostText("")
     setCity("")
     setAddressText("")
+    setLat("")
+    setLng("")
     setLinks([])
     setNotes("")
     setStatus("planned")
@@ -286,6 +297,38 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
                   placeholder="Rua, número, bairro"
                 />
+              </div>
+
+              {/* Coordinates */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="lat" className="block text-sm font-medium mb-1">
+                    Latitude
+                  </label>
+                  <input
+                    id="lat"
+                    type="text"
+                    inputMode="decimal"
+                    value={lat}
+                    onChange={(e) => setLat(e.target.value)}
+                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    placeholder="-23.550520"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="lng" className="block text-sm font-medium mb-1">
+                    Longitude
+                  </label>
+                  <input
+                    id="lng"
+                    type="text"
+                    inputMode="decimal"
+                    value={lng}
+                    onChange={(e) => setLng(e.target.value)}
+                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    placeholder="-46.633308"
+                  />
+                </div>
               </div>
 
               {/* Links */}

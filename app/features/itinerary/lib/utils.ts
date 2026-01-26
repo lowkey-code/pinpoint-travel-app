@@ -229,3 +229,43 @@ export function getDayTripCoveredSegments(item: ItineraryItem): Segment[] {
   }
   return SEGMENTS.filter((seg) => segments.has(seg))
 }
+
+// Build AMap URL (prefer coordinates, fallback to address text)
+export function buildAMapUrl(item: ItineraryItem): string | null {
+  if (item.lat !== undefined && item.lng !== undefined) {
+    return `https://uri.amap.com/marker?position=${item.lng},${item.lat}`
+  }
+  if (item.addressText) {
+    return `https://uri.amap.com/search?query=${encodeURIComponent(item.addressText)}`
+  }
+  return null
+}
+
+// Copy to clipboard with fallback
+export async function copyToClipboard(text: string): Promise<boolean> {
+  // Modern API
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text)
+      return true
+    } catch (err) {
+      console.warn("Clipboard API failed, trying fallback", err)
+    }
+  }
+
+  // Fallback for older browsers
+  try {
+    const textarea = document.createElement("textarea")
+    textarea.value = text
+    textarea.style.position = "fixed"
+    textarea.style.opacity = "0"
+    document.body.appendChild(textarea)
+    textarea.select()
+    const success = document.execCommand("copy")
+    document.body.removeChild(textarea)
+    return success
+  } catch (err) {
+    console.error("Copy fallback failed", err)
+    return false
+  }
+}
