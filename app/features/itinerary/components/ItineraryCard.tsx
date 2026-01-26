@@ -1,5 +1,5 @@
 import type { RenderableItem, Segment } from "~/features/itinerary"
-import { isGhostItem, formatDuration, formatCost } from "~/features/itinerary"
+import { isGhostItem, parseDurationText, formatDuration, parseCostText, formatCost, ITEM_TYPE_ICONS } from "~/features/itinerary"
 import { cn } from "~/lib/utils"
 import { CardActions } from "./CardActions"
 import { ReorderControls } from "./ReorderControls"
@@ -68,12 +68,10 @@ export function ItineraryCard({
       )}
 
       <div className={cn("flex gap-3", item.city && "pl-2")}>
-        {/* Icon */}
-        {item.icon && (
-          <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
-            {item.icon}
-          </div>
-        )}
+        {/* Icon or type indicator */}
+        <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
+          {item.icon || ITEM_TYPE_ICONS[item.itemType]}
+        </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0 space-y-3">
@@ -83,43 +81,34 @@ export function ItineraryCard({
           </h3>
 
           {/* Meta row */}
-          {(item.timeLabel || item.duration || item.cost !== undefined) && (
+          {(item.timeLabel || item.durationText || item.costText) && (
             <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
               {item.timeLabel && (
                 <span className="flex items-center gap-1">
                   🕐 {item.timeLabel}
                 </span>
               )}
-              {item.duration && (
+              {item.durationText && (
                 <span className="flex items-center gap-1">
-                  ⏱️ {formatDuration(item.duration)}
+                  ⏱️ {item.durationText}
                 </span>
               )}
-              {item.cost !== undefined && (
+              {item.costText && (
                 <span className="flex items-center gap-1">
-                  💰 {formatCost(item.cost, item.currency)}
+                  💰 {item.costText}
                 </span>
               )}
             </div>
           )}
 
-          {/* City/Hotel info */}
-          {(item.city || item.hotel) && (
+          {/* City info */}
+          {item.city && (
             <div className="text-xs text-muted-foreground space-y-1">
-              {item.city && (
-                <div className="flex items-center gap-1">
-                  <span className="bg-secondary px-2 py-0.5 rounded-full">
-                    📍 {item.city}
-                  </span>
-                </div>
-              )}
-              {item.hotel && (
-                <div className="flex items-center gap-1">
-                  <span className="bg-secondary px-2 py-0.5 rounded-full">
-                    🏨 {item.hotel}
-                  </span>
-                </div>
-              )}
+              <div className="flex items-center gap-1">
+                <span className="bg-secondary px-2 py-0.5 rounded-full">
+                  📍 {item.city}
+                </span>
+              </div>
             </div>
           )}
 

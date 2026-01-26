@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
 import { useActiveTrip, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
-import type { Segment, ItineraryItem, ItemStatus, ItemPriority } from "~/features/itinerary"
-import { X } from "lucide-react"
+import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
+import { X, ArrowRight } from "lucide-react"
+import { TypeSelector } from "./TypeSelector"
+import { StayFields } from "./StayFields"
+import { LinksEditor } from "./LinksEditor"
 
 interface ItemDrawerProps {
   open: boolean
@@ -13,57 +16,78 @@ interface ItemDrawerProps {
 }
 
 export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: ItemDrawerProps) {
-  const { addItem, updateItem } = useActiveTrip()
+  const { addItem, updateItem, convertQuickToActivity } = useActiveTrip()
 
+  const [itemType, setItemType] = useState<ItemType>("activity")
   const [title, setTitle] = useState("")
   const [icon, setIcon] = useState("")
   const [timeLabel, setTimeLabel] = useState("")
-  const [duration, setDuration] = useState("")
-  const [cost, setCost] = useState("")
+  const [durationText, setDurationText] = useState("")
+  const [costText, setCostText] = useState("")
   const [city, setCity] = useState("")
-  const [hotel, setHotel] = useState("")
-  const [address, setAddress] = useState("")
+  const [addressText, setAddressText] = useState("")
+  const [links, setLinks] = useState<string[]>([])
   const [notes, setNotes] = useState("")
   const [status, setStatus] = useState<ItemStatus>("planned")
   const [priority, setPriority] = useState<ItemPriority>(0)
   const [isDayTrip, setIsDayTrip] = useState(false)
   const [coversSegments, setCoversSegments] = useState<Segment[]>([])
+  const [breakfastIncluded, setBreakfastIncluded] = useState(false)
 
   // Load item data for editing
   useEffect(() => {
     if (item) {
+      setItemType(item.itemType)
       setTitle(item.title)
       setIcon(item.icon || "")
       setTimeLabel(item.timeLabel || "")
-      setDuration(item.duration?.toString() || "")
-      setCost(item.cost?.toString() || "")
+      setDurationText(item.durationText || "")
+      setCostText(item.costText || "")
       setCity(item.city || "")
-      setHotel(item.hotel || "")
-      setAddress(item.address || "")
+      setAddressText(item.addressText || "")
+      setLinks(item.links || [])
       setNotes(item.notes || "")
       setStatus(item.status)
       setPriority(item.priority)
       setIsDayTrip(item.isDayTrip || false)
       setCoversSegments(item.coversSegments || [])
+      setBreakfastIncluded(item.breakfastIncluded || false)
     }
   }, [item, open])
 
+  // Auto-set isDayTrip when type is "dayTrip"
+  useEffect(() => {
+    if (itemType === "dayTrip") {
+      setIsDayTrip(true)
+    } else {
+      setIsDayTrip(false)
+      setCoversSegments([])
+    }
+  }, [itemType])
+
   const handleSave = () => {
+    // Validation: title required unless quick type
+    if (itemType !== "quick" && !title.trim()) {
+      return
+    }
+
     const data = {
-      title,
+      itemType,
+      title: title.trim() || "Item rápido",
       icon: icon || undefined,
       timeLabel: timeLabel || undefined,
-      duration: duration ? parseInt(duration) : undefined,
-      cost: cost ? parseFloat(cost) : undefined,
+      durationText: durationText || undefined,
+      costText: costText || undefined,
       city: city || undefined,
-      hotel: hotel || undefined,
-      address: address || undefined,
+      addressText: addressText || undefined,
+      links: links.filter((l) => l.trim()).length > 0 ? links.filter((l) => l.trim()) : undefined,
       notes: notes || undefined,
       status,
       priority,
       isDayTrip: isDayTrip || undefined,
       primarySegment: isDayTrip ? segment : undefined,
       coversSegments: isDayTrip && coversSegments.length > 0 ? coversSegments : undefined,
+      breakfastIncluded: itemType === "stay" ? breakfastIncluded : undefined,
     }
 
     if (item) {
@@ -78,25 +102,37 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const handleClose = () => {
     onOpenChange(false)
     // Reset form
+    setItemType("activity")
     setTitle("")
     setIcon("")
     setTimeLabel("")
-    setDuration("")
-    setCost("")
+    setDurationText("")
+    setCostText("")
     setCity("")
-    setHotel("")
-    setAddress("")
+    setAddressText("")
+    setLinks([])
     setNotes("")
     setStatus("planned")
     setPriority(0)
     setIsDayTrip(false)
     setCoversSegments([])
+    setBreakfastIncluded(false)
   }
 
   const toggleSegment = (seg: Segment) => {
     setCoversSegments((prev) =>
       prev.includes(seg) ? prev.filter((s) => s !== seg) : [...prev, seg]
     )
+  }
+
+  const isTitleRequired = itemType !== "quick"
+  const canSave = !isTitleRequired || title.trim().length > 0
+  const isQuickItem = item?.itemType === "quick"
+
+  const handleConvertToActivity = () => {
+    if (!item || item.itemType !== "quick") return
+    convertQuickToActivity(item.id)
+    handleClose()
   }
 
   return (
@@ -106,34 +142,61 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-end">
           <Dialog.Content className="bg-background w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto">
             {/* Header */}
-            <div className="sticky top-0 bg-background border-b border-border p-4 flex items-center justify-between">
-              <Dialog.Title className="text-xl font-serif font-bold">
-                {item ? "Editar Item" : "Novo Item"}
-              </Dialog.Title>
-              <Dialog.CloseTrigger asChild>
-                <button
-                  className="p-2 hover:bg-secondary rounded-lg tap-target"
-                  aria-label="Fechar"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </Dialog.CloseTrigger>
+            <div className="sticky top-0 bg-background border-b border-border p-4 z-10">
+              <div className="flex items-center justify-between">
+                <Dialog.Title className="text-xl font-serif font-bold">
+                  {item ? "Editar Item" : "Novo Item"}
+                </Dialog.Title>
+                <Dialog.CloseTrigger asChild>
+                  <button
+                    className="p-2 hover:bg-secondary rounded-lg tap-target"
+                    aria-label="Fechar"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </Dialog.CloseTrigger>
+              </div>
+              {/* Convert quick to activity banner */}
+              {isQuickItem && (
+                <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-lg">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Este é um item rápido. Converta para atividade para adicionar mais detalhes.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={handleConvertToActivity}
+                    className="text-sm text-primary hover:underline flex items-center gap-1 font-medium"
+                  >
+                    Converter para Atividade <ArrowRight className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Form */}
             <div className="p-4 space-y-4">
+              {/* Type selector */}
+              <TypeSelector value={itemType} onChange={setItemType} />
+
               {/* Title */}
               <div>
                 <label className="block text-sm font-medium mb-1">
-                  Título <span className="text-destructive">*</span>
+                  Título {isTitleRequired && <span className="text-destructive">*</span>}
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
-                  placeholder="Nome do lugar ou atividade"
+                  placeholder={itemType === "quick" ? "Opcional para items rápidos" : "Nome do lugar ou atividade"}
+                  aria-required={isTitleRequired}
+                  aria-invalid={isTitleRequired && !title.trim()}
                 />
+                {isTitleRequired && !title.trim() && (
+                  <p className="text-xs text-destructive mt-1" role="alert">
+                    Título é obrigatório
+                  </p>
+                )}
               </div>
 
               {/* Icon */}
@@ -146,14 +209,18 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
                   placeholder="🍕"
                   maxLength={2}
+                  aria-label="Ícone emoji"
                 />
               </div>
 
               {/* Time & Duration */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Horário</label>
+                  <label htmlFor="time-label" className="block text-sm font-medium mb-1">
+                    Horário
+                  </label>
                   <input
+                    id="time-label"
                     type="text"
                     value={timeLabel}
                     onChange={(e) => setTimeLabel(e.target.value)}
@@ -162,75 +229,80 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-1">Duração (min)</label>
+                  <label htmlFor="duration-text" className="block text-sm font-medium mb-1">
+                    Duração
+                  </label>
                   <input
-                    type="number"
-                    value={duration}
-                    onChange={(e) => setDuration(e.target.value)}
+                    id="duration-text"
+                    type="text"
+                    value={durationText}
+                    onChange={(e) => setDurationText(e.target.value)}
                     className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
-                    placeholder="60"
+                    placeholder="2h 30min"
                   />
                 </div>
               </div>
 
               {/* Cost */}
               <div>
-                <label className="block text-sm font-medium mb-1">Custo (R$)</label>
+                <label htmlFor="cost-text" className="block text-sm font-medium mb-1">
+                  Custo
+                </label>
                 <input
-                  type="number"
-                  step="0.01"
-                  value={cost}
-                  onChange={(e) => setCost(e.target.value)}
+                  id="cost-text"
+                  type="text"
+                  value={costText}
+                  onChange={(e) => setCostText(e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
-                  placeholder="50.00"
+                  placeholder="R$ 50,00"
                 />
               </div>
 
-              {/* City & Hotel */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium mb-1">Cidade</label>
-                  <input
-                    type="text"
-                    value={city}
-                    onChange={(e) => setCity(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
-                    placeholder="São Paulo"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1">Hotel</label>
-                  <input
-                    type="text"
-                    value={hotel}
-                    onChange={(e) => setHotel(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
-                    placeholder="Hotel XYZ"
-                  />
-                </div>
+              {/* City */}
+              <div>
+                <label htmlFor="city" className="block text-sm font-medium mb-1">
+                  Cidade
+                </label>
+                <input
+                  id="city"
+                  type="text"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  placeholder="São Paulo"
+                />
               </div>
 
               {/* Address */}
               <div>
-                <label className="block text-sm font-medium mb-1">Endereço</label>
+                <label htmlFor="address-text" className="block text-sm font-medium mb-1">
+                  Endereço
+                </label>
                 <input
+                  id="address-text"
                   type="text"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  value={addressText}
+                  onChange={(e) => setAddressText(e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
                   placeholder="Rua, número, bairro"
                 />
               </div>
 
+              {/* Links */}
+              <LinksEditor links={links} onChange={setLinks} />
+
               {/* Notes */}
               <div>
-                <label className="block text-sm font-medium mb-1">Observações</label>
+                <label htmlFor="notes" className="block text-sm font-medium mb-1">
+                  Observações
+                </label>
                 <textarea
+                  id="notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none resize-none"
-                  placeholder="Notas adicionais..."
+                  placeholder="Notas adicionais…"
                 />
               </div>
 
@@ -241,6 +313,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   {(["planned", "done", "skipped"] as ItemStatus[]).map((s) => (
                     <button
                       key={s}
+                      type="button"
                       onClick={() => setStatus(s)}
                       className={`px-4 py-2 rounded-lg border transition-colors ${
                         status === s
@@ -263,6 +336,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   {([0, 1, 2] as ItemPriority[]).map((p) => (
                     <button
                       key={p}
+                      type="button"
                       onClick={() => setPriority(p)}
                       className={`px-4 py-2 rounded-lg border transition-colors ${
                         priority === p
@@ -278,57 +352,58 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 </div>
               </div>
 
-              {/* Day Trip */}
-              <div className="space-y-3">
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={isDayTrip}
-                    onChange={(e) => setIsDayTrip(e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                  <span className="text-sm font-medium">Dia Inteiro</span>
-                </label>
+              {/* Stay-specific fields */}
+              {itemType === "stay" && (
+                <StayFields
+                  breakfastIncluded={breakfastIncluded}
+                  onBreakfastChange={setBreakfastIncluded}
+                />
+              )}
 
-                {isDayTrip && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Selecione os períodos cobertos:
-                    </p>
-                    <div className="flex gap-2">
-                      {SEGMENTS.map((seg) => (
-                        <button
-                          key={seg}
-                          onClick={() => toggleSegment(seg)}
-                          disabled={seg === segment}
-                          className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
-                            seg === segment
-                              ? "bg-primary text-primary-foreground border-primary"
-                              : coversSegments.includes(seg)
-                              ? "bg-secondary border-primary"
-                              : "border-border hover:bg-secondary"
-                          }`}
-                        >
-                          {SEGMENT_LABELS[seg]}
-                        </button>
-                      ))}
-                    </div>
+              {/* Day Trip (only for dayTrip type) */}
+              {itemType === "dayTrip" && (
+                <div className="space-y-3 p-3 border border-border rounded-lg bg-muted/30">
+                  <p className="text-sm font-medium">Períodos cobertos pelo Dia Inteiro</p>
+                  <p className="text-xs text-muted-foreground">
+                    Este item aparece no período <strong>{SEGMENT_LABELS[segment]}</strong> (principal).
+                    Selecione períodos adicionais que ele cobre:
+                  </p>
+                  <div className="flex gap-2">
+                    {SEGMENTS.map((seg) => (
+                      <button
+                        key={seg}
+                        type="button"
+                        onClick={() => toggleSegment(seg)}
+                        disabled={seg === segment}
+                        className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
+                          seg === segment
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : coversSegments.includes(seg)
+                            ? "bg-secondary border-primary"
+                            : "border-border hover:bg-secondary"
+                        }`}
+                      >
+                        {SEGMENT_LABELS[seg]}
+                      </button>
+                    ))}
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-background border-t border-border p-4 flex gap-3">
+            <div className="sticky bottom-0 bg-background border-t border-border p-4 flex gap-3 z-10">
               <button
+                type="button"
                 onClick={handleClose}
                 className="flex-1 px-4 py-3 rounded-lg border border-border hover:bg-secondary transition-colors tap-target"
               >
                 Cancelar
               </button>
               <button
+                type="button"
                 onClick={handleSave}
-                disabled={!title.trim()}
+                disabled={!canSave}
                 className="flex-1 px-4 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors tap-target"
                 data-testid="save-item"
               >

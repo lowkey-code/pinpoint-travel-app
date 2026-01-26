@@ -1,4 +1,4 @@
-import type { Segment, ItemStatus, ItemPriority } from "./types"
+import type { Segment, ItemStatus, ItemPriority, ItemType } from "./types"
 
 // Segments (fixed order)
 export const SEGMENTS: readonly Segment[] = ["morning", "afternoon", "evening"] as const
@@ -13,6 +13,25 @@ export const SEGMENT_ICONS: Record<Segment, string> = {
   morning: "Sunrise",
   afternoon: "Sun",
   evening: "Moon",
+}
+
+// Item types
+export const ITEM_TYPES: readonly ItemType[] = ["activity", "dayTrip", "transport", "stay", "quick"] as const
+
+export const ITEM_TYPE_LABELS: Record<ItemType, string> = {
+  activity: "Atividade",
+  dayTrip: "Dia Inteiro",
+  transport: "Transporte",
+  stay: "Hospedagem",
+  quick: "Rápido",
+}
+
+export const ITEM_TYPE_ICONS: Record<ItemType, string> = {
+  activity: "📍",
+  dayTrip: "🌅",
+  transport: "🚗",
+  stay: "🏨",
+  quick: "⚡",
 }
 
 // Status
@@ -43,7 +62,7 @@ export const PRIORITY_COLORS: Record<ItemPriority, string> = {
 
 // Storage
 export const STORAGE_KEY = "pinpoint_itinerary"
-export const CURRENT_SCHEMA_VERSION = 1
+export const CURRENT_SCHEMA_VERSION = 2
 
 // Undo
 export const MAX_UNDO_STEPS = 10

@@ -13,6 +13,7 @@ export interface UseActiveTripReturn {
   updateItem: (itemId: string, updates: Partial<ItineraryItem>) => void
   deleteItem: (itemId: string) => void
   moveItem: (itemId: string, toDay: number, toSegment: Segment) => void
+  convertQuickToActivity: (itemId: string) => void
   addDay: (date?: string) => Day
   deleteDay: (dayIndex: number) => void
   updateDay: (dayIndex: number, updates: Partial<Day>) => void
@@ -97,6 +98,15 @@ export function useActiveTrip(): UseActiveTripReturn {
     }))
   }, [trip, pushAction, updateActiveTrip])
 
+  const convertQuickToActivity = useCallback((itemId: string): void => {
+    if (!trip) return
+    const existing = trip.items.find((i) => i.id === itemId)
+    if (!existing || existing.itemType !== "quick") return
+    const updated = { ...existing, itemType: "activity" as const, updatedAt: Date.now() }
+    pushAction({ type: "UPDATE_ITEM", before: existing, after: updated })
+    updateActiveTrip((t) => ({ ...t, items: t.items.map((i) => (i.id === itemId ? updated : i)), updatedAt: Date.now() }))
+  }, [trip, pushAction, updateActiveTrip])
+
   const addDay = useCallback((date?: string): Day => {
     if (!trip) throw new Error("No active trip")
     const newDay = createDay(trip.days.length, date)
@@ -139,5 +149,5 @@ export function useActiveTrip(): UseActiveTripReturn {
 
   const refresh = useCallback((): void => setState(loadState()), [])
 
-  return { trip, items, days, isLoading, addItem, updateItem, deleteItem, moveItem, addDay, deleteDay, updateDay, canUndo, canRedo, undo, redo, refresh }
+  return { trip, items, days, isLoading, addItem, updateItem, deleteItem, moveItem, convertQuickToActivity, addDay, deleteDay, updateDay, canUndo, canRedo, undo, redo, refresh }
 }

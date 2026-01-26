@@ -10,8 +10,9 @@ interface ItineraryMenuProps {
 }
 
 export function ItineraryMenu({ item }: ItineraryMenuProps) {
-  const { updateItem, deleteItem } = useActiveTrip()
+  const { updateItem, deleteItem, convertQuickToActivity } = useActiveTrip()
   const [drawerOpen, setDrawerOpen] = useState(false)
+  const isQuick = item.itemType === "quick"
 
   const handleChangeStatus = (status: ItemStatus) => {
     updateItem(item.id, { status })
@@ -134,6 +135,21 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
               </Menu.Root>
 
               <Menu.Separator className="h-px bg-border my-1" />
+
+              {/* Convert quick to activity */}
+              {isQuick && (
+                <>
+                  <Menu.Item
+                    id="convert"
+                    className="flex items-center gap-2 px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                    onClick={() => convertQuickToActivity(item.id)}
+                  >
+                    <CheckCircle className="w-4 h-4" />
+                    <span>Converter para Atividade</span>
+                  </Menu.Item>
+                  <Menu.Separator className="h-px bg-border my-1" />
+                </>
+              )}
 
               {/* Delete */}
               <Menu.Item

@@ -5,27 +5,32 @@ export type Segment = "morning" | "afternoon" | "evening"
 export type ItemStatus = "planned" | "done" | "skipped"
 export type ItemPriority = 0 | 1 | 2
 
+// Item type
+export type ItemType = "activity" | "dayTrip" | "transport" | "stay" | "quick"
+
 // Itinerary item
 export interface ItineraryItem {
   id: string
   tripId: string
   dayIndex: number
   segment: Segment
+  itemType: ItemType
   title: string
   icon?: string
   timeLabel?: string
-  duration?: number
-  cost?: number
+  durationText?: string
+  costText?: string
   currency?: string
   city?: string
-  hotel?: string
-  address?: string
+  addressText?: string
+  links?: string[]
   notes?: string
   status: ItemStatus
   priority: ItemPriority
   isDayTrip?: boolean
   primarySegment?: Segment
   coversSegments?: Segment[]
+  breakfastIncluded?: boolean
   createdAt: number
   updatedAt: number
 }

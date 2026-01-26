@@ -9,9 +9,9 @@ interface CardActionsProps {
 
 export function CardActions({ item }: CardActionsProps) {
   const handleCopy = async () => {
-    if (!item.address) return
+    if (!item.addressText) return
     try {
-      await navigator.clipboard.writeText(item.address)
+      await navigator.clipboard.writeText(item.addressText)
       // TODO: Show toast notification
       console.log("Endereço copiado!")
     } catch (err) {
@@ -20,8 +20,8 @@ export function CardActions({ item }: CardActionsProps) {
   }
 
   const handleOpenMap = () => {
-    if (!item.address) return
-    const url = `https://uri.amap.com/search?query=${encodeURIComponent(item.address)}`
+    if (!item.addressText) return
+    const url = `https://uri.amap.com/search?query=${encodeURIComponent(item.addressText)}`
     window.open(url, "_blank", "noopener,noreferrer")
   }
 
@@ -43,7 +43,7 @@ export function CardActions({ item }: CardActionsProps) {
 
       <div className="ml-auto flex items-center gap-1">
         {/* Copy button */}
-        {item.address && (
+        {item.addressText && (
           <button
             onClick={handleCopy}
             className="p-2 hover:bg-secondary rounded-lg transition-colors tap-target"
@@ -55,7 +55,7 @@ export function CardActions({ item }: CardActionsProps) {
         )}
 
         {/* AMap button */}
-        {item.address && (
+        {item.addressText && (
           <button
             onClick={handleOpenMap}
             className="p-2 hover:bg-secondary rounded-lg transition-colors tap-target"

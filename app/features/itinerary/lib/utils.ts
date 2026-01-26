@@ -93,16 +93,33 @@ export function getUniqueCities(items: ItineraryItem[]): string[] {
   return Array.from(cities).sort()
 }
 
+// Parse duration text to minutes (for calculations)
+export function parseDurationText(text: string | undefined): number | null {
+  if (!text) return null
+  const match = text.match(/(\d+)/)
+  return match ? parseInt(match[1]) : null
+}
+
+// Parse cost text to number (for calculations)
+export function parseCostText(text: string | undefined): number | null {
+  if (!text) return null
+  const cleaned = text.replace(/[^\d.,]/g, "").replace(",", ".")
+  const num = parseFloat(cleaned)
+  return isNaN(num) ? null : num
+}
+
 // Calculate day duration (minutes)
 export function calculateDayDuration(items: ItineraryItem[], dayIndex: number): number {
   return items
-    .filter((item) => item.dayIndex === dayIndex && item.duration)
-    .reduce((sum, item) => sum + (item.duration ?? 0), 0)
+    .filter((item) => item.dayIndex === dayIndex && item.durationText)
+    .reduce((sum, item) => sum + (parseDurationText(item.durationText) ?? 0), 0)
 }
 
 // Calculate trip cost
 export function calculateTripCost(items: ItineraryItem[]): number {
-  return items.filter((item) => item.cost).reduce((sum, item) => sum + (item.cost ?? 0), 0)
+  return items
+    .filter((item) => item.costText)
+    .reduce((sum, item) => sum + (parseCostText(item.costText) ?? 0), 0)
 }
 
 // Format duration
@@ -131,6 +148,7 @@ export function createItem(
     tripId,
     dayIndex,
     segment,
+    itemType: "activity",
     title: "",
     status: "planned",
     priority: 0,

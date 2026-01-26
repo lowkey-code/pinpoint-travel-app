@@ -26,7 +26,25 @@ function safeParse<T>(json: string | null, fallback: T): T {
 type Migration = (state: ItineraryState) => ItineraryState
 
 const migrations: Record<number, Migration> = {
-  // v1 -> v2 example: 1: (state) => ({ ...state, schemaVersion: 2, newField: value })
+  // v1 -> v2: duration/cost/address -> text fields, add itemType, remove hotel
+  1: (state) => ({
+    ...state,
+    schemaVersion: 2,
+    trips: state.trips.map((trip) => ({
+      ...trip,
+      items: trip.items.map((item: any) => ({
+        ...item,
+        itemType: item.isDayTrip ? "dayTrip" : "activity",
+        durationText: item.duration ? `${item.duration} min` : undefined,
+        costText: item.cost ? `R$ ${item.cost.toFixed(2)}` : undefined,
+        addressText: item.address,
+        duration: undefined,
+        cost: undefined,
+        address: undefined,
+        hotel: undefined,
+      })),
+    })),
+  }),
 }
 
 // Apply migrations
