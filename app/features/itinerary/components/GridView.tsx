@@ -1,70 +1,60 @@
-import { useActiveTrip, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment } from "~/features/itinerary"
-import { ItineraryCard } from "./ItineraryCard"
-import { Plus } from "lucide-react"
+import { useState } from "react"
+import { useActiveTrip } from "~/features/itinerary"
+import { GridDayColumn } from "./GridDayColumn"
 
 interface GridViewProps {
   tripId: string
 }
 
 export function GridView({ tripId }: GridViewProps) {
-  const { trip, items, days, addItem } = useActiveTrip()
+  const { days, isLoading } = useActiveTrip()
+  const [reorderMode, setReorderMode] = useState(false)
 
-  if (!trip || trip.id !== tripId) {
-    return <p className="text-muted-foreground">Carregando viagem...</p>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-muted-foreground">Carregando…</p>
+      </div>
+    )
+  }
+
+  if (days.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64 gap-4">
+        <p className="text-muted-foreground">Nenhum dia criado ainda</p>
+      </div>
+    )
   }
 
   return (
-    <div className="overflow-x-auto">
-      <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${days.length}, minmax(280px, 1fr))` }}>
-        {days.map((day) => (
-          <div key={day.index} className="space-y-4">
-            {/* Day header */}
-            <div className="sticky top-0 bg-background p-3 border-b-2 border-primary rounded-t-lg">
-              <h3 className="font-serif font-bold text-center">
-                {day.label || `Dia ${day.index + 1}`}
-              </h3>
-              {day.date && (
-                <p className="text-xs text-muted-foreground text-center">{day.date}</p>
-              )}
-            </div>
+    <div className="h-full flex flex-col">
+      {/* Toolbar */}
+      <div className="flex items-center justify-between p-4 border-b border-border bg-background">
+        <h2 className="text-lg font-serif font-bold">Visão Geral</h2>
+        <button
+          onClick={() => setReorderMode(!reorderMode)}
+          className={`px-3 py-1.5 rounded-lg border text-sm transition-colors ${
+            reorderMode
+              ? "bg-primary text-primary-foreground border-primary"
+              : "border-border hover:bg-secondary"
+          }`}
+        >
+          {reorderMode ? "Concluir" : "Reordenar"}
+        </button>
+      </div>
 
-            {/* Segments for this day */}
-            <div className="space-y-6">
-              {SEGMENTS.map((segment) => {
-                const segmentItems = getRenderableItemsForSegment(items, day.index, segment)
-                return (
-                  <div key={segment} className="bg-card border border-border rounded-lg p-3">
-                    <h4 className="text-sm font-semibold mb-2 text-muted-foreground">
-                      {SEGMENT_LABELS[segment]}
-                    </h4>
-                    <div className="space-y-2">
-                      {segmentItems.map((item) => (
-                        <ItineraryCard
-                          key={"isDayTripGhost" in item ? item.parentId : item.id}
-                          item={item}
-                          compact
-                        />
-                      ))}
-                      <button
-                        onClick={() => {
-                          const title = prompt("Título do item:")
-                          if (title) {
-                            addItem(day.index, segment, { title })
-                          }
-                        }}
-                        className="w-full p-2 border border-dashed border-border rounded-lg hover:border-primary hover:bg-secondary/50 transition-colors flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                        data-testid={`add-item-grid-${day.index}-${segment}`}
-                      >
-                        <Plus className="w-3 h-3" />
-                        Adicionar
-                      </button>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+      {/* Grid - horizontal scroll */}
+      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+        <div className="flex gap-4 p-4 min-h-full">
+          {days.map((day) => (
+            <GridDayColumn
+              key={day.index}
+              day={day}
+              dayIndex={day.index}
+              reorderMode={reorderMode}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

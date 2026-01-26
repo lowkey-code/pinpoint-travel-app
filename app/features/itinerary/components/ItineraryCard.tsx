@@ -27,24 +27,29 @@ export function ItineraryCard({
   if (isGhostItem(item)) {
     return (
       <div
-        className="border-2 border-dashed border-muted rounded-xl p-4 bg-muted/30"
+        className={cn(
+          "border-2 border-dashed border-muted rounded-xl bg-muted/30",
+          compact ? "p-2" : "p-4"
+        )}
         data-testid={`ghost-card-${item.parentId}`}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm text-muted-foreground italic mb-1">
+            <p className={cn("text-muted-foreground italic", compact ? "text-xs mb-0.5" : "text-sm mb-1")}>
               {item.title}
             </p>
-            <span className="text-xs bg-muted px-2 py-1 rounded-full">
+            <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
               Dia Inteiro
             </span>
           </div>
-          <button
-            className="text-xs text-primary hover:underline"
-            aria-label="Ver item principal"
-          >
-            Ver principal →
-          </button>
+          {!compact && (
+            <button
+              className="text-xs text-primary hover:underline"
+              aria-label="Ver item principal"
+            >
+              Ver principal →
+            </button>
+          )}
         </div>
       </div>
     )
@@ -67,22 +72,31 @@ export function ItineraryCard({
         />
       )}
 
-      <div className={cn("flex gap-3", item.city && "pl-2")}>
+      <div className={cn("flex", compact ? "gap-2" : "gap-3", item.city && "pl-2")}>
         {/* Icon or type indicator */}
-        <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
-          {item.icon || ITEM_TYPE_ICONS[item.itemType]}
-        </div>
+        {!compact && (
+          <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
+            {item.icon || ITEM_TYPE_ICONS[item.itemType]}
+          </div>
+        )}
 
         {/* Content */}
-        <div className="flex-1 min-w-0 space-y-3">
+        <div className={cn("flex-1 min-w-0", compact ? "space-y-2" : "space-y-3")}>
           {/* Title */}
-          <h3 className={cn("font-semibold", compact ? "text-sm" : "text-base")}>
-            {item.title || "Sem título"}
-          </h3>
+          <div className="flex items-start gap-2">
+            {compact && (
+              <span className="flex-shrink-0 text-base">
+                {item.icon || ITEM_TYPE_ICONS[item.itemType]}
+              </span>
+            )}
+            <h3 className={cn("font-semibold", compact ? "text-sm leading-tight" : "text-base")}>
+              {item.title || "Sem título"}
+            </h3>
+          </div>
 
           {/* Meta row */}
           {(item.timeLabel || item.durationText || item.costText) && (
-            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+            <div className={cn("flex flex-wrap text-muted-foreground", compact ? "gap-2 text-xs" : "gap-3 text-sm")}>
               {item.timeLabel && (
                 <span className="flex items-center gap-1">
                   🕐 {item.timeLabel}
@@ -102,7 +116,7 @@ export function ItineraryCard({
           )}
 
           {/* City info */}
-          {item.city && (
+          {item.city && !compact && (
             <div className="text-xs text-muted-foreground space-y-1">
               <div className="flex items-center gap-1">
                 <span className="bg-secondary px-2 py-0.5 rounded-full">
@@ -113,7 +127,7 @@ export function ItineraryCard({
           )}
 
           {/* DayTrip badge */}
-          {item.isDayTrip && (
+          {item.isDayTrip && !compact && (
             <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
               Dia Inteiro
             </span>
