@@ -14,20 +14,61 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/:tripId": {
+    params: {
+      "tripId": string;
+    };
+  };
+  "/:tripId/day/:date": {
+    params: {
+      "tripId": string;
+      "date": string;
+    };
+  };
+  "/:tripId/grid": {
+    params: {
+      "tripId": string;
+    };
+  };
 };
 
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/";
+    page: "/" | "/:tripId" | "/:tripId/day/:date" | "/:tripId/grid";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
     page: "/";
+  };
+  "routes/itinerary/layout.tsx": {
+    id: "routes/itinerary/layout";
+    page: "/" | "/:tripId" | "/:tripId/day/:date" | "/:tripId/grid";
+  };
+  "routes/itinerary/_index.tsx": {
+    id: "routes/itinerary/_index";
+    page: "/";
+  };
+  "routes/itinerary/$tripId/_index.tsx": {
+    id: "routes/itinerary/$tripId/_index";
+    page: "/:tripId";
+  };
+  "routes/itinerary/$tripId/day/$date.tsx": {
+    id: "routes/itinerary/$tripId/day/$date";
+    page: "/:tripId/day/:date";
+  };
+  "routes/itinerary/$tripId/grid.tsx": {
+    id: "routes/itinerary/$tripId/grid";
+    page: "/:tripId/grid";
   };
 };
 
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
+  "routes/itinerary/layout": typeof import("./app/routes/itinerary/layout.tsx");
+  "routes/itinerary/_index": typeof import("./app/routes/itinerary/_index.tsx");
+  "routes/itinerary/$tripId/_index": typeof import("./app/routes/itinerary/$tripId/_index.tsx");
+  "routes/itinerary/$tripId/day/$date": typeof import("./app/routes/itinerary/$tripId/day/$date.tsx");
+  "routes/itinerary/$tripId/grid": typeof import("./app/routes/itinerary/$tripId/grid.tsx");
 };

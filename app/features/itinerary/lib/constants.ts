@@ -1,0 +1,56 @@
+import type { Segment, ItemStatus, ItemPriority } from "./types"
+
+// Segments (fixed order)
+export const SEGMENTS: readonly Segment[] = ["morning", "afternoon", "evening"] as const
+
+export const SEGMENT_LABELS: Record<Segment, string> = {
+  morning: "Manhã",
+  afternoon: "Tarde",
+  evening: "Noite",
+}
+
+export const SEGMENT_ICONS: Record<Segment, string> = {
+  morning: "Sunrise",
+  afternoon: "Sun",
+  evening: "Moon",
+}
+
+// Status
+export const STATUS_LABELS: Record<ItemStatus, string> = {
+  planned: "Planejado",
+  done: "Feito",
+  skipped: "Pulado",
+}
+
+export const STATUS_COLORS: Record<ItemStatus, string> = {
+  planned: "text-muted-foreground",
+  done: "text-green-600 dark:text-green-400",
+  skipped: "text-orange-600 dark:text-orange-400",
+}
+
+// Priority (0 = normal, 1 = important, 2 = must-do)
+export const PRIORITY_LABELS: Record<ItemPriority, string> = {
+  0: "Normal",
+  1: "Importante",
+  2: "Imperdível",
+}
+
+export const PRIORITY_COLORS: Record<ItemPriority, string> = {
+  0: "bg-muted",
+  1: "bg-yellow-100 dark:bg-yellow-900/30",
+  2: "bg-red-100 dark:bg-red-900/30",
+}
+
+// Storage
+export const STORAGE_KEY = "pinpoint_itinerary"
+export const CURRENT_SCHEMA_VERSION = 1
+
+// Undo
+export const MAX_UNDO_STEPS = 10
+
+// Debounce
+export const STORAGE_DEBOUNCE_MS = 500
+
+// Defaults
+export const DEFAULT_CURRENCY = "BRL"
+export const DAY_LABEL_PREFIX = "Dia"
