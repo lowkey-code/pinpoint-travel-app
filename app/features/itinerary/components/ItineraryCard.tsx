@@ -1,93 +1,151 @@
-import type { RenderableItem } from "~/features/itinerary"
-import { isGhostItem, STATUS_COLORS, PRIORITY_COLORS } from "~/features/itinerary"
-import { MapPin, Clock, DollarSign, MoreVertical } from "lucide-react"
+import type { RenderableItem, Segment } from "~/features/itinerary"
+import { isGhostItem, formatDuration, formatCost } from "~/features/itinerary"
 import { cn } from "~/lib/utils"
+import { CardActions } from "./CardActions"
+import { ReorderControls } from "./ReorderControls"
 
 interface ItineraryCardProps {
   item: RenderableItem
+  reorderMode?: boolean
+  dayIndex?: number
+  segment?: Segment
+  isFirst?: boolean
+  isLast?: boolean
   compact?: boolean
 }
 
-export function ItineraryCard({ item, compact = false }: ItineraryCardProps) {
+export function ItineraryCard({
+  item,
+  reorderMode = false,
+  dayIndex,
+  segment,
+  isFirst = false,
+  isLast = false,
+  compact = false,
+}: ItineraryCardProps) {
   // Ghost items (dayTrip coverage indicators)
   if (isGhostItem(item)) {
     return (
       <div
-        className={cn(
-          "border-2 border-dashed border-muted rounded-lg p-3 bg-muted/30 opacity-60",
-          compact && "p-2"
-        )}
+        className="border-2 border-dashed border-muted rounded-xl p-4 bg-muted/30"
+        data-testid={`ghost-card-${item.parentId}`}
       >
-        <p className="text-sm text-muted-foreground italic">
-          {item.title} (dia inteiro)
-        </p>
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-sm text-muted-foreground italic mb-1">
+              {item.title}
+            </p>
+            <span className="text-xs bg-muted px-2 py-1 rounded-full">
+              Dia Inteiro
+            </span>
+          </div>
+          <button
+            className="text-xs text-primary hover:underline"
+            aria-label="Ver item principal"
+          >
+            Ver principal →
+          </button>
+        </div>
       </div>
     )
   }
 
-  // Regular items
+  // Regular items - Pinterest-style
   return (
     <div
       className={cn(
-        "bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow",
-        compact && "p-3",
-        item.priority > 0 && PRIORITY_COLORS[item.priority]
+        "bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow",
+        compact ? "p-3" : "p-4"
       )}
       data-testid={`itinerary-card-${item.id}`}
     >
-      <div className="flex items-start gap-3">
-        {/* City color indicator */}
-        {item.city && (
-          <div
-            className="w-1 h-full bg-primary rounded-full self-stretch"
-            title={item.city}
-          />
+      {/* City color indicator (left border) */}
+      {item.city && (
+        <div
+          className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"
+          title={item.city}
+        />
+      )}
+
+      <div className={cn("flex gap-3", item.city && "pl-2")}>
+        {/* Icon */}
+        {item.icon && (
+          <div className="flex-shrink-0 w-10 h-10 bg-secondary rounded-lg flex items-center justify-center text-lg">
+            {item.icon}
+          </div>
         )}
 
-        <div className="flex-1 min-w-0">
+        {/* Content */}
+        <div className="flex-1 min-w-0 space-y-3">
           {/* Title */}
-          <h3 className={cn("font-semibold mb-1", compact ? "text-sm" : "text-base")}>
+          <h3 className={cn("font-semibold", compact ? "text-sm" : "text-base")}>
             {item.title || "Sem título"}
           </h3>
 
           {/* Meta row */}
-          <div className={cn("flex flex-wrap gap-2 mb-2", compact ? "text-xs" : "text-sm")}>
-            {item.timeLabel && (
-              <span className="text-muted-foreground flex items-center gap-1">
-                <Clock className={cn(compact ? "w-3 h-3" : "w-4 h-4")} />
-                {item.timeLabel}
-              </span>
-            )}
-            {item.city && (
-              <span className="text-muted-foreground flex items-center gap-1">
-                <MapPin className={cn(compact ? "w-3 h-3" : "w-4 h-4")} />
-                {item.city}
-              </span>
-            )}
-            {item.cost !== undefined && (
-              <span className="text-muted-foreground flex items-center gap-1">
-                <DollarSign className={cn(compact ? "w-3 h-3" : "w-4 h-4")} />
-                {item.cost}
-              </span>
-            )}
-          </div>
+          {(item.timeLabel || item.duration || item.cost !== undefined) && (
+            <div className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+              {item.timeLabel && (
+                <span className="flex items-center gap-1">
+                  🕐 {item.timeLabel}
+                </span>
+              )}
+              {item.duration && (
+                <span className="flex items-center gap-1">
+                  ⏱️ {formatDuration(item.duration)}
+                </span>
+              )}
+              {item.cost !== undefined && (
+                <span className="flex items-center gap-1">
+                  💰 {formatCost(item.cost, item.currency)}
+                </span>
+              )}
+            </div>
+          )}
 
-          {/* Status */}
-          <span className={cn("text-xs font-medium", STATUS_COLORS[item.status])}>
-            {item.status === "planned" && "Planejado"}
-            {item.status === "done" && "Feito"}
-            {item.status === "skipped" && "Pulado"}
-          </span>
+          {/* City/Hotel info */}
+          {(item.city || item.hotel) && (
+            <div className="text-xs text-muted-foreground space-y-1">
+              {item.city && (
+                <div className="flex items-center gap-1">
+                  <span className="bg-secondary px-2 py-0.5 rounded-full">
+                    📍 {item.city}
+                  </span>
+                </div>
+              )}
+              {item.hotel && (
+                <div className="flex items-center gap-1">
+                  <span className="bg-secondary px-2 py-0.5 rounded-full">
+                    🏨 {item.hotel}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* DayTrip badge */}
+          {item.isDayTrip && (
+            <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
+              Dia Inteiro
+            </span>
+          )}
+
+          {/* Actions row */}
+          {!reorderMode && (
+            <CardActions item={item} />
+          )}
         </div>
 
-        {/* Actions menu */}
-        <button
-          className="p-1 hover:bg-secondary rounded-lg transition-colors"
-          aria-label="Mais ações"
-          data-testid={`item-menu-${item.id}`}
-        >
-          <MoreVertical className="w-4 h-4" />
-        </button>
+        {/* Reorder controls */}
+        {reorderMode && dayIndex !== undefined && segment && (
+          <ReorderControls
+            item={item}
+            dayIndex={dayIndex}
+            segment={segment}
+            isFirst={isFirst}
+            isLast={isLast}
+          />
+        )}
       </div>
     </div>
   )
