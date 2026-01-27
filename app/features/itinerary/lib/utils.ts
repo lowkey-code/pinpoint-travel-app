@@ -9,6 +9,7 @@ import type {
 } from "./types"
 import { SEGMENTS, DAY_LABEL_PREFIX } from "./constants"
 import { generateId } from "./storage"
+import { daysBetween, addDays as addDaysToDate } from "./dates"
 
 // Get items for a day segment (excluding dayTrips)
 export function getItemsForDaySegment(
@@ -48,6 +49,63 @@ export function createGhostItems(dayTrip: ItineraryItem): GhostItem[] {
     }))
 }
 
+// Get multi-day transports that arrive on a specific day
+export function getArrivingTransports(
+  items: ItineraryItem[],
+  dayIndex: number
+): ItineraryItem[] {
+  return items.filter(
+    (item) =>
+      item.itemType === "transport" &&
+      item.isMultiDayTransport &&
+      item.arrivalDayIndex === dayIndex
+  )
+}
+
+// Get multi-day transports that depart on a specific day
+export function getDepartingTransports(
+  items: ItineraryItem[],
+  dayIndex: number
+): ItineraryItem[] {
+  return items.filter(
+    (item) =>
+      item.itemType === "transport" &&
+      item.isMultiDayTransport &&
+      item.dayIndex === dayIndex
+  )
+}
+
+// Determine segment from time string (HH:mm)
+export function getSegmentFromTime(time: string): Segment {
+  const hour = parseInt(time.split(":")[0])
+  if (hour >= 5 && hour < 12) return "morning"
+  if (hour >= 12 && hour < 18) return "afternoon"
+  return "evening"
+}
+
+// Check if segment is after another segment
+export function isSegmentAfter(segment: Segment, afterSegment: Segment): boolean {
+  const order: Segment[] = ["morning", "afternoon", "evening"]
+  return order.indexOf(segment) > order.indexOf(afterSegment)
+}
+
+// Check if segment is before another segment
+export function isSegmentBefore(segment: Segment, beforeSegment: Segment): boolean {
+  const order: Segment[] = ["morning", "afternoon", "evening"]
+  return order.indexOf(segment) < order.indexOf(beforeSegment)
+}
+
+// Create ghost item for transport in transit
+export function createTransportGhost(transport: ItineraryItem, segment: Segment): GhostItem {
+  return {
+    parentId: transport.id,
+    segment,
+    title: transport.title,
+    isTransportGhost: true,
+    arrivalCity: transport.destinationCity,
+  }
+}
+
 // Get renderable items for a segment (items + ghosts)
 export function getRenderableItemsForSegment(
   items: ItineraryItem[],
@@ -56,8 +114,11 @@ export function getRenderableItemsForSegment(
 ): RenderableItem[] {
   const regularItems = getItemsForDaySegment(items, dayIndex, segment)
   const dayTrips = getDayTripsForSegment(items, dayIndex, segment)
+  const arrivingTransports = getArrivingTransports(items, dayIndex)
+  const departingTransports = getDepartingTransports(items, dayIndex)
   const result: RenderableItem[] = [...regularItems]
 
+  // Add dayTrip items or ghosts
   for (const dayTrip of dayTrips) {
     if (dayTrip.primarySegment === segment) {
       result.push(dayTrip)
@@ -70,6 +131,35 @@ export function getRenderableItemsForSegment(
       })
     }
   }
+
+  // Add transport ghosts for departing transports (from departure segment onwards)
+  for (const transport of departingTransports) {
+    if (transport.departureDateTime) {
+      const departureTime = transport.departureDateTime.split("T")[1]
+      const departureSegment = getSegmentFromTime(departureTime)
+
+      // Show ghost if current segment is departure segment or after
+      // But NOT on the segment where the transport card itself is shown
+      if ((segment === departureSegment || isSegmentAfter(segment, departureSegment))
+          && transport.segment !== segment) {
+        result.push(createTransportGhost(transport, segment))
+      }
+    }
+  }
+
+  // Add transport ghosts for arriving transports (before arrival segment)
+  for (const transport of arrivingTransports) {
+    if (transport.arrivalDateTime) {
+      const arrivalTime = transport.arrivalDateTime.split("T")[1]
+      const arrivalSegment = getSegmentFromTime(arrivalTime)
+
+      // Show ghost if current segment is before or equal to arrival segment
+      if (segment === arrivalSegment || isSegmentBefore(segment, arrivalSegment)) {
+        result.push(createTransportGhost(transport, segment))
+      }
+    }
+  }
+
   return result
 }
 
@@ -167,22 +257,6 @@ export function createDay(index: number, date?: string): Day {
   }
 }
 
-// Calculate days between two dates
-function calculateDaysBetween(startDate: string, endDate: string): number {
-  const start = new Date(startDate)
-  const end = new Date(endDate)
-  const diffTime = end.getTime() - start.getTime()
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  return Math.max(1, diffDays + 1) // +1 to include both start and end date
-}
-
-// Add days to a date
-function addDays(dateStr: string, days: number): string {
-  const date = new Date(dateStr)
-  date.setDate(date.getDate() + days)
-  return date.toISOString().split("T")[0]
-}
-
 // Create trip
 export function createTrip(name: string, partial?: Partial<Trip>): Trip {
   const now = Date.now()
@@ -190,9 +264,9 @@ export function createTrip(name: string, partial?: Partial<Trip>): Trip {
   // Calculate days based on date range
   let days: Day[]
   if (partial?.startDate && partial?.endDate) {
-    const numDays = calculateDaysBetween(partial.startDate, partial.endDate)
+    const numDays = daysBetween(partial.startDate, partial.endDate)
     days = Array.from({ length: numDays }, (_, i) =>
-      createDay(i, addDays(partial.startDate!, i))
+      createDay(i, addDaysToDate(partial.startDate!, i))
     )
   } else {
     days = [createDay(0, partial?.startDate)]
@@ -267,6 +341,18 @@ export function buildAMapUrl(item: ItineraryItem): string | null {
     return `https://uri.amap.com/search?query=${encodeURIComponent(item.addressText)}`
   }
   return null
+}
+
+// Get unique key for renderable item (for React keys)
+export function getRenderableItemKey(item: RenderableItem, index?: number): string {
+  if ("isDayTripGhost" in item && item.isDayTripGhost === true) {
+    return `ghost-daytrip-${item.parentId}-${index ?? 0}`
+  }
+  if ("isTransportGhost" in item && item.isTransportGhost === true) {
+    return `ghost-transport-${item.parentId}-${index ?? 0}`
+  }
+  // At this point, TypeScript knows item is ItineraryItem
+  return (item as ItineraryItem).id
 }
 
 // Copy to clipboard with fallback

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Segment } from "~/features/itinerary"
-import { useItinerary, getRenderableItemsForSegment, SEGMENT_LABELS } from "~/features/itinerary"
+import { useItinerary, getRenderableItemsForSegment, getRenderableItemKey, SEGMENT_LABELS } from "~/features/itinerary"
 import { Plus } from "lucide-react"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
@@ -45,7 +45,7 @@ export function GridSegmentSection({ dayIndex, segment, reorderMode }: GridSegme
         ) : (
           renderableItems.map((item, index) => (
             <ItineraryCard
-              key={"isDayTripGhost" in item ? `ghost-${item.parentId}-${segment}` : item.id}
+              key={getRenderableItemKey(item, index)}
               item={item}
               reorderMode={reorderMode}
               dayIndex={dayIndex}

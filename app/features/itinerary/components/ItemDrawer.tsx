@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
-import { useItinerary, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
-import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS, extractDate, daysBetween, today } from "~/features/itinerary"
+import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType, Day } from "~/features/itinerary"
 import { X, ArrowRight } from "lucide-react"
 import { TypeSelector } from "./TypeSelector"
 import { StayFields } from "./StayFields"
+import { TransportFields } from "./TransportFields"
 import { LinksEditor } from "./LinksEditor"
 
 interface ItemDrawerProps {
@@ -16,7 +17,7 @@ interface ItemDrawerProps {
 }
 
 export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: ItemDrawerProps) {
-  const { addItem, updateItem, convertQuickToActivity } = useItinerary()
+  const { addItem, updateItem, convertQuickToActivity, trip } = useItinerary()
 
   const [itemType, setItemType] = useState<ItemType>("activity")
   const [title, setTitle] = useState("")
@@ -35,6 +36,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const [isDayTrip, setIsDayTrip] = useState(false)
   const [coversSegments, setCoversSegments] = useState<Segment[]>([])
   const [breakfastIncluded, setBreakfastIncluded] = useState(false)
+  // Transport fields
+  const [departureDateTime, setDepartureDateTime] = useState("")
+  const [arrivalDateTime, setArrivalDateTime] = useState("")
+  const [originCity, setOriginCity] = useState("")
+  const [destinationCity, setDestinationCity] = useState("")
+  const [transportError, setTransportError] = useState("")
 
   // Load item data for editing
   useEffect(() => {
@@ -56,6 +63,11 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       setIsDayTrip(item.isDayTrip || false)
       setCoversSegments(item.coversSegments || [])
       setBreakfastIncluded(item.breakfastIncluded || false)
+      // Transport fields
+      setDepartureDateTime(item.departureDateTime || "")
+      setArrivalDateTime(item.arrivalDateTime || "")
+      setOriginCity(item.originCity || "")
+      setDestinationCity(item.destinationCity || "")
     }
   }, [item, open])
 
@@ -75,8 +87,38 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       return
     }
 
+    // Validation: transport requires all fields
+    if (itemType === "transport") {
+      if (!departureDateTime || !arrivalDateTime || !originCity.trim() || !destinationCity.trim()) {
+        setTransportError("Todos os campos de transporte são obrigatórios")
+        return
+      }
+
+      // Validate arrival is after departure
+      if (arrivalDateTime <= departureDateTime) {
+        setTransportError("A chegada deve ser posterior à partida")
+        return
+      }
+    }
+
     const parsedLat = lat ? parseFloat(lat) : undefined
     const parsedLng = lng ? parseFloat(lng) : undefined
+
+    // Calculate arrivalDayIndex for multi-day transport
+    let arrivalDayIndex: number | undefined
+    let isMultiDayTransport = false
+
+    if (itemType === "transport" && trip && departureDateTime && arrivalDateTime) {
+      const departureDate = extractDate(departureDateTime)
+      const arrivalDate = extractDate(arrivalDateTime)
+
+      if (departureDate !== arrivalDate && trip.startDate) {
+        isMultiDayTransport = true
+        // Calculate day index based on trip start date
+        const daysFromStart = daysBetween(trip.startDate, arrivalDate) - 1
+        arrivalDayIndex = daysFromStart
+      }
+    }
 
     const data = {
       itemType,
@@ -97,6 +139,13 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       primarySegment: isDayTrip ? segment : undefined,
       coversSegments: isDayTrip && coversSegments.length > 0 ? coversSegments : undefined,
       breakfastIncluded: itemType === "stay" ? breakfastIncluded : undefined,
+      // Transport fields
+      isMultiDayTransport: isMultiDayTransport || undefined,
+      departureDateTime: itemType === "transport" ? departureDateTime : undefined,
+      arrivalDateTime: itemType === "transport" ? arrivalDateTime : undefined,
+      originCity: itemType === "transport" ? originCity.trim() : undefined,
+      destinationCity: itemType === "transport" ? destinationCity.trim() : undefined,
+      arrivalDayIndex: isMultiDayTransport ? arrivalDayIndex : undefined,
     }
 
     if (item) {
@@ -128,6 +177,11 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     setIsDayTrip(false)
     setCoversSegments([])
     setBreakfastIncluded(false)
+    setDepartureDateTime("")
+    setArrivalDateTime("")
+    setOriginCity("")
+    setDestinationCity("")
+    setTransportError("")
   }
 
   const toggleSegment = (seg: Segment) => {
@@ -402,6 +456,21 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 <StayFields
                   breakfastIncluded={breakfastIncluded}
                   onBreakfastChange={setBreakfastIncluded}
+                />
+              )}
+
+              {/* Transport-specific fields */}
+              {itemType === "transport" && (
+                <TransportFields
+                  departureDateTime={departureDateTime}
+                  arrivalDateTime={arrivalDateTime}
+                  originCity={originCity}
+                  destinationCity={destinationCity}
+                  onDepartureDateTimeChange={setDepartureDateTime}
+                  onArrivalDateTimeChange={setArrivalDateTime}
+                  onOriginCityChange={setOriginCity}
+                  onDestinationCityChange={setDestinationCity}
+                  error={transportError}
                 />
               )}
 

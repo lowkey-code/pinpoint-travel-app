@@ -57,6 +57,12 @@ export {
   getDayTripsForSegment,
   createGhostItems,
   getRenderableItemsForSegment,
+  getRenderableItemKey,
+  getArrivingTransports,
+  getDepartingTransports,
+  getSegmentFromTime,
+  isSegmentAfter,
+  isSegmentBefore,
   filterByCity,
   filterByStatus,
   getUniqueCities,
@@ -77,6 +83,22 @@ export {
   isDayTripCoveringSegment,
   getDayTripCoveredSegments,
 } from "./lib/utils"
+
+// Date utilities (timezone-safe)
+export {
+  parseDateString,
+  createLocalDate,
+  formatDatePtBR,
+  addDays,
+  daysBetween,
+  today,
+  compareDates,
+  isValidDate,
+  extractDate,
+  extractTime,
+  formatTime,
+  createDateTime,
+} from "./lib/dates"
 
 // Hooks
 export { useTrips } from "./hooks/useTrips"

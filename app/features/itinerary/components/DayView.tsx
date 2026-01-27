@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment, getRenderableItemKey } from "~/features/itinerary"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
 import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
@@ -91,7 +91,7 @@ export function DayView() {
         ) : (
           segmentItems.map((item, index) => (
             <ItineraryCard
-              key={"isDayTripGhost" in item ? `ghost-${item.parentId}` : item.id}
+              key={getRenderableItemKey(item, index)}
               item={item}
               reorderMode={reorderMode}
               dayIndex={selectedDayIndex}

@@ -23,23 +23,25 @@ export function ItineraryCard({
   isLast = false,
   compact = false,
 }: ItineraryCardProps) {
-  // Ghost items (dayTrip coverage indicators)
+  // Ghost items (dayTrip coverage indicators or transport in transit)
   if (isGhostItem(item)) {
+    const isTransport = item.isTransportGhost
     return (
       <div
         className={cn(
-          "border-2 border-dashed border-muted rounded-xl bg-muted/30",
+          "border-2 border-dashed rounded-xl",
+          isTransport ? "border-blue-500/50 bg-blue-500/10" : "border-muted bg-muted/30",
           compact ? "p-2" : "p-4"
         )}
         data-testid={`ghost-card-${item.parentId}`}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className={cn("text-muted-foreground italic", compact ? "text-xs mb-0.5" : "text-sm mb-1")}>
-              {item.title}
+            <p className={cn("italic", isTransport ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground", compact ? "text-xs mb-0.5" : "text-sm mb-1")}>
+              {isTransport ? `✈️ Em trânsito` : item.title}
             </p>
-            <span className="text-xs bg-muted px-2 py-0.5 rounded-full">
-              Dia Inteiro
+            <span className={cn("text-xs px-2 py-0.5 rounded-full", isTransport ? "bg-blue-500/20 text-blue-700 dark:text-blue-300" : "bg-muted")}>
+              {isTransport ? `Chegada em ${item.arrivalCity}` : "Dia Inteiro"}
             </span>
           </div>
           {!compact && (
@@ -93,6 +95,40 @@ export function ItineraryCard({
               {item.title || "Sem título"}
             </h3>
           </div>
+
+          {/* Transport multi-day info */}
+          {item.itemType === "transport" && item.isMultiDayTransport && !compact && (
+            <div className="space-y-2 text-sm">
+              <div className="flex items-start gap-2 text-muted-foreground">
+                <span>🛫</span>
+                <div>
+                  <p className="font-medium text-foreground">{item.originCity}</p>
+                  <p className="text-xs">
+                    {item.departureDateTime && new Date(item.departureDateTime).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2 text-muted-foreground">
+                <span>🛬</span>
+                <div>
+                  <p className="font-medium text-foreground">{item.destinationCity}</p>
+                  <p className="text-xs">
+                    {item.arrivalDateTime && new Date(item.arrivalDateTime).toLocaleString("pt-BR", {
+                      day: "2-digit",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Meta row */}
           {(item.timeLabel || item.durationText || item.costText) && (

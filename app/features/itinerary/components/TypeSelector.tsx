@@ -19,20 +19,20 @@ export function TypeSelector({ value, onChange, disabled = false }: TypeSelector
       >
         <div className="flex flex-wrap gap-2">
           {ITEM_TYPES.map((type) => (
-            <RadioGroup.Item key={type} value={type} asChild>
-              <button
-                className={`px-3 py-2 rounded-lg border transition-colors text-sm flex items-center gap-2 ${
-                  value === type
-                    ? "bg-primary text-primary-foreground border-primary"
-                    : "border-border hover:bg-secondary"
-                }`}
-                disabled={disabled}
-                data-testid={`item-type-${type}`}
-              >
-                <span>{ITEM_TYPE_ICONS[type]}</span>
-                <span>{ITEM_TYPE_LABELS[type]}</span>
-                <RadioGroup.ItemControl />
-              </button>
+            <RadioGroup.Item
+              key={type}
+              value={type}
+              className={`px-3 py-2 rounded-lg border transition-colors text-sm flex items-center gap-2 cursor-pointer ${
+                value === type
+                  ? "bg-primary text-primary-foreground border-primary"
+                  : "border-border hover:bg-secondary"
+              }`}
+              disabled={disabled}
+              data-testid={`item-type-${type}`}
+            >
+              <RadioGroup.ItemControl className="hidden" />
+              <span>{ITEM_TYPE_ICONS[type]}</span>
+              <RadioGroup.ItemText>{ITEM_TYPE_LABELS[type]}</RadioGroup.ItemText>
             </RadioGroup.Item>
           ))}
         </div>

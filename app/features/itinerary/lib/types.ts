@@ -33,6 +33,13 @@ export interface ItineraryItem {
   primarySegment?: Segment
   coversSegments?: Segment[]
   breakfastIncluded?: boolean
+  // Multi-day transport fields
+  isMultiDayTransport?: boolean
+  departureDateTime?: string // ISO datetime (YYYY-MM-DDTHH:mm)
+  arrivalDateTime?: string // ISO datetime (YYYY-MM-DDTHH:mm)
+  originCity?: string
+  destinationCity?: string
+  arrivalDayIndex?: number // Day index where transport arrives
   createdAt: number
   updatedAt: number
 }
@@ -82,12 +89,14 @@ export interface ItineraryState {
   undoStacks: Record<string, UndoStack>
 }
 
-// Ghost item for dayTrip covered segments
+// Ghost item for dayTrip covered segments or transport in transit
 export interface GhostItem {
   parentId: string
   segment: Segment
   title: string
-  isDayTripGhost: true
+  isDayTripGhost?: true
+  isTransportGhost?: true
+  arrivalCity?: string
 }
 
 // Renderable item (real or ghost)
@@ -95,7 +104,8 @@ export type RenderableItem = ItineraryItem | GhostItem
 
 // Type guard
 export function isGhostItem(item: RenderableItem): item is GhostItem {
-  return "isDayTripGhost" in item && item.isDayTripGhost === true
+  return ("isDayTripGhost" in item && item.isDayTripGhost === true) ||
+         ("isTransportGhost" in item && item.isTransportGhost === true)
 }
 
 // Export format

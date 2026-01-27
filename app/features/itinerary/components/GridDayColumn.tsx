@@ -1,5 +1,6 @@
 import type { Day } from "~/features/itinerary"
 import { SEGMENTS } from "~/features/itinerary"
+import { formatDatePtBR } from "~/features/itinerary/lib/dates"
 import { GridSegmentSection } from "./GridSegmentSection"
 
 interface GridDayColumnProps {
@@ -18,10 +19,7 @@ export function GridDayColumn({ day, dayIndex, reorderMode }: GridDayColumnProps
         </h3>
         {day.date && (
           <p className="text-xs text-muted-foreground mt-1">
-            {new Date(day.date).toLocaleDateString("pt-BR", {
-              day: "2-digit",
-              month: "short",
-            })}
+            {formatDatePtBR(day.date, { short: true })}
           </p>
         )}
       </div>
