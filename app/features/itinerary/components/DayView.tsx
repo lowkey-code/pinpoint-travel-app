@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment, getRenderableItemKey } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment, getRenderableItemKey, getCitiesForDay } from "~/features/itinerary"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
 import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
@@ -18,6 +18,7 @@ export function DayView() {
 
   const currentDay = days[selectedDayIndex]
   const segmentItems = getRenderableItemsForSegment(items, selectedDayIndex, selectedSegment)
+  const dayCities = getCitiesForDay(items, selectedDayIndex)
 
   return (
     <div className="space-y-4 pb-20">
@@ -36,6 +37,9 @@ export function DayView() {
         <div className="text-center flex-1" data-testid="current-day-header">
           <h2 className="text-xl font-serif font-bold" data-testid="current-day-label">
             {currentDay?.label || `Dia ${selectedDayIndex + 1}`}
+            {dayCities.length > 0 && (
+              <span className="text-muted-foreground font-normal"> - {dayCities.join(", ")}</span>
+            )}
           </h2>
           {currentDay?.date && (
             <p className="text-xs text-muted-foreground">{currentDay.date}</p>

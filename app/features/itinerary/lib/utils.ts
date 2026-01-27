@@ -183,6 +183,18 @@ export function getUniqueCities(items: ItineraryItem[]): string[] {
   return Array.from(cities).sort()
 }
 
+// Get cities for a specific day (max 2 cities)
+export function getCitiesForDay(items: ItineraryItem[], dayIndex: number): string[] {
+  const cities = new Set<string>()
+  for (const item of items) {
+    if (item.dayIndex === dayIndex && item.city) {
+      cities.add(item.city)
+    }
+  }
+  const sortedCities = Array.from(cities).sort()
+  return sortedCities.slice(0, 2)
+}
+
 // Parse duration text to minutes (for calculations)
 export function parseDurationText(text: string | undefined): number | null {
   if (!text) return null

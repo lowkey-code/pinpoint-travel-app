@@ -66,6 +66,7 @@ export {
   filterByCity,
   filterByStatus,
   getUniqueCities,
+  getCitiesForDay,
   parseDurationText,
   parseCostText,
   calculateDayDuration,
