@@ -1,11 +1,19 @@
 import type { ItineraryItem } from "~/features/itinerary"
-import { STATUS_LABELS, STATUS_COLORS, PRIORITY_COLORS, buildAMapUrl, copyToClipboard } from "~/features/itinerary"
-import { Copy, MapPin } from "lucide-react"
+import { STATUS_LABELS, buildAMapUrl, copyToClipboard } from "~/features/itinerary"
+import { Copy, MapPin } from "@phosphor-icons/react"
 import { ItineraryMenu } from "./ItineraryMenu"
 import { useToast } from "~/hooks/use-toast"
+import { StampBadge } from "~/components/ui/folio"
+import type { StampVariant } from "~/components/ui/folio"
 
 interface CardActionsProps {
   item: ItineraryItem
+}
+
+const statusToStamp: Record<string, StampVariant> = {
+  planned: "navy",
+  done: "sage",
+  skipped: "amber",
 }
 
 export function CardActions({ item }: CardActionsProps) {
@@ -37,17 +45,15 @@ export function CardActions({ item }: CardActionsProps) {
     <div className="flex items-center gap-2 flex-wrap">
       {/* Priority badge */}
       {item.priority > 0 && (
-        <span
-          className={`text-xs px-2 py-1 rounded-full font-medium ${PRIORITY_COLORS[item.priority]}`}
-        >
-          {item.priority === 1 ? "⚠️ Importante" : "⭐ Imperdível"}
-        </span>
+        <StampBadge variant={item.priority === 2 ? "brick" : "amber"} rotated>
+          {item.priority === 1 ? "Importante" : "Imperdível"}
+        </StampBadge>
       )}
 
       {/* Status badge */}
-      <span className={`text-xs font-medium ${STATUS_COLORS[item.status]}`}>
+      <StampBadge variant={statusToStamp[item.status]}>
         {STATUS_LABELS[item.status]}
-      </span>
+      </StampBadge>
 
       <div className="ml-auto flex items-center gap-1">
         {/* Copy button */}
@@ -58,7 +64,7 @@ export function CardActions({ item }: CardActionsProps) {
             aria-label="Copiar endereço"
             data-testid={`copy-${item.id}`}
           >
-            <Copy className="w-4 h-4" />
+            <Copy className="w-4 h-4" weight="bold" />
           </button>
         )}
 
@@ -70,7 +76,7 @@ export function CardActions({ item }: CardActionsProps) {
             aria-label="Abrir no mapa"
             data-testid={`amap-${item.id}`}
           >
-            <MapPin className="w-4 h-4" />
+            <MapPin className="w-4 h-4" weight="bold" />
           </button>
         )}
 

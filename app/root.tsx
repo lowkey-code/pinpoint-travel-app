@@ -15,6 +15,12 @@ import { ToastContainer } from "~/components/ui/Toast";
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+  {
+    rel: "stylesheet",
+    href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@600;700;800&display=swap",
+  },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {

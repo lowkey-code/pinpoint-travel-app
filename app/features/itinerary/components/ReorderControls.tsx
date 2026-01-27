@@ -1,6 +1,6 @@
 import type { ItineraryItem, Segment } from "~/features/itinerary"
 import { useItinerary } from "~/features/itinerary"
-import { ChevronUp, ChevronDown, ArrowUp, ArrowDown } from "lucide-react"
+import { CaretUp, CaretDown, ArrowUp, ArrowDown } from "@phosphor-icons/react"
 
 interface ReorderControlsProps {
   item: ItineraryItem
@@ -14,13 +14,11 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
   const { updateItem, moveItem, days } = useItinerary()
 
   const handleMoveUp = () => {
-    // Swap with previous item by updating timestamps
     const now = Date.now()
     updateItem(item.id, { updatedAt: now + 1 })
   }
 
   const handleMoveDown = () => {
-    // Swap with next item by updating timestamps
     const now = Date.now()
     updateItem(item.id, { updatedAt: now - 1 })
   }
@@ -39,7 +37,6 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
 
   return (
     <div className="flex flex-col gap-1">
-      {/* Move up within segment */}
       <button
         onClick={handleMoveUp}
         disabled={isFirst}
@@ -47,10 +44,9 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
         aria-label="Mover para cima"
         data-testid={`move-up-${item.id}`}
       >
-        <ChevronUp className="w-4 h-4" />
+        <CaretUp className="w-4 h-4" weight="bold" />
       </button>
 
-      {/* Move down within segment */}
       <button
         onClick={handleMoveDown}
         disabled={isLast}
@@ -58,12 +54,11 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
         aria-label="Mover para baixo"
         data-testid={`move-down-${item.id}`}
       >
-        <ChevronDown className="w-4 h-4" />
+        <CaretDown className="w-4 h-4" weight="bold" />
       </button>
 
-      <div className="border-t border-border my-1" />
+      <div className="border-t border-paper-line my-1" />
 
-      {/* Move to previous day */}
       <button
         onClick={handleMoveToPrevDay}
         disabled={dayIndex === 0}
@@ -71,10 +66,9 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
         aria-label="Mover para dia anterior"
         data-testid={`move-prev-day-${item.id}`}
       >
-        <ArrowUp className="w-4 h-4" />
+        <ArrowUp className="w-4 h-4" weight="bold" />
       </button>
 
-      {/* Move to next day */}
       <button
         onClick={handleMoveToNextDay}
         disabled={dayIndex === days.length - 1}
@@ -82,7 +76,7 @@ export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: Re
         aria-label="Mover para próximo dia"
         data-testid={`move-next-day-${item.id}`}
       >
-        <ArrowDown className="w-4 h-4" />
+        <ArrowDown className="w-4 h-4" weight="bold" />
       </button>
     </div>
   )

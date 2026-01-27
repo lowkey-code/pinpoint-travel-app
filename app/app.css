@@ -3,99 +3,147 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* ============================================
+   FOLIO DESIGN SYSTEM v3.7
+   "Functional Nostalgia" - Passport warmth + Swiss precision
+   ============================================ */
+
 :root {
-  --background: oklch(0.98 0.01 60);
-  --foreground: oklch(0.25 0.02 30);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.25 0.02 30);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.25 0.02 30);
-  --primary: oklch(0.65 0.2 40);
-  --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.92 0.03 60);
-  --secondary-foreground: oklch(0.35 0.05 30);
-  --muted: oklch(0.95 0.02 60);
-  --muted-foreground: oklch(0.5 0.02 30);
-  --accent: oklch(0.75 0.15 80);
-  --accent-foreground: oklch(0.25 0.02 30);
-  --destructive: oklch(0.55 0.22 25);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.88 0.03 60);
-  --input: oklch(0.92 0.02 60);
-  --ring: oklch(0.65 0.2 40);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  /* Paper tones */
+  --paper-base: #FBF9F6;
+  --paper-card: #FFFFFF;
+  --paper-line: #E6E0D9;
+
+  /* Ink tones */
+  --ink-primary: #1C1E21;
+  --ink-secondary: #54585F;
+  --ink-utility: #364152;
+
+  /* Action */
+  --action-blue: #0055FF;
+  --action-hover: #0044CC;
+
+  /* Stamps */
+  --stamp-sage: #4A7A67;
+  --stamp-amber: #B57B2E;
+  --stamp-navy: #2C4B70;
+  --stamp-brick: #C93A3A;
+
+  /* Safe areas */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  /* Compatibility aliases (for existing components) */
+  --background: var(--paper-base);
+  --foreground: var(--ink-primary);
+  --card: var(--paper-card);
+  --card-foreground: var(--ink-primary);
+  --popover: var(--paper-card);
+  --popover-foreground: var(--ink-primary);
+  --primary: var(--action-blue);
+  --primary-foreground: #FFFFFF;
+  --secondary: #F1EDE8;
+  --secondary-foreground: var(--ink-secondary);
+  --muted: #F5F2EE;
+  --muted-foreground: var(--ink-secondary);
+  --accent: var(--stamp-amber);
+  --accent-foreground: #FFFFFF;
+  --destructive: var(--stamp-brick);
+  --destructive-foreground: #FFFFFF;
+  --border: var(--paper-line);
+  --input: #F5F2EE;
+  --ring: var(--action-blue);
   --radius: 0.75rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 
   /* Category colors */
-  --category-food: oklch(0.65 0.2 40);
-  --category-museum: oklch(0.55 0.15 280);
-  --category-viewpoint: oklch(0.6 0.18 145);
-  --category-hotel: oklch(0.55 0.12 250);
-  --category-shopping: oklch(0.65 0.18 330);
-  --category-transport: oklch(0.5 0.1 220);
+  --category-food: var(--stamp-amber);
+  --category-museum: var(--stamp-navy);
+  --category-viewpoint: var(--stamp-sage);
+  --category-hotel: var(--stamp-navy);
+  --category-shopping: #9B4D96;
+  --category-transport: var(--ink-utility);
 }
 
-/* Sunset Warmth Palette - Dark Mode */
+/* Passport Navy - Dark Mode */
 .dark {
-  --background: oklch(0.18 0.02 30);
-  --foreground: oklch(0.95 0.01 60);
-  --card: oklch(0.22 0.02 30);
-  --card-foreground: oklch(0.95 0.01 60);
-  --popover: oklch(0.22 0.02 30);
-  --popover-foreground: oklch(0.95 0.01 60);
-  --primary: oklch(0.72 0.18 40);
-  --primary-foreground: oklch(0.15 0.02 30);
-  --secondary: oklch(0.28 0.03 30);
-  --secondary-foreground: oklch(0.9 0.02 60);
-  --muted: oklch(0.28 0.02 30);
-  --muted-foreground: oklch(0.65 0.02 60);
-  --accent: oklch(0.65 0.12 80);
-  --accent-foreground: oklch(0.15 0.02 30);
-  --destructive: oklch(0.5 0.2 25);
-  --destructive-foreground: oklch(0.95 0.01 60);
-  --border: oklch(0.32 0.02 30);
-  --input: oklch(0.28 0.02 30);
-  --ring: oklch(0.72 0.18 40);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.439 0 0);
+  /* Paper tones (inverted) */
+  --paper-base: #0E1A2B;
+  --paper-card: #1B2B44;
+  --paper-line: #2E466C;
+
+  /* Ink tones (inverted) */
+  --ink-primary: #FBF9F6;
+  --ink-secondary: #CBD5E1;
+  --ink-utility: #94A3B8;
+
+  /* Action */
+  --action-blue: #60A5FA;
+  --action-hover: #93C5FD;
+
+  /* Stamps (lighter for dark bg) */
+  --stamp-sage: #6EE7B7;
+  --stamp-amber: #FCD34D;
+  --stamp-navy: #93C5FD;
+  --stamp-brick: #FCA5A5;
+
+  /* Compatibility aliases */
+  --background: var(--paper-base);
+  --foreground: var(--ink-primary);
+  --card: var(--paper-card);
+  --card-foreground: var(--ink-primary);
+  --popover: var(--paper-card);
+  --popover-foreground: var(--ink-primary);
+  --primary: var(--action-blue);
+  --primary-foreground: var(--paper-base);
+  --secondary: #243B5C;
+  --secondary-foreground: var(--ink-secondary);
+  --muted: #1B2B44;
+  --muted-foreground: var(--ink-utility);
+  --accent: var(--stamp-amber);
+  --accent-foreground: var(--paper-base);
+  --destructive: var(--stamp-brick);
+  --destructive-foreground: var(--paper-base);
+  --border: var(--paper-line);
+  --input: #243B5C;
+  --ring: var(--action-blue);
 
   /* Category colors - dark mode */
-  --category-food: oklch(0.72 0.18 40);
-  --category-museum: oklch(0.65 0.15 280);
-  --category-viewpoint: oklch(0.65 0.16 145);
-  --category-hotel: oklch(0.6 0.12 250);
-  --category-shopping: oklch(0.7 0.16 330);
-  --category-transport: oklch(0.55 0.1 220);
+  --category-food: var(--stamp-amber);
+  --category-museum: var(--stamp-navy);
+  --category-viewpoint: var(--stamp-sage);
+  --category-hotel: var(--stamp-navy);
+  --category-shopping: #E879F9;
+  --category-transport: var(--ink-utility);
 }
 
 @theme inline {
-  /* optional: --font-sans, --font-serif, --font-mono if they are applied in the layout.tsx */
-  --font-sans: "Open Sans", "Open Sans Fallback", sans-serif;
-  --font-serif: "Nunito", "Nunito Fallback", sans-serif;
-  --font-mono: "Geist Mono", "Geist Mono Fallback", monospace;
+  /* Typography - Folio Triad */
+  --font-sans: "Nunito", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Fluid typography */
+  --text-fluid-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+  --text-fluid-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+  --text-fluid-base: clamp(1rem, 0.9rem + 0.5vw, 1.125rem);
+
+  /* Folio color tokens */
+  --color-paper-base: var(--paper-base);
+  --color-paper-card: var(--paper-card);
+  --color-paper-line: var(--paper-line);
+  --color-ink-primary: var(--ink-primary);
+  --color-ink-secondary: var(--ink-secondary);
+  --color-ink-utility: var(--ink-utility);
+  --color-action-blue: var(--action-blue);
+  --color-action-hover: var(--action-hover);
+  --color-stamp-sage: var(--stamp-sage);
+  --color-stamp-amber: var(--stamp-amber);
+  --color-stamp-navy: var(--stamp-navy);
+  --color-stamp-brick: var(--stamp-brick);
+
+  /* Compatibility mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -115,23 +163,12 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-chart-1: var(--chart-1);
-  --color-chart-2: var(--chart-2);
-  --color-chart-3: var(--chart-3);
-  --color-chart-4: var(--chart-4);
-  --color-chart-5: var(--chart-5);
+
+  /* Radius */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
 }
 
 @layer base {
@@ -139,7 +176,10 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-paper-base text-ink-primary font-body;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-bold;
   }
 }
 
@@ -149,15 +189,60 @@ html {
   touch-action: manipulation;
 }
 
-/* Large tap targets for mobile */
+/* Large tap targets for mobile (WCAG 2.5.5) */
 .tap-target {
   min-height: 48px;
   min-width: 48px;
 }
 
-/* Safe area padding for notched devices */
-@supports (padding: env(safe-area-inset-bottom)) {
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom);
+/* Safe area utilities */
+.safe-top {
+  padding-top: var(--safe-top);
+}
+
+.safe-bottom {
+  padding-bottom: var(--safe-bottom);
+}
+
+.safe-x {
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+}
+
+/* Folio Boarding Pass perforation effect */
+.perforation {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--paper-line) 0,
+    var(--paper-line) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  height: 1px;
+}
+
+/* Stamp badge rotation */
+.stamp-rotated {
+  transform: rotate(-2deg);
+}
+
+/* Tabular numbers for data */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Focus visible ring - Folio style */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-action-blue focus-visible:ring-offset-2 focus-visible:ring-offset-paper-base;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }

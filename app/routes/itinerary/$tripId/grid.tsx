@@ -1,6 +1,6 @@
 import { useParams, Link, Navigate } from "react-router"
 import { useTrips, ItineraryProvider } from "~/features/itinerary"
-import { ArrowLeft, Calendar, Grid3x3 } from "lucide-react"
+import { ArrowLeft, CalendarBlank, SquaresFour } from "@phosphor-icons/react"
 import { GridView } from "~/features/itinerary/components/GridView"
 import { UndoRedoBar } from "~/features/itinerary/components/UndoRedoBar"
 import { ExportImport } from "~/features/itinerary/components/ExportImport"
@@ -13,7 +13,7 @@ export default function TripGrid() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Carregando...</p>
+        <p className="text-ink-secondary font-body">Carregando…</p>
       </div>
     )
   }
@@ -26,9 +26,9 @@ export default function TripGrid() {
 
   return (
     <ItineraryProvider tripId={trip.id}>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-paper-base">
         {/* Header */}
-        <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <header className="sticky top-0 z-40 bg-paper-base/95 backdrop-blur-sm border-b border-paper-line safe-top">
           <div className="container max-w-6xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
@@ -37,12 +37,12 @@ export default function TripGrid() {
                   className="p-2 hover:bg-secondary rounded-lg transition-colors"
                   aria-label="Voltar"
                 >
-                  <ArrowLeft className="w-5 h-5" />
+                  <ArrowLeft className="w-5 h-5" weight="bold" />
                 </Link>
                 <div>
-                  <h1 className="text-xl font-serif font-bold">{trip.name}</h1>
+                  <h1 className="text-xl font-sans font-bold">{trip.name}</h1>
                   {trip.description && (
-                    <p className="text-sm text-muted-foreground">{trip.description}</p>
+                    <p className="text-sm text-ink-secondary font-body">{trip.description}</p>
                   )}
                 </div>
               </div>
@@ -58,16 +58,16 @@ export default function TripGrid() {
             <nav className="flex gap-2 mt-4">
               <Link
                 to={`/itinerary/${tripId}`}
-                className="px-4 py-2 rounded-lg hover:bg-secondary text-foreground font-medium"
+                className="px-4 py-2 rounded-lg hover:bg-secondary text-ink-primary font-medium font-body"
               >
-                <Calendar className="w-4 h-4 inline mr-2" />
+                <CalendarBlank className="w-4 h-4 inline mr-2" weight="bold" />
                 Dia a Dia
               </Link>
               <Link
                 to={`/itinerary/${tripId}/grid`}
-                className="px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium"
+                className="px-4 py-2 rounded-lg bg-action-blue text-white font-medium font-body"
               >
-                <Grid3x3 className="w-4 h-4 inline mr-2" />
+                <SquaresFour className="w-4 h-4 inline mr-2" weight="bold" />
                 Grade
               </Link>
             </nav>

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router"
 import { useState } from "react"
 import { useTrips } from "~/features/itinerary"
-import { Plus, Archive, Copy, Trash2 } from "lucide-react"
+import { Plus, Archive, Copy, Trash } from "@phosphor-icons/react"
 import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
 import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
 
@@ -42,7 +42,7 @@ export default function ItineraryIndex() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-muted-foreground">Carregando...</p>
+        <p className="text-ink-secondary font-body">Carregando…</p>
       </div>
     )
   }
@@ -50,16 +50,16 @@ export default function ItineraryIndex() {
   return (
     <div className="container max-w-4xl mx-auto p-4 py-8">
       <header className="mb-8" data-testid="itinerary-header">
-        <h1 className="text-3xl font-serif font-bold mb-2">Minhas Viagens</h1>
-        <p className="text-muted-foreground">Organize seus roteiros de viagem</p>
+        <h1 className="text-3xl font-sans font-bold mb-2">Minhas Viagens</h1>
+        <p className="text-ink-secondary font-body">Organize seus roteiros de viagem</p>
       </header>
 
       <button
         onClick={() => setShowCreateDialog(true)}
-        className="w-full mb-8 p-4 border-2 border-dashed border-border rounded-xl hover:border-primary hover:bg-secondary/50 transition-colors flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
+        className="w-full mb-8 p-4 border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-secondary/50 transition-colors flex items-center justify-center gap-2 text-ink-secondary hover:text-ink-primary font-body"
         data-testid="create-trip-button"
       >
-        <Plus className="w-5 h-5" />
+        <Plus className="w-5 h-5" weight="bold" />
         Nova Viagem
       </button>
 
@@ -71,27 +71,27 @@ export default function ItineraryIndex() {
 
       {activeTrips.length === 0 && archivedTrips.length === 0 && (
         <div className="text-center py-16">
-          <p className="text-muted-foreground">Nenhuma viagem criada ainda.</p>
+          <p className="text-ink-secondary font-body">Nenhuma viagem criada ainda.</p>
         </div>
       )}
 
       {activeTrips.length > 0 && (
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Ativas</h2>
+          <h2 className="text-xl font-sans font-semibold mb-4">Ativas</h2>
           <div className="space-y-3">
             {activeTrips.map((trip) => (
               <div
                 key={trip.id}
-                className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow"
+                className="bg-paper-card border border-paper-line rounded-xl p-4 hover:shadow-md transition-shadow"
                 data-testid={`trip-card-${trip.id}`}
               >
                 <div className="flex items-start justify-between">
                   <Link to={`/itinerary/${trip.id}`} className="flex-1" data-testid={`trip-link-${trip.id}`}>
-                    <h3 className="font-semibold text-lg mb-1" data-testid={`trip-name-${trip.id}`}>{trip.name}</h3>
+                    <h3 className="font-sans font-semibold text-lg mb-1" data-testid={`trip-name-${trip.id}`}>{trip.name}</h3>
                     {trip.description && (
-                      <p className="text-sm text-muted-foreground mb-2">{trip.description}</p>
+                      <p className="text-sm text-ink-secondary mb-2 font-body">{trip.description}</p>
                     )}
-                    <div className="flex gap-4 text-xs text-muted-foreground">
+                    <div className="flex gap-4 text-xs text-ink-utility font-mono tabular-nums">
                       <span>{trip.days.length} dias</span>
                       <span>{trip.items.length} itens</span>
                     </div>
@@ -105,14 +105,14 @@ export default function ItineraryIndex() {
                       className="p-2 hover:bg-secondary rounded-lg transition-colors"
                       aria-label="Duplicar viagem"
                     >
-                      <Copy className="w-4 h-4" />
+                      <Copy className="w-4 h-4" weight="bold" />
                     </button>
                     <button
                       onClick={() => archiveTrip(trip.id)}
                       className="p-2 hover:bg-secondary rounded-lg transition-colors"
                       aria-label="Arquivar viagem"
                     >
-                      <Archive className="w-4 h-4" />
+                      <Archive className="w-4 h-4" weight="bold" />
                     </button>
                   </div>
                 </div>
@@ -124,17 +124,17 @@ export default function ItineraryIndex() {
 
       {archivedTrips.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold mb-4 text-muted-foreground">Arquivadas</h2>
+          <h2 className="text-xl font-sans font-semibold mb-4 text-ink-secondary">Arquivadas</h2>
           <div className="space-y-3">
             {archivedTrips.map((trip) => (
               <div
                 key={trip.id}
-                className="bg-card/50 border border-border rounded-xl p-4 opacity-60"
+                className="bg-paper-card/50 border border-paper-line rounded-xl p-4 opacity-60"
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">{trip.name}</h3>
-                    <div className="flex gap-4 text-xs text-muted-foreground">
+                    <h3 className="font-sans font-semibold text-lg mb-1">{trip.name}</h3>
+                    <div className="flex gap-4 text-xs text-ink-utility font-mono tabular-nums">
                       <span>{trip.days.length} dias</span>
                       <span>{trip.items.length} itens</span>
                     </div>
@@ -145,14 +145,14 @@ export default function ItineraryIndex() {
                       className="p-2 hover:bg-secondary rounded-lg transition-colors"
                       aria-label="Restaurar viagem"
                     >
-                      <Archive className="w-4 h-4" />
+                      <Archive className="w-4 h-4" weight="bold" />
                     </button>
                     <button
                       onClick={() => setDeleteConfirm({ open: true, tripId: trip.id })}
-                      className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
+                      className="p-2 hover:bg-stamp-brick/10 text-stamp-brick rounded-lg transition-colors"
                       aria-label="Deletar viagem"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash className="w-4 h-4" weight="bold" />
                     </button>
                   </div>
                 </div>

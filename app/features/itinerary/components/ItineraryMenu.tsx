@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Menu, Portal } from "@ark-ui/react"
 import { useItinerary } from "~/features/itinerary"
 import type { ItineraryItem, ItemStatus, ItemPriority } from "~/features/itinerary"
-import { MoreVertical, Edit, Trash2, CheckCircle, Circle, XCircle } from "lucide-react"
+import { DotsThreeVertical, PencilSimple, Trash, CheckCircle, Circle, ArrowsClockwise } from "@phosphor-icons/react"
 import { ItemDrawer } from "./ItemDrawer"
 
 interface ItineraryMenuProps {
@@ -37,55 +37,55 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
             aria-label="Mais opções"
             data-testid={`item-menu-${item.id}`}
           >
-            <MoreVertical className="w-4 h-4" />
+            <DotsThreeVertical className="w-4 h-4" weight="bold" />
           </button>
         </Menu.Trigger>
 
         <Portal>
           <Menu.Positioner>
-            <Menu.Content className="bg-popover border border-border rounded-lg shadow-lg p-1 min-w-[200px] z-50">
+            <Menu.Content className="bg-paper-card border border-paper-line rounded-lg shadow-lg p-1 min-w-[200px] z-50">
               {/* Edit */}
               <Menu.Item
                 id="edit"
-                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                 onClick={() => setDrawerOpen(true)}
               >
-                <Edit className="w-4 h-4" />
+                <PencilSimple className="w-4 h-4" weight="bold" />
                 <span>Editar</span>
               </Menu.Item>
 
-              <Menu.Separator className="h-px bg-border my-1" />
+              <Menu.Separator className="h-px bg-paper-line my-1" />
 
               {/* Status submenu */}
               <Menu.Root positioning={{ placement: "right-start" }}>
-                <Menu.TriggerItem className="flex items-center justify-between gap-2 px-3 py-2 rounded hover:bg-accent cursor-pointer">
+                <Menu.TriggerItem className="flex items-center justify-between gap-2 px-3 py-2 rounded hover:bg-secondary cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="w-4 h-4" weight="bold" />
                     <span>Status</span>
                   </div>
-                  <span className="text-xs">›</span>
+                  <span className="text-xs text-ink-utility">›</span>
                 </Menu.TriggerItem>
 
                 <Portal>
                   <Menu.Positioner>
-                    <Menu.Content className="bg-popover border border-border rounded-lg shadow-lg p-1 min-w-[160px] z-50">
+                    <Menu.Content className="bg-paper-card border border-paper-line rounded-lg shadow-lg p-1 min-w-[160px] z-50">
                       <Menu.Item
                         id="status-planned"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangeStatus("planned")}
                       >
                         Planejado
                       </Menu.Item>
                       <Menu.Item
                         id="status-done"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangeStatus("done")}
                       >
                         Feito
                       </Menu.Item>
                       <Menu.Item
                         id="status-skipped"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangeStatus("skipped")}
                       >
                         Pulado
@@ -97,34 +97,34 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
 
               {/* Priority submenu */}
               <Menu.Root positioning={{ placement: "right-start" }}>
-                <Menu.TriggerItem className="flex items-center justify-between gap-2 px-3 py-2 rounded hover:bg-accent cursor-pointer">
+                <Menu.TriggerItem className="flex items-center justify-between gap-2 px-3 py-2 rounded hover:bg-secondary cursor-pointer">
                   <div className="flex items-center gap-2">
-                    <Circle className="w-4 h-4" />
+                    <Circle className="w-4 h-4" weight="bold" />
                     <span>Prioridade</span>
                   </div>
-                  <span className="text-xs">›</span>
+                  <span className="text-xs text-ink-utility">›</span>
                 </Menu.TriggerItem>
 
                 <Portal>
                   <Menu.Positioner>
-                    <Menu.Content className="bg-popover border border-border rounded-lg shadow-lg p-1 min-w-[160px] z-50">
+                    <Menu.Content className="bg-paper-card border border-paper-line rounded-lg shadow-lg p-1 min-w-[160px] z-50">
                       <Menu.Item
                         id="priority-0"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangePriority(0)}
                       >
                         Normal
                       </Menu.Item>
                       <Menu.Item
                         id="priority-1"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangePriority(1)}
                       >
                         Importante
                       </Menu.Item>
                       <Menu.Item
                         id="priority-2"
-                        className="px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                        className="px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                         onClick={() => handleChangePriority(2)}
                       >
                         Imperdível
@@ -134,30 +134,30 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
                 </Portal>
               </Menu.Root>
 
-              <Menu.Separator className="h-px bg-border my-1" />
+              <Menu.Separator className="h-px bg-paper-line my-1" />
 
               {/* Convert quick to activity */}
               {isQuick && (
                 <>
                   <Menu.Item
                     id="convert"
-                    className="flex items-center gap-2 px-3 py-2 rounded hover:bg-accent cursor-pointer"
+                    className="flex items-center gap-2 px-3 py-2 rounded hover:bg-secondary cursor-pointer"
                     onClick={() => convertQuickToActivity(item.id)}
                   >
-                    <CheckCircle className="w-4 h-4" />
+                    <ArrowsClockwise className="w-4 h-4" weight="bold" />
                     <span>Converter para Atividade</span>
                   </Menu.Item>
-                  <Menu.Separator className="h-px bg-border my-1" />
+                  <Menu.Separator className="h-px bg-paper-line my-1" />
                 </>
               )}
 
               {/* Delete */}
               <Menu.Item
                 id="delete"
-                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-destructive/10 text-destructive cursor-pointer"
+                className="flex items-center gap-2 px-3 py-2 rounded hover:bg-stamp-brick/10 text-stamp-brick cursor-pointer"
                 onClick={handleDelete}
               >
-                <Trash2 className="w-4 h-4" />
+                <Trash className="w-4 h-4" weight="bold" />
                 <span>Deletar</span>
               </Menu.Item>
             </Menu.Content>

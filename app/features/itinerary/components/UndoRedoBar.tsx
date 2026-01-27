@@ -1,11 +1,11 @@
 import { useItinerary } from "~/features/itinerary"
-import { Undo, Redo } from "lucide-react"
+import { ArrowCounterClockwise, ArrowClockwise } from "@phosphor-icons/react"
 
 export function UndoRedoBar() {
   const { canUndo, canRedo, undo, redo } = useItinerary()
 
   return (
-    <div className="flex items-center gap-1 border border-border rounded-lg p-1">
+    <div className="flex items-center gap-1 border border-paper-line rounded-lg p-1">
       <button
         onClick={undo}
         disabled={!canUndo}
@@ -13,7 +13,7 @@ export function UndoRedoBar() {
         aria-label="Desfazer"
         data-testid="undo-button"
       >
-        <Undo className="w-4 h-4" />
+        <ArrowCounterClockwise className="w-4 h-4" weight="bold" />
       </button>
       <button
         onClick={redo}
@@ -22,7 +22,7 @@ export function UndoRedoBar() {
         aria-label="Refazer"
         data-testid="redo-button"
       >
-        <Redo className="w-4 h-4" />
+        <ArrowClockwise className="w-4 h-4" weight="bold" />
       </button>
     </div>
   )

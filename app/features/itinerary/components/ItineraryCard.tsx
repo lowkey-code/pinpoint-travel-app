@@ -1,8 +1,9 @@
 import type { RenderableItem, Segment } from "~/features/itinerary"
-import { isGhostItem, parseDurationText, formatDuration, parseCostText, formatCost, ITEM_TYPE_ICONS } from "~/features/itinerary"
+import { isGhostItem, ITEM_TYPE_ICONS } from "~/features/itinerary"
 import { cn } from "~/lib/utils"
 import { CardActions } from "./CardActions"
 import { ReorderControls } from "./ReorderControls"
+import { AirplaneTakeoff, AirplaneLanding } from "@phosphor-icons/react"
 
 interface ItineraryCardProps {
   item: RenderableItem
@@ -23,30 +24,29 @@ export function ItineraryCard({
   isLast = false,
   compact = false,
 }: ItineraryCardProps) {
-  // Ghost items (dayTrip coverage indicators or transport in transit)
   if (isGhostItem(item)) {
     const isTransport = item.isTransportGhost
     return (
       <div
         className={cn(
           "border-2 border-dashed rounded-xl",
-          isTransport ? "border-blue-500/50 bg-blue-500/10" : "border-muted bg-muted/30",
+          isTransport ? "border-action-blue/50 bg-action-blue/10" : "border-paper-line bg-secondary/30",
           compact ? "p-2" : "p-4"
         )}
         data-testid={`ghost-card-${item.parentId}`}
       >
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className={cn("italic", isTransport ? "text-blue-600 dark:text-blue-400" : "text-muted-foreground", compact ? "text-xs mb-0.5" : "text-sm mb-1")}>
-              {isTransport ? `✈️ Em trânsito` : item.title}
+            <p className={cn("italic font-body", isTransport ? "text-action-blue" : "text-ink-secondary", compact ? "text-xs mb-0.5" : "text-sm mb-1")}>
+              {isTransport ? `Em trânsito` : item.title}
             </p>
-            <span className={cn("text-xs px-2 py-0.5 rounded-full", isTransport ? "bg-blue-500/20 text-blue-700 dark:text-blue-300" : "bg-muted")}>
+            <span className={cn("text-xs px-2 py-0.5 rounded-full font-body", isTransport ? "bg-action-blue/20 text-action-blue" : "bg-secondary")}>
               {isTransport ? `Chegada em ${item.arrivalCity}` : "Dia Inteiro"}
             </span>
           </div>
           {!compact && (
             <button
-              className="text-xs text-primary hover:underline"
+              className="text-xs text-action-blue hover:underline font-body"
               aria-label="Ver item principal"
             >
               Ver principal →
@@ -57,11 +57,10 @@ export function ItineraryCard({
     )
   }
 
-  // Regular items - Pinterest-style
   return (
     <div
       className={cn(
-        "bg-card border border-border rounded-xl shadow-sm hover:shadow-md transition-shadow",
+        "bg-paper-card border border-paper-line rounded-xl shadow-sm hover:shadow-md transition-shadow relative",
         compact ? "p-3" : "p-4"
       )}
       data-testid={`itinerary-card-${item.id}`}
@@ -69,7 +68,7 @@ export function ItineraryCard({
       {/* City color indicator (left border) */}
       {item.city && (
         <div
-          className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-l-xl"
+          className="absolute left-0 top-0 bottom-0 w-1 bg-action-blue rounded-l-xl"
           title={item.city}
         />
       )}
@@ -91,19 +90,19 @@ export function ItineraryCard({
                 {item.icon || ITEM_TYPE_ICONS[item.itemType]}
               </span>
             )}
-            <h3 className={cn("font-semibold", compact ? "text-sm leading-tight" : "text-base")}>
+            <h3 className={cn("font-sans font-semibold", compact ? "text-sm leading-tight" : "text-base")}>
               {item.title || "Sem título"}
             </h3>
           </div>
 
           {/* Transport multi-day info */}
           {item.itemType === "transport" && item.isMultiDayTransport && !compact && (
-            <div className="space-y-2 text-sm">
-              <div className="flex items-start gap-2 text-muted-foreground">
-                <span>🛫</span>
+            <div className="space-y-2 text-sm font-body">
+              <div className="flex items-start gap-2 text-ink-secondary">
+                <AirplaneTakeoff className="w-4 h-4 mt-0.5" weight="bold" />
                 <div>
-                  <p className="font-medium text-foreground">{item.originCity}</p>
-                  <p className="text-xs">
+                  <p className="font-medium text-ink-primary">{item.originCity}</p>
+                  <p className="text-xs font-mono tabular-nums">
                     {item.departureDateTime && new Date(item.departureDateTime).toLocaleString("pt-BR", {
                       day: "2-digit",
                       month: "short",
@@ -113,11 +112,11 @@ export function ItineraryCard({
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-2 text-muted-foreground">
-                <span>🛬</span>
+              <div className="flex items-start gap-2 text-ink-secondary">
+                <AirplaneLanding className="w-4 h-4 mt-0.5" weight="bold" />
                 <div>
-                  <p className="font-medium text-foreground">{item.destinationCity}</p>
-                  <p className="text-xs">
+                  <p className="font-medium text-ink-primary">{item.destinationCity}</p>
+                  <p className="text-xs font-mono tabular-nums">
                     {item.arrivalDateTime && new Date(item.arrivalDateTime).toLocaleString("pt-BR", {
                       day: "2-digit",
                       month: "short",
@@ -132,19 +131,19 @@ export function ItineraryCard({
 
           {/* Meta row */}
           {(item.timeLabel || item.durationText || item.costText) && (
-            <div className={cn("flex flex-wrap text-muted-foreground", compact ? "gap-2 text-xs" : "gap-3 text-sm")}>
+            <div className={cn("flex flex-wrap text-ink-secondary font-body", compact ? "gap-2 text-xs" : "gap-3 text-sm")}>
               {item.timeLabel && (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 font-mono tabular-nums">
                   🕐 {item.timeLabel}
                 </span>
               )}
               {item.durationText && (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 font-mono tabular-nums">
                   ⏱️ {item.durationText}
                 </span>
               )}
               {item.costText && (
-                <span className="flex items-center gap-1">
+                <span className="flex items-center gap-1 font-mono tabular-nums">
                   💰 {item.costText}
                 </span>
               )}
@@ -153,7 +152,7 @@ export function ItineraryCard({
 
           {/* City info */}
           {item.city && !compact && (
-            <div className="text-xs text-muted-foreground space-y-1">
+            <div className="text-xs text-ink-secondary space-y-1 font-body">
               <div className="flex items-center gap-1">
                 <span className="bg-secondary px-2 py-0.5 rounded-full">
                   📍 {item.city}
@@ -164,7 +163,7 @@ export function ItineraryCard({
 
           {/* DayTrip badge */}
           {item.isDayTrip && !compact && (
-            <span className="inline-block text-xs bg-primary/10 text-primary px-2 py-1 rounded-full font-medium">
+            <span className="inline-block text-xs bg-action-blue/10 text-action-blue px-2 py-1 rounded-full font-medium font-body">
               Dia Inteiro
             </span>
           )}

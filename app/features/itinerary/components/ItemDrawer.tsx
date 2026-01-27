@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
-import { useItinerary, SEGMENTS, SEGMENT_LABELS, extractDate, daysBetween, today } from "~/features/itinerary"
-import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType, Day } from "~/features/itinerary"
-import { X, ArrowRight } from "lucide-react"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS, extractDate, daysBetween } from "~/features/itinerary"
+import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
+import { X, ArrowRight } from "@phosphor-icons/react"
 import { TypeSelector } from "./TypeSelector"
 import { StayFields } from "./StayFields"
 import { TransportFields } from "./TransportFields"
@@ -36,14 +36,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const [isDayTrip, setIsDayTrip] = useState(false)
   const [coversSegments, setCoversSegments] = useState<Segment[]>([])
   const [breakfastIncluded, setBreakfastIncluded] = useState(false)
-  // Transport fields
   const [departureDateTime, setDepartureDateTime] = useState("")
   const [arrivalDateTime, setArrivalDateTime] = useState("")
   const [originCity, setOriginCity] = useState("")
   const [destinationCity, setDestinationCity] = useState("")
   const [transportError, setTransportError] = useState("")
 
-  // Load item data for editing
   useEffect(() => {
     if (item) {
       setItemType(item.itemType)
@@ -63,7 +61,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       setIsDayTrip(item.isDayTrip || false)
       setCoversSegments(item.coversSegments || [])
       setBreakfastIncluded(item.breakfastIncluded || false)
-      // Transport fields
       setDepartureDateTime(item.departureDateTime || "")
       setArrivalDateTime(item.arrivalDateTime || "")
       setOriginCity(item.originCity || "")
@@ -71,7 +68,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     }
   }, [item, open])
 
-  // Auto-set isDayTrip when type is "dayTrip"
   useEffect(() => {
     if (itemType === "dayTrip") {
       setIsDayTrip(true)
@@ -82,19 +78,16 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   }, [itemType])
 
   const handleSave = () => {
-    // Validation: title required unless quick type
     if (itemType !== "quick" && !title.trim()) {
       return
     }
 
-    // Validation: transport requires all fields
     if (itemType === "transport") {
       if (!departureDateTime || !arrivalDateTime || !originCity.trim() || !destinationCity.trim()) {
         setTransportError("Todos os campos de transporte são obrigatórios")
         return
       }
 
-      // Validate arrival is after departure
       if (arrivalDateTime <= departureDateTime) {
         setTransportError("A chegada deve ser posterior à partida")
         return
@@ -104,7 +97,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     const parsedLat = lat ? parseFloat(lat) : undefined
     const parsedLng = lng ? parseFloat(lng) : undefined
 
-    // Calculate arrivalDayIndex for multi-day transport
     let arrivalDayIndex: number | undefined
     let isMultiDayTransport = false
 
@@ -114,7 +106,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
       if (departureDate !== arrivalDate && trip.startDate) {
         isMultiDayTransport = true
-        // Calculate day index based on trip start date
         const daysFromStart = daysBetween(trip.startDate, arrivalDate) - 1
         arrivalDayIndex = daysFromStart
       }
@@ -139,7 +130,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       primarySegment: isDayTrip ? segment : undefined,
       coversSegments: isDayTrip && coversSegments.length > 0 ? coversSegments : undefined,
       breakfastIncluded: itemType === "stay" ? breakfastIncluded : undefined,
-      // Transport fields
       isMultiDayTransport: isMultiDayTransport || undefined,
       departureDateTime: itemType === "transport" ? departureDateTime : undefined,
       arrivalDateTime: itemType === "transport" ? arrivalDateTime : undefined,
@@ -159,7 +149,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
   const handleClose = () => {
     onOpenChange(false)
-    // Reset form
     setItemType("activity")
     setTitle("")
     setIcon("")
@@ -205,11 +194,11 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       <Portal>
         <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-40" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-end">
-          <Dialog.Content className="bg-background w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto" data-testid="item-drawer">
+          <Dialog.Content className="bg-paper-base w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto" data-testid={item ? `edit-item-drawer-${item.id}` : "item-drawer"}>
             {/* Header */}
-            <div className="sticky top-0 bg-background border-b border-border p-4 z-10">
+            <div className="sticky top-0 bg-paper-base border-b border-paper-line p-4 z-10">
               <div className="flex items-center justify-between">
-                <Dialog.Title className="text-xl font-serif font-bold">
+                <Dialog.Title className="text-xl font-sans font-bold">
                   {item ? "Editar Item" : "Novo Item"}
                 </Dialog.Title>
                 <Dialog.CloseTrigger asChild>
@@ -217,22 +206,21 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                     className="p-2 hover:bg-secondary rounded-lg tap-target"
                     aria-label="Fechar"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-5 h-5" weight="bold" />
                   </button>
                 </Dialog.CloseTrigger>
               </div>
-              {/* Convert quick to activity banner */}
               {isQuickItem && (
-                <div className="mt-3 p-3 bg-primary/10 border border-primary/20 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">
+                <div className="mt-3 p-3 bg-action-blue/10 border border-action-blue/20 rounded-lg">
+                  <p className="text-sm text-ink-secondary mb-2 font-body">
                     Este é um item rápido. Converta para atividade para adicionar mais detalhes.
                   </p>
                   <button
                     type="button"
                     onClick={handleConvertToActivity}
-                    className="text-sm text-primary hover:underline flex items-center gap-1 font-medium"
+                    className="text-sm text-action-blue hover:underline flex items-center gap-1 font-medium"
                   >
-                    Converter para Atividade <ArrowRight className="w-3 h-3" />
+                    Converter para Atividade <ArrowRight className="w-3 h-3" weight="bold" />
                   </button>
                 </div>
               )}
@@ -240,26 +228,25 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
             {/* Form */}
             <div className="p-4 space-y-4">
-              {/* Type selector */}
               <TypeSelector value={itemType} onChange={setItemType} />
 
               {/* Title */}
               <div>
-                <label className="block text-sm font-medium mb-1">
-                  Título {isTitleRequired && <span className="text-destructive">*</span>}
+                <label className="block text-sm font-medium mb-1 font-body">
+                  Título {isTitleRequired && <span className="text-stamp-brick">*</span>}
                 </label>
                 <input
                   type="text"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
                   placeholder={itemType === "quick" ? "Opcional para items rápidos" : "Nome do lugar ou atividade"}
                   aria-required={isTitleRequired}
                   aria-invalid={isTitleRequired && !title.trim()}
                   data-testid="item-title-input"
                 />
                 {isTitleRequired && !title.trim() && (
-                  <p className="text-xs text-destructive mt-1" role="alert">
+                  <p className="text-xs text-stamp-brick mt-1" role="alert">
                     Título é obrigatório
                   </p>
                 )}
@@ -267,12 +254,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
               {/* Icon */}
               <div>
-                <label className="block text-sm font-medium mb-1">Ícone (emoji)</label>
+                <label className="block text-sm font-medium mb-1 font-body">Ícone (emoji)</label>
                 <input
                   type="text"
                   value={icon}
                   onChange={(e) => setIcon(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none"
                   placeholder="🍕"
                   maxLength={2}
                   aria-label="Ícone emoji"
@@ -282,7 +269,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
               {/* Time & Duration */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="time-label" className="block text-sm font-medium mb-1">
+                  <label htmlFor="time-label" className="block text-sm font-medium mb-1 font-body">
                     Horário
                   </label>
                   <input
@@ -290,12 +277,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                     type="text"
                     value={timeLabel}
                     onChange={(e) => setTimeLabel(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
                     placeholder="09:00"
                   />
                 </div>
                 <div>
-                  <label htmlFor="duration-text" className="block text-sm font-medium mb-1">
+                  <label htmlFor="duration-text" className="block text-sm font-medium mb-1 font-body">
                     Duração
                   </label>
                   <input
@@ -303,7 +290,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                     type="text"
                     value={durationText}
                     onChange={(e) => setDurationText(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
                     placeholder="2h 30min"
                   />
                 </div>
@@ -311,7 +298,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
               {/* Cost */}
               <div>
-                <label htmlFor="cost-text" className="block text-sm font-medium mb-1">
+                <label htmlFor="cost-text" className="block text-sm font-medium mb-1 font-body">
                   Custo
                 </label>
                 <input
@@ -319,14 +306,14 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   type="text"
                   value={costText}
                   onChange={(e) => setCostText(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
                   placeholder="R$ 50,00"
                 />
               </div>
 
               {/* City */}
               <div>
-                <label htmlFor="city" className="block text-sm font-medium mb-1">
+                <label htmlFor="city" className="block text-sm font-medium mb-1 font-body">
                   Cidade
                 </label>
                 <input
@@ -334,14 +321,14 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
                   placeholder="São Paulo"
                 />
               </div>
 
               {/* Address */}
               <div>
-                <label htmlFor="address-text" className="block text-sm font-medium mb-1">
+                <label htmlFor="address-text" className="block text-sm font-medium mb-1 font-body">
                   Endereço
                 </label>
                 <input
@@ -349,7 +336,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   type="text"
                   value={addressText}
                   onChange={(e) => setAddressText(e.target.value)}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
                   placeholder="Rua, número, bairro"
                   data-testid="item-address-input"
                 />
@@ -358,7 +345,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
               {/* Coordinates */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="lat" className="block text-sm font-medium mb-1">
+                  <label htmlFor="lat" className="block text-sm font-medium mb-1 font-body">
                     Latitude
                   </label>
                   <input
@@ -367,12 +354,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                     inputMode="decimal"
                     value={lat}
                     onChange={(e) => setLat(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
                     placeholder="-23.550520"
                   />
                 </div>
                 <div>
-                  <label htmlFor="lng" className="block text-sm font-medium mb-1">
+                  <label htmlFor="lng" className="block text-sm font-medium mb-1 font-body">
                     Longitude
                   </label>
                   <input
@@ -381,18 +368,17 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                     inputMode="decimal"
                     value={lng}
                     onChange={(e) => setLng(e.target.value)}
-                    className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
+                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
                     placeholder="-46.633308"
                   />
                 </div>
               </div>
 
-              {/* Links */}
               <LinksEditor links={links} onChange={setLinks} />
 
               {/* Notes */}
               <div>
-                <label htmlFor="notes" className="block text-sm font-medium mb-1">
+                <label htmlFor="notes" className="block text-sm font-medium mb-1 font-body">
                   Observações
                 </label>
                 <textarea
@@ -400,24 +386,24 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   rows={3}
-                  className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none resize-none"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none resize-none font-body"
                   placeholder="Notas adicionais…"
                 />
               </div>
 
               {/* Status */}
               <div>
-                <label className="block text-sm font-medium mb-2">Status</label>
+                <label className="block text-sm font-medium mb-2 font-body">Status</label>
                 <div className="flex gap-2">
                   {(["planned", "done", "skipped"] as ItemStatus[]).map((s) => (
                     <button
                       key={s}
                       type="button"
                       onClick={() => setStatus(s)}
-                      className={`px-4 py-2 rounded-lg border transition-colors ${
+                      className={`px-4 py-2 rounded-lg border transition-colors font-body ${
                         status === s
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:bg-secondary"
+                          ? "bg-action-blue text-white border-action-blue"
+                          : "border-paper-line hover:bg-secondary"
                       }`}
                     >
                       {s === "planned" && "Planejado"}
@@ -430,17 +416,17 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
               {/* Priority */}
               <div>
-                <label className="block text-sm font-medium mb-2">Prioridade</label>
+                <label className="block text-sm font-medium mb-2 font-body">Prioridade</label>
                 <div className="flex gap-2">
                   {([0, 1, 2] as ItemPriority[]).map((p) => (
                     <button
                       key={p}
                       type="button"
                       onClick={() => setPriority(p)}
-                      className={`px-4 py-2 rounded-lg border transition-colors ${
+                      className={`px-4 py-2 rounded-lg border transition-colors font-body ${
                         priority === p
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "border-border hover:bg-secondary"
+                          ? "bg-action-blue text-white border-action-blue"
+                          : "border-paper-line hover:bg-secondary"
                       }`}
                     >
                       {p === 0 && "Normal"}
@@ -451,7 +437,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 </div>
               </div>
 
-              {/* Stay-specific fields */}
               {itemType === "stay" && (
                 <StayFields
                   breakfastIncluded={breakfastIncluded}
@@ -459,7 +444,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 />
               )}
 
-              {/* Transport-specific fields */}
               {itemType === "transport" && (
                 <TransportFields
                   departureDateTime={departureDateTime}
@@ -474,11 +458,10 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 />
               )}
 
-              {/* Day Trip (only for dayTrip type) */}
               {itemType === "dayTrip" && (
-                <div className="space-y-3 p-3 border border-border rounded-lg bg-muted/30">
-                  <p className="text-sm font-medium">Períodos cobertos pelo Dia Inteiro</p>
-                  <p className="text-xs text-muted-foreground">
+                <div className="space-y-3 p-3 border border-paper-line rounded-lg bg-secondary/30">
+                  <p className="text-sm font-medium font-body">Períodos cobertos pelo Dia Inteiro</p>
+                  <p className="text-xs text-ink-secondary font-body">
                     Este item aparece no período <strong>{SEGMENT_LABELS[segment]}</strong> (principal).
                     Selecione períodos adicionais que ele cobre:
                   </p>
@@ -489,12 +472,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                         type="button"
                         onClick={() => toggleSegment(seg)}
                         disabled={seg === segment}
-                        className={`px-3 py-2 rounded-lg border text-sm transition-colors ${
+                        className={`px-3 py-2 rounded-lg border text-sm transition-colors font-body ${
                           seg === segment
-                            ? "bg-primary text-primary-foreground border-primary"
+                            ? "bg-action-blue text-white border-action-blue"
                             : coversSegments.includes(seg)
-                            ? "bg-secondary border-primary"
-                            : "border-border hover:bg-secondary"
+                            ? "bg-secondary border-action-blue"
+                            : "border-paper-line hover:bg-secondary"
                         }`}
                         data-testid={`daytrip-segment-${seg}`}
                       >
@@ -507,11 +490,11 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
             </div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-background border-t border-border p-4 flex gap-3 z-10">
+            <div className="sticky bottom-0 bg-paper-base border-t border-paper-line p-4 flex gap-3 z-10 safe-bottom">
               <button
                 type="button"
                 onClick={handleClose}
-                className="flex-1 px-4 py-3 rounded-lg border border-border hover:bg-secondary transition-colors tap-target"
+                className="flex-1 px-4 py-3 rounded-lg border border-paper-line hover:bg-secondary transition-colors tap-target font-body"
               >
                 Cancelar
               </button>
@@ -519,7 +502,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 type="button"
                 onClick={handleSave}
                 disabled={!canSave}
-                className="flex-1 px-4 py-3 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors tap-target"
+                className="flex-1 px-4 py-3 rounded-lg bg-action-blue text-white hover:bg-action-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors tap-target font-body"
                 data-testid="save-item"
               >
                 {item ? "Salvar" : "Adicionar"}

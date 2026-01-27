@@ -42,9 +42,9 @@ export const STATUS_LABELS: Record<ItemStatus, string> = {
 }
 
 export const STATUS_COLORS: Record<ItemStatus, string> = {
-  planned: "text-muted-foreground",
-  done: "text-green-600 dark:text-green-400",
-  skipped: "text-orange-600 dark:text-orange-400",
+  planned: "text-stamp-navy",
+  done: "text-stamp-sage",
+  skipped: "text-stamp-amber",
 }
 
 // Priority (0 = normal, 1 = important, 2 = must-do)
@@ -55,9 +55,9 @@ export const PRIORITY_LABELS: Record<ItemPriority, string> = {
 }
 
 export const PRIORITY_COLORS: Record<ItemPriority, string> = {
-  0: "bg-muted",
-  1: "bg-yellow-100 dark:bg-yellow-900/30",
-  2: "bg-red-100 dark:bg-red-900/30",
+  0: "bg-secondary",
+  1: "bg-stamp-amber/10",
+  2: "bg-stamp-brick/10",
 }
 
 // Storage

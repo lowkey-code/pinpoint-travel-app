@@ -1,4 +1,4 @@
-import { Sun, Moon, Monitor } from "lucide-react"
+import { Sun, Moon, Desktop } from "@phosphor-icons/react"
 import { useTheme } from "~/hooks/use-theme"
 
 export function ThemeToggle() {
@@ -23,9 +23,9 @@ export function ThemeToggle() {
           : "Modo sistema"
       }
     >
-      {theme === "light" && <Sun className="w-5 h-5" />}
-      {theme === "dark" && <Moon className="w-5 h-5" />}
-      {theme === "system" && <Monitor className="w-5 h-5" />}
+      {theme === "light" && <Sun className="w-5 h-5" weight="bold" />}
+      {theme === "dark" && <Moon className="w-5 h-5" weight="bold" />}
+      {theme === "system" && <Desktop className="w-5 h-5" weight="bold" />}
     </button>
   )
 }

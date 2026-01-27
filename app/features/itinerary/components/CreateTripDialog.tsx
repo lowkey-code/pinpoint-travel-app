@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react"
 import { Dialog } from "~/components/ui/Dialog"
 import { Input, Textarea } from "~/components/ui/Input"
-import { Plane } from "lucide-react"
+import { Airplane } from "@phosphor-icons/react"
 
 interface CreateTripDialogProps {
   open: boolean
@@ -44,7 +44,6 @@ export function CreateTripDialog({ open, onOpenChange, onCreate }: CreateTripDia
       endDate: endDate || undefined,
     })
 
-    // Reset form
     setName("")
     setDescription("")
     setStartDate("")
@@ -56,7 +55,6 @@ export function CreateTripDialog({ open, onOpenChange, onCreate }: CreateTripDia
 
   const handleOpenChange = (open: boolean) => {
     if (!open) {
-      // Reset form on close
       setName("")
       setDescription("")
       setStartDate("")
@@ -119,7 +117,7 @@ export function CreateTripDialog({ open, onOpenChange, onCreate }: CreateTripDia
           <button
             type="button"
             onClick={() => handleOpenChange(false)}
-            className="px-4 py-2 rounded-lg border border-border hover:bg-secondary transition-colors"
+            className="px-4 py-2 rounded-lg border border-paper-line hover:bg-secondary transition-colors font-body"
             disabled={isSubmitting}
           >
             Cancelar
@@ -127,9 +125,9 @@ export function CreateTripDialog({ open, onOpenChange, onCreate }: CreateTripDia
           <button
             type="submit"
             disabled={isSubmitting}
-            className="px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 rounded-lg bg-action-blue text-white hover:bg-action-hover transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed font-body"
           >
-            <Plane className="w-4 h-4" />
+            <Airplane className="w-4 h-4" weight="bold" />
             Criar Viagem
           </button>
         </div>
