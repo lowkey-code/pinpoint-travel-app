@@ -1,30 +1,46 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, type ReactNode } from "react"
 import type { Trip, ItineraryItem, Day, Segment, UndoStack, ItineraryState } from "../lib/types"
 import { loadState, saveStateDebounced, flushPendingWrites } from "../lib/storage"
 import { createItem, createDay, reindexDays, updateItemDayIndices } from "../lib/utils"
-import { useUndoRedo, applyUndoAction, applyRedoAction } from "./useUndoRedo"
+import { useUndoRedo, applyUndoAction, applyRedoAction } from "../hooks/useUndoRedo"
 
-export interface UseActiveTripReturn {
+interface ItineraryContextValue {
+  // Current trip data
   trip: Trip | null
   items: ItineraryItem[]
   days: Day[]
   isLoading: boolean
+
+  // Item operations
   addItem: (dayIndex: number, segment: Segment, data: Partial<ItineraryItem>) => ItineraryItem
   updateItem: (itemId: string, updates: Partial<ItineraryItem>) => void
   deleteItem: (itemId: string) => void
   moveItem: (itemId: string, toDay: number, toSegment: Segment) => void
   convertQuickToActivity: (itemId: string) => void
+
+  // Day operations
   addDay: (date?: string) => Day
   deleteDay: (dayIndex: number) => void
   updateDay: (dayIndex: number, updates: Partial<Day>) => void
+
+  // Undo/Redo
   canUndo: boolean
   canRedo: boolean
   undo: () => void
   redo: () => void
+
+  // Utilities
   refresh: () => void
 }
 
-export function useActiveTrip(overrideTripId?: string): UseActiveTripReturn {
+const ItineraryContext = createContext<ItineraryContextValue | null>(null)
+
+interface ItineraryProviderProps {
+  tripId: string
+  children: ReactNode
+}
+
+export function ItineraryProvider({ tripId, children }: ItineraryProviderProps) {
   const [state, setState] = useState<ItineraryState | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
@@ -39,36 +55,34 @@ export function useActiveTrip(overrideTripId?: string): UseActiveTripReturn {
 
   useEffect(() => () => flushPendingWrites(), [])
 
-  // Use override tripId if provided, otherwise fall back to state's activeTripId
-  const activeTripId = overrideTripId ?? state?.activeTripId ?? null
-  const trip = useMemo(() => state?.trips.find((t) => t.id === activeTripId) ?? null, [state?.trips, activeTripId])
+  const trip = useMemo(() => state?.trips.find((t) => t.id === tripId) ?? null, [state?.trips, tripId])
   const items = trip?.items ?? []
   const days = trip?.days ?? []
 
   const undoStack: UndoStack = useMemo(() => {
-    if (!activeTripId || !state?.undoStacks) return { past: [], future: [] }
-    return state.undoStacks[activeTripId] ?? { past: [], future: [] }
-  }, [activeTripId, state?.undoStacks])
+    if (!tripId || !state?.undoStacks) return { past: [], future: [] }
+    return state.undoStacks[tripId] ?? { past: [], future: [] }
+  }, [tripId, state?.undoStacks])
 
   const onStackChange = useCallback((newStack: UndoStack) => {
-    if (!activeTripId) return
-    setState((prev) => prev ? { ...prev, undoStacks: { ...prev.undoStacks, [activeTripId]: newStack } } : prev)
-  }, [activeTripId])
+    if (!tripId) return
+    setState((prev) => prev ? { ...prev, undoStacks: { ...prev.undoStacks, [tripId]: newStack } } : prev)
+  }, [tripId])
 
   const { canUndo, canRedo, pushAction, undo: undoAction, redo: redoAction } = useUndoRedo({ undoStack, onStackChange })
 
   const updateActiveTrip = useCallback((updater: (trip: Trip) => Trip) => {
-    if (!activeTripId) return
-    setState((prev) => prev ? { ...prev, trips: prev.trips.map((t) => (t.id === activeTripId ? updater(t) : t)) } : prev)
-  }, [activeTripId])
+    if (!tripId) return
+    setState((prev) => prev ? { ...prev, trips: prev.trips.map((t) => (t.id === tripId ? updater(t) : t)) } : prev)
+  }, [tripId])
 
   const addItem = useCallback((dayIndex: number, segment: Segment, data: Partial<ItineraryItem>): ItineraryItem => {
-    if (!activeTripId) throw new Error("No active trip")
-    const newItem = createItem(activeTripId, dayIndex, segment, data)
+    if (!tripId) throw new Error("No active trip")
+    const newItem = createItem(tripId, dayIndex, segment, data)
     pushAction({ type: "ADD_ITEM", item: newItem })
     updateActiveTrip((t) => ({ ...t, items: [...t.items, newItem], updatedAt: Date.now() }))
     return newItem
-  }, [activeTripId, pushAction, updateActiveTrip])
+  }, [tripId, pushAction, updateActiveTrip])
 
   const updateItem = useCallback((itemId: string, updates: Partial<ItineraryItem>): void => {
     if (!trip) return
@@ -150,5 +164,42 @@ export function useActiveTrip(overrideTripId?: string): UseActiveTripReturn {
 
   const refresh = useCallback((): void => setState(loadState()), [])
 
-  return { trip, items, days, isLoading, addItem, updateItem, deleteItem, moveItem, convertQuickToActivity, addDay, deleteDay, updateDay, canUndo, canRedo, undo, redo, refresh }
+  const value = useMemo(() => ({
+    trip,
+    items,
+    days,
+    isLoading,
+    addItem,
+    updateItem,
+    deleteItem,
+    moveItem,
+    convertQuickToActivity,
+    addDay,
+    deleteDay,
+    updateDay,
+    canUndo,
+    canRedo,
+    undo,
+    redo,
+    refresh,
+  }), [
+    trip, items, days, isLoading,
+    addItem, updateItem, deleteItem, moveItem, convertQuickToActivity,
+    addDay, deleteDay, updateDay,
+    canUndo, canRedo, undo, redo, refresh
+  ])
+
+  return (
+    <ItineraryContext.Provider value={value}>
+      {children}
+    </ItineraryContext.Provider>
+  )
+}
+
+export function useItinerary(): ItineraryContextValue {
+  const context = useContext(ItineraryContext)
+  if (!context) {
+    throw new Error("useItinerary must be used within an ItineraryProvider")
+  }
+  return context
 }

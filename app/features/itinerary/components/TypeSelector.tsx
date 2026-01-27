@@ -27,6 +27,7 @@ export function TypeSelector({ value, onChange, disabled = false }: TypeSelector
                     : "border-border hover:bg-secondary"
                 }`}
                 disabled={disabled}
+                data-testid={`item-type-${type}`}
               >
                 <span>{ITEM_TYPE_ICONS[type]}</span>
                 <span>{ITEM_TYPE_LABELS[type]}</span>

@@ -1,22 +1,18 @@
 import { useState } from "react"
-import { useActiveTrip, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment } from "~/features/itinerary"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
 import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
 import type { Segment } from "~/features/itinerary"
 
-interface DayViewProps {
-  tripId: string
-}
-
-export function DayView({ tripId }: DayViewProps) {
-  const { trip, items, days } = useActiveTrip()
+export function DayView() {
+  const { trip, items, days, isLoading } = useItinerary()
   const [selectedDayIndex, setSelectedDayIndex] = useState(0)
   const [selectedSegment, setSelectedSegment] = useState<Segment>("morning")
   const [reorderMode, setReorderMode] = useState(false)
   const [drawerOpen, setDrawerOpen] = useState(false)
 
-  if (!trip || trip.id !== tripId) {
+  if (isLoading || !trip) {
     return <p className="text-muted-foreground">Carregando viagem...</p>
   }
 
@@ -32,12 +28,13 @@ export function DayView({ tripId }: DayViewProps) {
           disabled={selectedDayIndex === 0}
           className="p-3 rounded-lg hover:bg-secondary disabled:opacity-30 disabled:cursor-not-allowed tap-target"
           aria-label="Dia anterior"
+          data-testid="prev-day-button"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        <div className="text-center flex-1">
-          <h2 className="text-xl font-serif font-bold">
+        <div className="text-center flex-1" data-testid="current-day-header">
+          <h2 className="text-xl font-serif font-bold" data-testid="current-day-label">
             {currentDay?.label || `Dia ${selectedDayIndex + 1}`}
           </h2>
           {currentDay?.date && (
@@ -61,6 +58,7 @@ export function DayView({ tripId }: DayViewProps) {
           disabled={selectedDayIndex === days.length - 1}
           className="p-3 rounded-lg hover:bg-secondary disabled:opacity-30 disabled:cursor-not-allowed tap-target"
           aria-label="Próximo dia"
+          data-testid="next-day-button"
         >
           <ChevronRight className="w-5 h-5" />
         </button>

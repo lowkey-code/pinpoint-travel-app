@@ -1,6 +1,7 @@
 import { useState, useRef } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
-import { useTrips, CURRENT_SCHEMA_VERSION } from "~/features/itinerary"
+import { useTrips, useItinerary, CURRENT_SCHEMA_VERSION, exportTrip as exportTripToJson } from "~/features/itinerary"
+import type { Trip } from "~/features/itinerary"
 import { Download, Upload, X, FileJson, Check, AlertCircle } from "lucide-react"
 import { useToast } from "~/hooks/use-toast"
 
@@ -20,7 +21,9 @@ interface ImportPreview {
 }
 
 export function ExportImport({ tripId }: ExportImportProps) {
-  const { exportTrip, importTrip, trips } = useTrips()
+  const { importTrip, trips } = useTrips()
+  // Use the context's trip data which is always current
+  const { trip: currentTrip } = useItinerary()
   const toast = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -31,12 +34,13 @@ export function ExportImport({ tripId }: ExportImportProps) {
   const [errorMessage, setErrorMessage] = useState<string>("")
 
   const handleExport = () => {
-    const exported = exportTrip(tripId)
-    if (!exported) {
+    // Use the current trip from context (most up-to-date)
+    if (!currentTrip || currentTrip.id !== tripId) {
       toast.error("Erro ao exportar viagem")
       return
     }
 
+    const exported = exportTripToJson(currentTrip)
     const json = JSON.stringify(exported, null, 2)
     const blob = new Blob([json], { type: "application/json" })
     const url = URL.createObjectURL(blob)

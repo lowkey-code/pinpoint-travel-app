@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Menu, Portal } from "@ark-ui/react"
-import { useActiveTrip } from "~/features/itinerary"
+import { useItinerary } from "~/features/itinerary"
 import type { ItineraryItem, ItemStatus, ItemPriority } from "~/features/itinerary"
 import { MoreVertical, Edit, Trash2, CheckCircle, Circle, XCircle } from "lucide-react"
 import { ItemDrawer } from "./ItemDrawer"
@@ -10,7 +10,7 @@ interface ItineraryMenuProps {
 }
 
 export function ItineraryMenu({ item }: ItineraryMenuProps) {
-  const { updateItem, deleteItem, convertQuickToActivity } = useActiveTrip()
+  const { updateItem, deleteItem, convertQuickToActivity } = useItinerary()
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isQuick = item.itemType === "quick"
 

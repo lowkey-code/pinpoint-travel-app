@@ -1,5 +1,5 @@
 import type { ItineraryItem, Segment } from "~/features/itinerary"
-import { useActiveTrip } from "~/features/itinerary"
+import { useItinerary } from "~/features/itinerary"
 import { ChevronUp, ChevronDown, ArrowUp, ArrowDown } from "lucide-react"
 
 interface ReorderControlsProps {
@@ -11,7 +11,7 @@ interface ReorderControlsProps {
 }
 
 export function ReorderControls({ item, dayIndex, segment, isFirst, isLast }: ReorderControlsProps) {
-  const { updateItem, moveItem, days } = useActiveTrip()
+  const { updateItem, moveItem, days } = useItinerary()
 
   const handleMoveUp = () => {
     // Swap with previous item by updating timestamps

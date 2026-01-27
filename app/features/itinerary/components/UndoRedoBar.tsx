@@ -1,8 +1,8 @@
-import { useActiveTrip } from "~/features/itinerary"
+import { useItinerary } from "~/features/itinerary"
 import { Undo, Redo } from "lucide-react"
 
 export function UndoRedoBar() {
-  const { canUndo, canRedo, undo, redo } = useActiveTrip()
+  const { canUndo, canRedo, undo, redo } = useItinerary()
 
   return (
     <div className="flex items-center gap-1 border border-border rounded-lg p-1">

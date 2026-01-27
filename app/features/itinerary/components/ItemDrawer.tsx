@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
-import { useActiveTrip, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
 import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
 import { X, ArrowRight } from "lucide-react"
 import { TypeSelector } from "./TypeSelector"
@@ -16,7 +16,7 @@ interface ItemDrawerProps {
 }
 
 export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: ItemDrawerProps) {
-  const { addItem, updateItem, convertQuickToActivity } = useActiveTrip()
+  const { addItem, updateItem, convertQuickToActivity } = useItinerary()
 
   const [itemType, setItemType] = useState<ItemType>("activity")
   const [title, setTitle] = useState("")
@@ -151,7 +151,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       <Portal>
         <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-40" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-end">
-          <Dialog.Content className="bg-background w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto">
+          <Dialog.Content className="bg-background w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto" data-testid="item-drawer">
             {/* Header */}
             <div className="sticky top-0 bg-background border-b border-border p-4 z-10">
               <div className="flex items-center justify-between">
@@ -202,6 +202,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   placeholder={itemType === "quick" ? "Opcional para items rápidos" : "Nome do lugar ou atividade"}
                   aria-required={isTitleRequired}
                   aria-invalid={isTitleRequired && !title.trim()}
+                  data-testid="item-title-input"
                 />
                 {isTitleRequired && !title.trim() && (
                   <p className="text-xs text-destructive mt-1" role="alert">
@@ -296,6 +297,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                   onChange={(e) => setAddressText(e.target.value)}
                   className="w-full px-3 py-2 border border-input rounded-lg bg-background focus:ring-2 focus:ring-ring outline-none"
                   placeholder="Rua, número, bairro"
+                  data-testid="item-address-input"
                 />
               </div>
 
@@ -425,6 +427,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                             ? "bg-secondary border-primary"
                             : "border-border hover:bg-secondary"
                         }`}
+                        data-testid={`daytrip-segment-${seg}`}
                       >
                         {SEGMENT_LABELS[seg]}
                       </button>

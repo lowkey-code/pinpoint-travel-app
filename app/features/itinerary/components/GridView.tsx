@@ -1,13 +1,9 @@
 import { useState } from "react"
-import { useActiveTrip } from "~/features/itinerary"
+import { useItinerary } from "~/features/itinerary"
 import { GridDayColumn } from "./GridDayColumn"
 
-interface GridViewProps {
-  tripId: string
-}
-
-export function GridView({ tripId }: GridViewProps) {
-  const { days, isLoading } = useActiveTrip()
+export function GridView() {
+  const { days, isLoading } = useItinerary()
   const [reorderMode, setReorderMode] = useState(false)
 
   if (isLoading) {

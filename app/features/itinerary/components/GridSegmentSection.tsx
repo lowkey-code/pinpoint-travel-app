@@ -1,6 +1,6 @@
 import { useState } from "react"
 import type { Segment } from "~/features/itinerary"
-import { useActiveTrip, getRenderableItemsForSegment, SEGMENT_LABELS } from "~/features/itinerary"
+import { useItinerary, getRenderableItemsForSegment, SEGMENT_LABELS } from "~/features/itinerary"
 import { Plus } from "lucide-react"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
@@ -12,7 +12,7 @@ interface GridSegmentSectionProps {
 }
 
 export function GridSegmentSection({ dayIndex, segment, reorderMode }: GridSegmentSectionProps) {
-  const { items, days } = useActiveTrip()
+  const { items } = useItinerary()
   const [drawerOpen, setDrawerOpen] = useState(false)
 
   const renderableItems = getRenderableItemsForSegment(items, dayIndex, segment)

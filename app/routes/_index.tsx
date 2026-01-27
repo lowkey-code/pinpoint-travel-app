@@ -1,3 +1,5 @@
+import { Navigate } from "react-router";
+
 export default function Index() {
-  return <h1>PinPoint</h1>;
+  return <Navigate to="/itinerary" replace />;
 }

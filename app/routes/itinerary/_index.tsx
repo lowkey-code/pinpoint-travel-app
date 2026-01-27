@@ -32,7 +32,7 @@ export default function ItineraryIndex() {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 py-8">
-      <header className="mb-8">
+      <header className="mb-8" data-testid="itinerary-header">
         <h1 className="text-3xl font-serif font-bold mb-2">Minhas Viagens</h1>
         <p className="text-muted-foreground">Organize seus roteiros de viagem</p>
       </header>
@@ -60,10 +60,11 @@ export default function ItineraryIndex() {
               <div
                 key={trip.id}
                 className="bg-card border border-border rounded-xl p-4 hover:shadow-md transition-shadow"
+                data-testid={`trip-card-${trip.id}`}
               >
                 <div className="flex items-start justify-between">
-                  <Link to={`/itinerary/${trip.id}`} className="flex-1">
-                    <h3 className="font-semibold text-lg mb-1">{trip.name}</h3>
+                  <Link to={`/itinerary/${trip.id}`} className="flex-1" data-testid={`trip-link-${trip.id}`}>
+                    <h3 className="font-semibold text-lg mb-1" data-testid={`trip-name-${trip.id}`}>{trip.name}</h3>
                     {trip.description && (
                       <p className="text-sm text-muted-foreground mb-2">{trip.description}</p>
                     )}

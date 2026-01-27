@@ -87,3 +87,6 @@ export type { UseActiveTripReturn } from "./hooks/useActiveTrip"
 
 export { useUndoRedo, applyUndoAction, applyRedoAction } from "./hooks/useUndoRedo"
 export type { UseUndoRedoReturn, UseUndoRedoOptions } from "./hooks/useUndoRedo"
+
+// Context
+export { ItineraryProvider, useItinerary } from "./context/ItineraryContext"
