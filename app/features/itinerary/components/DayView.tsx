@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment, getRenderableItemKey, getCitiesForDay } from "~/features/itinerary"
+import { formatDatePtBR } from "~/features/itinerary/lib/dates"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
 import { Plus, ChevronLeft, ChevronRight, ArrowUpDown } from "lucide-react"
@@ -42,7 +43,7 @@ export function DayView() {
             )}
           </h2>
           {currentDay?.date && (
-            <p className="text-xs text-muted-foreground">{currentDay.date}</p>
+            <p className="text-xs text-muted-foreground">{formatDatePtBR(currentDay.date)}</p>
           )}
         </div>
 
