@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinpoint — Passport Stamps Design System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       DESIGN TOKENS — Passport Stamps
+       ============================================ */
+    :root {
+      /* PAPER (Neutros) */
+      --paper-50: #FAF7F2;
+      --paper-100: #F3EEE6;
+
+      /* INK (Texto) */
+      --ink-900: #1B1F23;
+      --ink-700: #3A434C;
+      --ink-500: #6B7785;
+
+      /* LINE (Bordas) */
+      --line-200: #E6DED4;
+
+      /* PASSPORT NAVY (Base dark + ações) */
+      --navy-900: #0E1A2B;
+      --navy-700: #1B2B44;
+      --navy-500: #2E466C;
+
+      /* SEMANTIC STAMPS */
+      --stamp-done: #3F6F5B;
+      --stamp-skipped: #B26A2A;
+      --stamp-planned: #2B3138;
+      --stamp-info: #2F5E8D;
+
+      /* CITY INKS (8 cores dessaturadas) */
+      --ink-blue: #2F5E8D;
+      --ink-sage: #3F6F5B;
+      --ink-plum: #7A4E8D;
+      --ink-amber: #B26A2A;
+      --ink-teal: #2A7A73;
+      --ink-brown: #8A5A3C;
+      --ink-olive: #5E6C2F;
+      --ink-brick: #7A3A3A;
+
+      /* TYPOGRAPHY */
+      --font-heading: "Nunito", system-ui, sans-serif;
+      --font-body: "Open Sans", system-ui, sans-serif;
+
+      /* SPACING */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+
+      /* RADIUS */
+      --radius-card: 16px;
+      --radius-stamp: 20px;
+      --radius-pill: 999px;
+    }
+
+    /* DARK MODE — Passport Night */
+    .dark {
+      --paper-50: #0E1A2B;
+      --paper-100: #1B2B44;
+      --ink-900: #FAF7F2;
+      --ink-700: #E6DED4;
+      --ink-500: #B8AFA2;
+      --line-200: rgba(230, 222, 212, 0.15);
+    }
+
+    /* ============================================
+       BASE STYLES
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--paper-50);
+      color: var(--ink-900);
+      line-height: 1.4;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-6);
+    }
+
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    h1, h2, h3 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    h1 {
+      font-size: 28px;
+      line-height: 32px;
+      color: var(--navy-900);
+      margin-bottom: var(--space-6);
+    }
+
+    h2 {
+      font-size: 20px;
+      line-height: 24px;
+      color: var(--ink-900);
+      margin-top: var(--space-8);
+      margin-bottom: var(--space-4);
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 18px;
+      line-height: 22px;
+      color: var(--ink-900);
+      margin-bottom: var(--space-3);
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--ink-700);
+      margin-bottom: var(--space-4);
+    }
+
+    .meta {
+      font-size: 12px;
+      line-height: 16px;
+      color: var(--ink-500);
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+      padding-bottom: var(--space-6);
+      border-bottom: 1px dashed var(--line-200);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .logo-stamp {
+      width: 48px;
+      height: 48px;
+      border: 3px solid var(--navy-900);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading);
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--navy-900);
+      position: relative;
+    }
+
+    /* Grain texture on stamp */
+    .logo-stamp::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.05'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .logo-title {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink-900);
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .logo-tagline {
+      font-size: 11px;
+      color: var(--ink-500);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .theme-toggle {
+      background: var(--paper-100);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-pill);
+      padding: var(--space-2) var(--space-4);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--ink-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--navy-500);
+      color: var(--navy-900);
+    }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    .section {
+      margin-bottom: var(--space-8);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    /* ============================================
+       STAMP BADGE (Status)
+       ============================================ */
+    .stamp-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 2px solid currentColor;
+      background: transparent;
+      position: relative;
+    }
+
+    /* Grain texture on stamps */
+    .stamp-badge::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-pill);
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    .stamp-done {
+      color: var(--stamp-done);
+    }
+
+    .stamp-skipped {
+      color: var(--stamp-skipped);
+    }
+
+    .stamp-planned {
+      color: var(--stamp-planned);
+    }
+
+    .stamp-info {
+      color: var(--stamp-info);
+    }
+
+    /* ============================================
+       CITY TAG
+       ============================================ */
+    .city-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--line-200);
+      background: var(--paper-100);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-700);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ink-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ============================================
+       PLACE CARD
+       ============================================ */
+    .place-card {
+      background: var(--paper-100);
+      border: 1px solid var(--line-200);
+      border-left: 4px solid var(--ink-blue);
+      border-radius: var(--radius-card);
+      padding: var(--space-4);
+      transition: all 0.2s ease;
+    }
+
+    .place-card:hover {
+      border-color: var(--ink-900);
+      box-shadow: 0 2px 8px rgba(27, 31, 35, 0.08);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 16px;
+      line-height: 20px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin-bottom: var(--space-2);
+    }
+
+    .card-description {
+      font-size: 14px;
+      line-height: 20px;
+      color: var(--ink-700);
+      margin-bottom: var(--space-4);
+    }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding-top: var(--space-3);
+      border-top: 1px dashed var(--line-200);
+      font-size: 12px;
+      color: var(--ink-500);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    .action-btn {
+      background: transparent;
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-pill);
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-body);
+    }
+
+    .action-btn:hover {
+      border-color: var(--navy-500);
+      color: var(--navy-900);
+      background: var(--paper-50);
+    }
+
+    /* ============================================
+       TICKET DIVIDER
+       ============================================ */
+    .ticket-divider {
+      border: none;
+      border-top: 2px dashed var(--line-200);
+      margin: var(--space-6) 0;
+      position: relative;
+    }
+
+    .ticket-divider::before,
+    .ticket-divider::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: var(--paper-50);
+      border: 2px solid var(--line-200);
+      border-radius: 50%;
+      top: -7px;
+    }
+
+    .ticket-divider::before {
+      left: -6px;
+    }
+
+    .ticket-divider::after {
+      right: -6px;
+    }
+
+    .divider-label {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--paper-50);
+      padding: 0 var(--space-3);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-500);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ============================================
+       COLLECT PILL
+       ============================================ */
+    .collect-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+      background: var(--navy-900);
+      color: var(--paper-50);
+      border-radius: var(--radius-pill);
+      padding: 10px var(--space-5);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .collect-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .collect-number {
+      font-family: var(--font-heading);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .collect-divider {
+      width: 1px;
+      height: 20px;
+      background: rgba(250, 247, 242, 0.3);
+    }
+
+    /* ============================================
+       COLOR SWATCHES
+       ============================================ */
+    .color-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: var(--space-3);
+    }
+
+    .color-swatch {
+      background: var(--paper-100);
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-card);
+      padding: var(--space-3);
+      text-align: center;
+    }
+
+    .color-circle {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-2);
+      border: 2px solid var(--line-200);
+    }
+
+    .color-name {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--ink-900);
+      margin-bottom: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .color-hex {
+      font-size: 10px;
+      color: var(--ink-500);
+      font-family: monospace;
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 10px 20px;
+      border-radius: var(--radius-pill);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--navy-900);
+      color: var(--paper-50);
+    }
+
+    .btn-primary:hover {
+      background: var(--navy-700);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--navy-900);
+      color: var(--navy-900);
+    }
+
+    .btn-outline:hover {
+      background: var(--navy-900);
+      color: var(--paper-50);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid var(--line-200);
+      color: var(--ink-700);
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--navy-500);
+      color: var(--navy-900);
+    }
+
+    /* ============================================
+       INPUT
+       ============================================ */
+    .input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--line-200);
+      border-radius: var(--radius-card);
+      background: var(--paper-100);
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink-900);
+      transition: all 0.2s ease;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--navy-500);
+      background: var(--paper-50);
+    }
+
+    .input::placeholder {
+      color: var(--ink-500);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      h1 { font-size: 24px; line-height: 28px; }
+      h2 { font-size: 18px; line-height: 22px; }
+      .container { padding: var(--space-6) var(--space-4); }
+      .logo-stamp { width: 40px; height: 40px; font-size: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo">
+        <div class="logo-stamp">P</div>
+        <div class="logo-text">
+          <div class="logo-title">Pinpoint</div>
+          <div class="logo-tagline">Offline Stamps</div>
+        </div>
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span> Toggle Dark
+      </button>
+    </div>
+
+    <!-- INTRO -->
+    <div style="margin-bottom: var(--space-8);">
+      <h1>Passport Stamps Design System</h1>
+      <p style="font-size: 14px; line-height: 20px; max-width: 600px;">
+        <strong>"Save it. Stamp it. Go."</strong> — Guardar lugares como carimbos de passaporte. Rápido de salvar, fácil de achar, gostoso de marcar como feito.
+      </p>
+
+      <div class="collect-pill" style="margin-top: var(--space-4);">
+        <div class="collect-stat">
+          <span class="collect-number">24</span>
+          <span>Pinned</span>
+        </div>
+        <div class="collect-divider"></div>
+        <div class="collect-stat">
+          <span class="collect-number">8</span>
+          <span>Stamped</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLORS -->
+    <section class="section">
+      <h2>🎨 Paleta — Paper + Ink</h2>
+
+      <h3 style="margin-top: var(--space-5); margin-bottom: var(--space-3); font-size: 14px;">Neutros (Paper + Ink)</h3>
+      <div class="color-showcase">
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #FAF7F2;"></div>
+          <div class="color-name">Paper 50</div>
+          <div class="color-hex">#FAF7F2</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #F3EEE6;"></div>
+          <div class="color-name">Paper 100</div>
+          <div class="color-hex">#F3EEE6</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #1B1F23;"></div>
+          <div class="color-name">Ink 900</div>
+          <div class="color-hex">#1B1F23</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #6B7785;"></div>
+          <div class="color-name">Ink 500</div>
+          <div class="color-hex">#6B7785</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: var(--space-5); margin-bottom: var(--space-3); font-size: 14px;">City Inks (8 cores dessaturadas)</h3>
+      <div class="color-showcase">
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #2F5E8D;"></div>
+          <div class="color-name">Blue</div>
+          <div class="color-hex">#2F5E8D</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #3F6F5B;"></div>
+          <div class="color-name">Sage</div>
+          <div class="color-hex">#3F6F5B</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #7A4E8D;"></div>
+          <div class="color-name">Plum</div>
+          <div class="color-hex">#7A4E8D</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #B26A2A;"></div>
+          <div class="color-name">Amber</div>
+          <div class="color-hex">#B26A2A</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #2A7A73;"></div>
+          <div class="color-name">Teal</div>
+          <div class="color-hex">#2A7A73</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #8A5A3C;"></div>
+          <div class="color-name">Brown</div>
+          <div class="color-hex">#8A5A3C</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #5E6C2F;"></div>
+          <div class="color-name">Olive</div>
+          <div class="color-hex">#5E6C2F</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #7A3A3A;"></div>
+          <div class="color-name">Brick</div>
+          <div class="color-hex">#7A3A3A</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STAMP BADGES -->
+    <section class="section">
+      <h2>🏷️ Stamp Badges (Status)</h2>
+      <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+        <span class="stamp-badge stamp-done">✓ Done</span>
+        <span class="stamp-badge stamp-skipped">⏭ Skip</span>
+        <span class="stamp-badge stamp-planned">○ Planned</span>
+        <span class="stamp-badge stamp-info">ℹ Info</span>
+      </div>
+    </section>
+
+    <!-- CITY TAGS -->
+    <section class="section">
+      <h2>📍 City Tags</h2>
+      <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+        <span class="city-tag">
+          <span class="ink-dot" style="background: #2F5E8D;"></span>
+          BJS
+        </span>
+        <span class="city-tag">
+          <span class="ink-dot" style="background: #3F6F5B;"></span>
+          SHA
+        </span>
+        <span class="city-tag">
+          <span class="ink-dot" style="background: #7A4E8D;"></span>
+          XIA
+        </span>
+        <span class="city-tag">
+          <span class="ink-dot" style="background: #B26A2A;"></span>
+          CDU
+        </span>
+        <span class="city-tag">
+          <span class="ink-dot" style="background: #2A7A73;"></span>
+          HGH
+        </span>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="section">
+      <h2>🔘 Buttons</h2>
+      <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+        <button class="btn btn-primary">Quick Pin</button>
+        <button class="btn btn-outline">Save Offline ✓</button>
+        <button class="btn btn-ghost">Skip for Now</button>
+      </div>
+    </section>
+
+    <!-- INPUT -->
+    <section class="section">
+      <h2>📝 Input Field</h2>
+      <input type="text" class="input" placeholder="Search places...">
+    </section>
+
+    <!-- TICKET DIVIDER -->
+    <section class="section">
+      <h2>🎫 Ticket Divider</h2>
+      <div style="background: var(--paper-100); padding: var(--space-5); border-radius: var(--radius-card); border: 1px solid var(--line-200);">
+        <p style="margin: 0;">Manhã</p>
+        <hr class="ticket-divider">
+        <p style="margin: 0;">Tarde</p>
+        <hr class="ticket-divider">
+        <p style="margin: 0;">Noite</p>
+      </div>
+    </section>
+
+    <!-- PLACE CARDS -->
+    <section class="section">
+      <h2>🗺️ Place Card — Exemplo Real</h2>
+
+      <div class="grid">
+        <!-- Card 1 -->
+        <div class="place-card" style="border-left-color: #2F5E8D;">
+          <div class="card-header">
+            <span class="city-tag">
+              <span class="ink-dot" style="background: #2F5E8D;"></span>
+              BJS
+            </span>
+            <span class="stamp-badge stamp-done">✓ Done</span>
+          </div>
+
+          <h3 class="card-title">Forbidden City</h3>
+
+          <p class="card-description">
+            Imperial palace complex. Arrive early to avoid crowds. Audio guide recommended.
+          </p>
+
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              2h30
+            </span>
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              ¥60
+            </span>
+            <span class="meta-item">09:00</span>
+          </div>
+
+          <div class="card-actions">
+            <button class="action-btn">📋 Copy</button>
+            <button class="action-btn">🧭 AMap</button>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="place-card" style="border-left-color: #3F6F5B;">
+          <div class="card-header">
+            <span class="city-tag">
+              <span class="ink-dot" style="background: #3F6F5B;"></span>
+              SHA
+            </span>
+            <span class="stamp-badge stamp-planned">○ Planned</span>
+          </div>
+
+          <h3 class="card-title">Yu Garden</h3>
+
+          <p class="card-description">
+            Classical Chinese garden. Best visited in afternoon. Nearby tea house.
+          </p>
+
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              1h15
+            </span>
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              ¥40
+            </span>
+            <span class="meta-item">14:30</span>
+          </div>
+
+          <div class="card-actions">
+            <button class="action-btn">📋 Copy</button>
+            <button class="action-btn">🧭 AMap</button>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="place-card" style="border-left-color: #B26A2A;">
+          <div class="card-header">
+            <span class="city-tag">
+              <span class="ink-dot" style="background: #B26A2A;"></span>
+              CDU
+            </span>
+            <span class="stamp-badge stamp-skipped">⏭ Skip</span>
+          </div>
+
+          <h3 class="card-title">Panda Base</h3>
+
+          <p class="card-description">
+            Giant panda breeding research base. Morning hours best (7:30-10am).
+          </p>
+
+          <div class="card-meta">
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              3h
+            </span>
+            <span class="meta-item">
+              <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              ¥58
+            </span>
+            <span class="meta-item">08:00</span>
+          </div>
+
+          <div class="card-actions">
+            <button class="action-btn">📋 Copy</button>
+            <button class="action-btn">🧭 AMap</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div style="margin-top: var(--space-8); padding-top: var(--space-6); border-top: 1px dashed var(--line-200); text-align: center;">
+      <p class="meta" style="margin: 0;">
+        Pinpoint — Passport Stamps Design System
+      </p>
+      <p class="meta" style="margin-top: var(--space-2);">
+        "Offline notes. On-trip ready."
+      </p>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.textContent = '🌙';
+      } else {
+        html.classList.add('dark');
+        icon.textContent = '☀️';
+      }
+    }
+  </script>
+</body>
+</html>

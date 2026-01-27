@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pinpoint Travel — Design System Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================
+       DESIGN TOKENS — Earth Meets Sky
+       ============================================ */
+    :root {
+      /* PRIMARY: Terracotta Warmth */
+      --primary: #E67E50;
+      --primary-light: #F29C73;
+      --primary-dark: #C45A2E;
+
+      /* SECONDARY: Sky Serenity */
+      --secondary: #6B9BD1;
+      --secondary-light: #A3C4E8;
+      --secondary-dark: #4A7BA7;
+
+      /* ACCENT: Sage Calm */
+      --accent: #8FB99C;
+      --accent-light: #B5D4C1;
+      --accent-dark: #6A9B7E;
+
+      /* BACKGROUNDS: Warm Neutrals */
+      --bg-primary: #FBF8F3;
+      --bg-secondary: #F5F0E8;
+      --bg-tertiary: #EDE6DB;
+
+      /* TEXT: Grounded Browns */
+      --text-primary: #3E3230;
+      --text-secondary: #73625B;
+      --text-tertiary: #A89B94;
+
+      /* BORDERS */
+      --border-light: #E5DCD0;
+      --border-medium: #D4C5B3;
+
+      /* SEMANTIC */
+      --success: #7FAA84;
+      --success-bg: #EDF5EE;
+      --warning: #E3B448;
+      --warning-bg: #FDF7E8;
+      --error: #D17A6F;
+      --error-bg: #FBEAE8;
+      --info: #6B9BD1;
+      --info-bg: #EAF2FA;
+
+      /* TYPOGRAPHY */
+      --font-display: "DM Sans", system-ui, sans-serif;
+      --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
+
+      /* SPACING */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+
+      /* RADIUS */
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-2xl: 24px;
+      --radius-full: 9999px;
+    }
+
+    /* DARK MODE */
+    .dark {
+      --bg-primary: #2B2522;
+      --bg-secondary: #3A3330;
+      --bg-tertiary: #4A423D;
+      --text-primary: #F5F0E8;
+      --text-secondary: #D4C5B3;
+      --text-tertiary: #A89B94;
+      --border-light: rgba(229, 220, 208, 0.2);
+      --border-medium: rgba(212, 197, 179, 0.3);
+      --primary: #F29C73;
+      --secondary: #A3C4E8;
+      --accent: #B5D4C1;
+    }
+
+    /* ============================================
+       BASE STYLES
+       ============================================ */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--space-8) var(--space-6);
+    }
+
+    /* ============================================
+       TYPOGRAPHY
+       ============================================ */
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      line-height: 1.25;
+      margin-bottom: var(--space-4);
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: var(--space-6);
+    }
+
+    h2 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-top: var(--space-10);
+      margin-bottom: var(--space-5);
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+
+    p {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-4);
+      line-height: 1.625;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+    }
+
+    /* ============================================
+       HEADER
+       ============================================ */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+      padding-bottom: var(--space-6);
+      border-bottom: 2px solid var(--border-light);
+    }
+
+    .logo {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .theme-toggle {
+      background: var(--bg-secondary);
+      border: 2px solid var(--border-light);
+      border-radius: var(--radius-full);
+      padding: var(--space-2) var(--space-4);
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      transition: all 0.3s ease;
+      box-shadow:
+        6px 6px 12px rgba(62, 50, 48, 0.08),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow:
+        8px 8px 16px rgba(62, 50, 48, 0.12),
+        -8px -8px 16px rgba(255, 255, 255, 0.9);
+    }
+
+    .dark .theme-toggle {
+      box-shadow:
+        6px 6px 12px rgba(0, 0, 0, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.03);
+    }
+
+    /* ============================================
+       SECTIONS
+       ============================================ */
+    .section {
+      margin-bottom: var(--space-12);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+
+    /* ============================================
+       COLOR SWATCHES
+       ============================================ */
+    .color-swatch {
+      background: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      text-align: center;
+      box-shadow:
+        8px 8px 16px rgba(62, 50, 48, 0.1),
+        -4px -4px 12px rgba(255, 255, 255, 0.8);
+      border: 1px solid var(--border-light);
+    }
+
+    .dark .color-swatch {
+      box-shadow:
+        8px 8px 16px rgba(0, 0, 0, 0.3),
+        -4px -4px 12px rgba(255, 255, 255, 0.03);
+    }
+
+    .color-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto var(--space-3);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .color-name {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-1);
+    }
+
+    .color-hex {
+      font-size: 0.75rem;
+      color: var(--text-tertiary);
+      font-family: monospace;
+    }
+
+    /* ============================================
+       CARDS
+       ============================================ */
+    .card-soft {
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      box-shadow:
+        8px 8px 16px rgba(62, 50, 48, 0.1),
+        -4px -4px 12px rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(229, 220, 208, 0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card-soft:hover {
+      box-shadow:
+        12px 12px 24px rgba(62, 50, 48, 0.12),
+        -6px -6px 16px rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .dark .card-soft {
+      background: var(--bg-secondary);
+      box-shadow:
+        8px 8px 16px rgba(0, 0, 0, 0.3),
+        -4px -4px 12px rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 197, 179, 0.1);
+    }
+
+    .dark .card-soft:hover {
+      box-shadow:
+        12px 12px 24px rgba(0, 0, 0, 0.4),
+        -6px -6px 16px rgba(255, 255, 255, 0.05);
+    }
+
+    /* ============================================
+       BUTTONS
+       ============================================ */
+    .btn {
+      border-radius: var(--radius-lg);
+      padding: 12px 24px;
+      font-weight: 600;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #E67E50 0%, #F29C73 100%);
+      color: white;
+      box-shadow:
+        0 4px 12px rgba(230, 126, 80, 0.25),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow:
+        0 6px 16px rgba(230, 126, 80, 0.35),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-primary:active {
+      transform: translateY(0);
+      box-shadow:
+        0 2px 8px rgba(230, 126, 80, 0.2),
+        inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      box-shadow:
+        6px 6px 12px rgba(62, 50, 48, 0.08),
+        -6px -6px 12px rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(229, 220, 208, 0.3);
+    }
+
+    .btn-secondary:hover {
+      box-shadow:
+        8px 8px 16px rgba(62, 50, 48, 0.12),
+        -8px -8px 16px rgba(255, 255, 255, 0.9);
+    }
+
+    .dark .btn-secondary {
+      box-shadow:
+        6px 6px 12px rgba(0, 0, 0, 0.3),
+        -6px -6px 12px rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(230, 126, 80, 0.1);
+      border-color: var(--primary-dark);
+      color: var(--primary-dark);
+    }
+
+    /* ============================================
+       INPUTS
+       ============================================ */
+    .input {
+      background: var(--bg-secondary);
+      border: 2px solid transparent;
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-family: var(--font-body);
+      color: var(--text-primary);
+      width: 100%;
+      box-shadow: inset 4px 4px 8px rgba(62, 50, 48, 0.06);
+      transition: all 0.3s ease;
+    }
+
+    .input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: var(--bg-primary);
+      box-shadow:
+        inset 2px 2px 4px rgba(62, 50, 48, 0.04),
+        0 0 0 4px rgba(230, 126, 80, 0.1);
+    }
+
+    .input::placeholder {
+      color: var(--text-tertiary);
+      font-weight: 400;
+    }
+
+    .dark .input {
+      box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    /* ============================================
+       CHIPS
+       ============================================ */
+    .chip {
+      background: linear-gradient(135deg, rgba(230, 126, 80, 0.1) 0%, rgba(242, 156, 115, 0.15) 100%);
+      color: var(--primary-dark);
+      border-radius: var(--radius-full);
+      padding: 6px 14px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 6px rgba(230, 126, 80, 0.1);
+      border: 1px solid rgba(230, 126, 80, 0.2);
+    }
+
+    .chip-city {
+      background: var(--bg-secondary);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ============================================
+       ITEM CARD EXAMPLE
+       ============================================ */
+    .item-card {
+      background: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      box-shadow:
+        8px 8px 16px rgba(62, 50, 48, 0.1),
+        -4px -4px 12px rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(229, 220, 208, 0.5);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .item-card:hover {
+      box-shadow:
+        12px 12px 24px rgba(62, 50, 48, 0.12),
+        -6px -6px 16px rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+
+    .dark .item-card {
+      background: var(--bg-secondary);
+      box-shadow:
+        8px 8px 16px rgba(0, 0, 0, 0.3),
+        -4px -4px 12px rgba(255, 255, 255, 0.03);
+    }
+
+    .item-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      margin-bottom: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .item-card-title {
+      font-size: 1.25rem;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: var(--space-2);
+      transition: color 0.3s ease;
+    }
+
+    .item-card:hover .item-card-title {
+      color: var(--primary-dark);
+    }
+
+    .item-card-description {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      line-height: 1.625;
+      margin-bottom: var(--space-4);
+    }
+
+    .item-card-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding-top: var(--space-4);
+      margin-top: var(--space-4);
+      border-top: 1px solid var(--border-light);
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-tertiary);
+      font-size: 0.875rem;
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ============================================
+       COMPARISON (Before/After)
+       ============================================ */
+    .comparison {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-6);
+      margin-top: var(--space-6);
+    }
+
+    .comparison-label {
+      font-weight: 700;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-3);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .label-old {
+      color: var(--error);
+    }
+
+    .label-new {
+      color: var(--success);
+    }
+
+    .card-old {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-old h3 {
+      font-family: "Nunito", sans-serif;
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #111827;
+      margin-bottom: 8px;
+    }
+
+    .card-old p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
+    /* ============================================
+       SEMANTIC BADGES
+       ============================================ */
+    .badge {
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 600;
+      font-size: 0.875rem;
+      display: inline-block;
+    }
+
+    .badge-success {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .badge-error {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+
+    .badge-info {
+      background: var(--info-bg);
+      color: var(--info);
+    }
+
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    @media (max-width: 768px) {
+      .comparison {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 1.875rem;
+      }
+
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      .container {
+        padding: var(--space-6) var(--space-4);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- HEADER -->
+    <div class="header">
+      <div class="logo">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="16" cy="16" r="16" fill="currentColor" opacity="0.1"/>
+          <path d="M16 8L20 14H12L16 8Z" fill="currentColor"/>
+          <circle cx="16" cy="20" r="3" fill="currentColor"/>
+        </svg>
+        Pinpoint Travel
+      </div>
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span> Alternar Tema
+      </button>
+    </div>
+
+    <h1>Design System Showcase</h1>
+    <p style="font-size: 1.125rem; margin-bottom: var(--space-10);">
+      Bem-vindo ao novo design system do Pinpoint! Explore os elementos visuais baseados no conceito <strong>"Earth Meets Sky"</strong> — uma paleta quente e terrosa que transmite conforto, natureza e confiança.
+    </p>
+
+    <!-- COLORS -->
+    <section class="section">
+      <h2>🎨 Paleta de Cores</h2>
+
+      <h3>Cores Principais</h3>
+      <div class="grid">
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #E67E50;"></div>
+          <div class="color-name">Terracotta</div>
+          <div class="color-hex">#E67E50</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #6B9BD1;"></div>
+          <div class="color-name">Sky Blue</div>
+          <div class="color-hex">#6B9BD1</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #8FB99C;"></div>
+          <div class="color-name">Sage Green</div>
+          <div class="color-hex">#8FB99C</div>
+        </div>
+      </div>
+
+      <h3>Tons Neutros</h3>
+      <div class="grid">
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #FBF8F3;"></div>
+          <div class="color-name">Background</div>
+          <div class="color-hex">#FBF8F3</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #3E3230;"></div>
+          <div class="color-name">Text Primary</div>
+          <div class="color-hex">#3E3230</div>
+        </div>
+        <div class="color-swatch">
+          <div class="color-circle" style="background: #E5DCD0;"></div>
+          <div class="color-name">Border</div>
+          <div class="color-hex">#E5DCD0</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TYPOGRAPHY -->
+    <section class="section">
+      <h2>📝 Tipografia</h2>
+      <div class="card-soft">
+        <h1 style="margin: 0 0 var(--space-4) 0;">Heading 1 — DM Sans Bold</h1>
+        <h2 style="margin: 0 0 var(--space-4) 0;">Heading 2 — DM Sans Semibold</h2>
+        <h3 style="margin: 0 0 var(--space-4) 0;">Heading 3 — DM Sans Semibold</h3>
+        <p style="margin: 0;">Body text — Plus Jakarta Sans Regular. Esta é a fonte usada para todo o conteúdo de leitura, com line-height generoso para melhor legibilidade e sensação de espaço.</p>
+      </div>
+    </section>
+
+    <!-- BUTTONS -->
+    <section class="section">
+      <h2>🔘 Buttons</h2>
+      <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+        <button class="btn btn-primary">
+          <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+          </svg>
+          Primary Button
+        </button>
+        <button class="btn btn-secondary">Secondary Button</button>
+        <button class="btn btn-ghost">Ghost Button</button>
+      </div>
+    </section>
+
+    <!-- INPUTS -->
+    <section class="section">
+      <h2>📝 Inputs & Chips</h2>
+      <div class="grid">
+        <div>
+          <label style="display: block; margin-bottom: var(--space-2); font-weight: 600; font-size: 0.875rem;">Input Field</label>
+          <input type="text" class="input" placeholder="Digite algo aqui...">
+        </div>
+        <div>
+          <label style="display: block; margin-bottom: var(--space-2); font-weight: 600; font-size: 0.875rem;">Chips & Badges</label>
+          <div style="display: flex; gap: var(--space-2); flex-wrap: wrap;">
+            <span class="chip">
+              <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              09:00
+            </span>
+            <span class="chip-city" style="border-left-color: #E67E50;">Rio de Janeiro</span>
+            <span class="chip-city" style="border-left-color: #6B9BD1;">São Paulo</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CARDS -->
+    <section class="section">
+      <h2>🃏 Cards — Soft UI</h2>
+      <div class="grid">
+        <div class="card-soft">
+          <h3>Card com Soft Shadow</h3>
+          <p>Este card usa neumorphism com sombras suaves que criam sensação de elevação. Passe o mouse para ver o efeito hover.</p>
+        </div>
+        <div class="card-soft">
+          <h3>Elevação Tátil</h3>
+          <p>Bordas arredondadas (20px) e sombras duplas (interna + externa) simulam profundidade física, convidando ao toque.</p>
+        </div>
+        <div class="card-soft">
+          <h3>Transições Suaves</h3>
+          <p>Todas as transições usam cubic-bezier para movimentos naturais. Hover = lift + shadow increase.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEMANTIC BADGES -->
+    <section class="section">
+      <h2>🏷️ Semantic Badges</h2>
+      <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+        <span class="badge badge-success">✓ Concluído</span>
+        <span class="badge badge-warning">⚠ Atenção</span>
+        <span class="badge badge-error">✕ Erro</span>
+        <span class="badge badge-info">ℹ Informação</span>
+      </div>
+    </section>
+
+    <!-- ITEM CARD EXAMPLE -->
+    <section class="section">
+      <h2>🎫 Item Card — Exemplo Real</h2>
+      <div class="item-card">
+        <div class="item-card-header">
+          <span class="chip-city" style="border-left-color: #E67E50;">Rio de Janeiro</span>
+          <span class="chip">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            09:00
+          </span>
+          <span class="badge badge-success">Planejado</span>
+        </div>
+
+        <h3 class="item-card-title">Cristo Redentor</h3>
+
+        <p class="item-card-description">
+          Uma das Sete Maravilhas do Mundo Moderno, o Cristo Redentor oferece uma vista panorâmica incrível da cidade. Recomendo ir de manhã para evitar multidões e pegar a melhor luz para fotos.
+        </p>
+
+        <div class="item-card-meta">
+          <div class="meta-item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>2h30min</span>
+          </div>
+          <div class="meta-item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>R$ 89</span>
+          </div>
+          <div class="meta-item">
+            <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <span>Corcovado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BEFORE/AFTER COMPARISON -->
+    <section class="section">
+      <h2>🔄 Antes vs Depois</h2>
+      <div class="comparison">
+        <div>
+          <div class="comparison-label label-old">
+            ❌ Antes (Design Atual)
+          </div>
+          <div class="card-old">
+            <h3>Cristo Redentor</h3>
+            <p>Uma das Sete Maravilhas do Mundo Moderno.</p>
+          </div>
+        </div>
+        <div>
+          <div class="comparison-label label-new">
+            ✅ Depois (Novo Design)
+          </div>
+          <div class="item-card">
+            <div class="item-card-header">
+              <span class="chip-city" style="border-left-color: #E67E50;">Rio de Janeiro</span>
+              <span class="chip">
+                <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                09:00
+              </span>
+            </div>
+            <h3 class="item-card-title">Cristo Redentor</h3>
+            <p class="item-card-description">Uma das Sete Maravilhas do Mundo Moderno.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <div style="margin-top: var(--space-12); padding-top: var(--space-6); border-top: 2px solid var(--border-light); text-align: center; color: var(--text-tertiary); font-size: 0.875rem;">
+      <p>Pinpoint Travel Design System — Earth Meets Sky ☀️</p>
+      <p style="margin-top: var(--space-2);">Conceito: Jornada Humana | Tipografia: DM Sans + Plus Jakarta Sans | Paleta: Terroso + Céu</p>
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        icon.textContent = '🌙';
+      } else {
+        html.classList.add('dark');
+        icon.textContent = '☀️';
+      }
+    }
+  </script>
+</body>
+</html>

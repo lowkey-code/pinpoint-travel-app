@@ -58,14 +58,22 @@ Use `~/` for imports from the `app/` directory (configured in `tsconfig.json`).
 - **State**: Local React state; no external state management
 - **No SSR**: Client-only SPA (`ssr: false` in `react-router.config.ts`)
 
-## UI Contract
+## Design System
 
-- **Visual style**: Pinterest-like (rounded cards, soft shadows, generous whitespace)
-- **Typography**: Nunito for headings (`font-serif`), Open Sans for body (`font-sans`)
+**Folio Design System v3.7** — "Functional Nostalgia" aesthetic (Passport warmth + Swiss precision)
+
+- **Complete Guidelines**: See `/DESIGN_GUIDELINES.md` for AI agents
+- **Visual Showcase**: See `/docs/folio-design-system.html` for interactive preview
+- **Future**: Storybook planned for React component documentation (see `/TODO.md`)
+- **Theme**: Paper & Ink (Light mode) / Passport Navy (Dark mode)
+- **Typography Triad**:
+  - Nunito (`font-sans`) for headings/brands
+  - Inter (`font-body`) for body/UI elements
+  - JetBrains Mono (`font-mono`) for data/timestamps/codes
+- **Icons**: Phosphor Icons (`ph-bold`, `ph-fill`)
+- **Core Component**: Boarding Pass Cards with perforated dividers
 - **Labels**: Portuguese (PT-BR)
-- **Spacing**: Base 16px; card padding 16px; card gap 12px; section gap 24px
-- **Cards**: `rounded-xl`, subtle shadow; add borders only in dark mode
-- **Icons**: Use `lucide-react`; icon-only buttons must have `aria-label`
+- **Accessibility**: WCAG 2.1 AA compliant (min 4.5:1 contrast)
 
 ## Performance Guidelines
 
@@ -168,27 +176,31 @@ Use `~/` for imports from the `app/` directory (configured in `tsconfig.json`).
 - Hardcoded date/number formats (use `Intl`)
 - Barrel file imports when direct imports work
 
+## Design Implementation Rules
+
+- **Always follow Folio Design System**: Read `/DESIGN_GUIDELINES.md` before creating new UI
+- **Component Reusability (CRITICAL)**:
+  - **NEVER create a new component without checking if it exists first**
+  - Search `app/components/` and `app/features/*/components/` for similar patterns
+  - Reuse existing components; extend with props if needed
+  - Only create new components if no similar pattern exists
+  - Check `/docs/folio-design-system.html` for visual reference
+  - Goal: Make design system grow organically and stay maintainable
+- **Use Semantic Tokens**: `bg-paper-card`, `text-ink-primary`, `border-paper-line` (auto dark mode)
+- **Typography Hierarchy**: Nunito (headings) → Inter (body) → JetBrains Mono (data only)
+- **Boarding Pass Pattern**: Cards with perforated dividers for activities/places
+- **Stamp Badges**: Status indicators with `border-2`, slight rotation, semantic colors
+- **Spacing**: Base 16px; follow design system spacing scale
+- **Accessibility First**: Min 4.5:1 contrast; never use dark ink colors on dark backgrounds
+- **Do not introduce new visual patterns** beyond Folio guidelines without asking
+
 ## OUTPUT RULES (token-saving)
-- Never print full code, large snippets, or diffs.
+- Never print full code, large snippets, or diffs
 - After applying changes, output ONLY:
   1) Files touched (paths only)
   2) Summary of what changed (max 10 bullets)
   3) TODOs / assumptions (max 5 bullets)
-- If code is absolutely necessary, show at most 30 lines total.
-
-## UI CONTRACT (must follow)
-- Visual style: “Pinterest-like” (rounded cards, soft shadows, whitespace, friendly chips).
-- Tech/UI: Tailwind CSS v4 + @ark-ui/react (Tabs/Drawer/Dialog/Menu) + lucide-react icons.
-- Spacing: base 16px; card padding 16; card gap 12; section gap 24.
-- Cards: radius-xl; subtle shadow; add borders only in dark mode.
-- Typography: Nunito for headings, Open Sans for body. Labels in PT-BR.
-- City color usage: ONLY as small left border (2–4px) + a small city chip. No full background coloring.
-- Day View:
-  - Tabs fixed: Manhã / Tarde / Noite
-  - Card layout: icon + title + meta row (timeLabel, duration, cost) + actions row (priority/status/copy/amap/menu)
-- Grid View:
-  - Columns = days; 3 stacked sections (Manhã/Tarde/Noite); compact cards; same hierarchy.
-- Do not introduce new visual patterns beyond this contract without asking.
+- If code is absolutely necessary, show at most 30 lines total
 
 ## Feature rules (Itinerary)
 - Offline-first, localStorage-based.

@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Folio — Design System</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Definição de Variáveis CSS para Light/Dark Mode -->
+    <style>
+        :root {
+            /* Light Mode (Paper & Ink) */
+            --paper-base: #FBF9F6;
+            --paper-card: #FFFFFF;
+            --paper-line: #E6E0D9;
+
+            --ink-primary: #1C1E21;
+            --ink-secondary: #54585F;
+            --ink-utility: #364152;
+
+            --action-blue: #0055FF;
+            --action-hover: #0044CC;
+
+            /* Stamps Light (Cores de Tinta) */
+            --stamp-sage: #4A7A67;
+            --stamp-amber: #B57B2E;
+            --stamp-navy: #2C4B70;
+            --stamp-brick: #C93A3A;
+        }
+
+        .dark {
+            /* Dark Mode (Passport Navy) */
+            --paper-base: #0E1A2B; /* Navy 900 */
+            --paper-card: #1B2B44; /* Navy 700 */
+            --paper-line: #2E466C; /* Navy 500 */
+
+            --ink-primary: #FBF9F6; /* Paper Base (Invertido) - Contraste 13.5:1 */
+            --ink-secondary: #CBD5E1; /* Slate 300 - Contraste ~9:1 */
+            --ink-utility: #94A3B8; /* Slate 400 - Contraste 5.6:1 (Corrigido para passar AA) */
+
+            --action-blue: #60A5FA; /* Blue 400 - Contraste melhor em fundo escuro */
+            --action-hover: #93C5FD;
+
+            /* Stamps Dark (Cores Pastel/Neon para contraste em fundo escuro) */
+            --stamp-sage: #6EE7B7; /* Emerald 300 */
+            --stamp-amber: #FCD34D; /* Amber 300 */
+            --stamp-navy: #93C5FD; /* Blue 300 */
+            --stamp-brick: #FCA5A5; /* Red 300 */
+        }
+
+        body {
+            background-color: var(--paper-base);
+            color: var(--ink-primary);
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* Utilitários Customizados */
+        .ink-effect { mix-blend-mode: multiply; }
+        .dark .ink-effect { mix-blend-mode: normal; } /* Blend mode desligado no dark para visibilidade */
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--paper-line); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ink-utility); }
+
+        .perforated-line {
+            background-image: linear-gradient(to right, var(--paper-line) 50%, rgba(255,255,255,0) 0%);
+            background-position: bottom;
+            background-size: 10px 1px;
+            background-repeat: repeat-x;
+        }
+    </style>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        paper: {
+                            base: 'var(--paper-base)',
+                            card: 'var(--paper-card)',
+                            line: 'var(--paper-line)',
+                        },
+                        ink: {
+                            primary: 'var(--ink-primary)',
+                            secondary: 'var(--ink-secondary)',
+                            utility: 'var(--ink-utility)',
+                        },
+                        action: {
+                            blue: 'var(--action-blue)',
+                            hover: 'var(--action-hover)',
+                        },
+                        stamp: {
+                            sage: 'var(--stamp-sage)',
+                            amber: 'var(--stamp-amber)',
+                            navy: 'var(--stamp-navy)',
+                            brick: 'var(--stamp-brick)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Nunito', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'paper': '0 2px 4px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.02)',
+                        'float': '0 8px 24px rgba(0, 0, 0, 0.08)',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="font-body selection:bg-action-blue selection:text-white flex min-h-screen transition-colors duration-300">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 fixed h-full border-r border-paper-line bg-paper-base hidden md:flex flex-col p-8 z-10 transition-colors duration-300">
+        <div class="mb-12">
+            <div class="flex items-center gap-3 text-ink-primary mb-2">
+                <!-- Logo SVG adaptável via classe text-ink-primary -->
+                <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M30 80 V20 H80 M30 50 H70" stroke="currentColor" stroke-width="22"/>
+                        <path d="M30 80 V20 H80 M30 50 H70" class="stroke-paper-base" stroke-width="14"/>
+                        <path d="M30 80 V20 H80 M30 50 H70" stroke="currentColor" stroke-width="2"/>
+                    </g>
+                    <circle cx="30" cy="80" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                    <circle cx="30" cy="50" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                    <circle cx="30" cy="20" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                    <circle cx="80" cy="20" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                    <circle cx="70" cy="50" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                </svg>
+                <span class="font-sans font-extrabold text-xl tracking-wide">FOLIO</span>
+            </div>
+            <div class="text-xs font-mono text-ink-utility mt-1 tracking-widest uppercase">Design System 3.7</div>
+        </div>
+
+        <nav class="flex-1 space-y-6">
+            <!-- Menus -->
+            <div>
+                <h3 class="font-mono text-xs text-ink-secondary uppercase tracking-wider mb-3">Fundamentos</h3>
+                <ul class="space-y-2 font-medium text-sm text-ink-primary">
+                    <li><a href="#brand" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-star"></i> Marca & Logo</a></li>
+                    <li><a href="#colors" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-palette"></i> Cores</a></li>
+                    <li><a href="#typography" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-text-aa"></i> Tipografia</a></li>
+                    <li><a href="#iconography" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-shapes"></i> Iconografia</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-mono text-xs text-ink-secondary uppercase tracking-wider mb-3">Componentes</h3>
+                <ul class="space-y-2 font-medium text-sm text-ink-primary">
+                    <li><a href="#buttons" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-cursor-click"></i> Botões & Inputs</a></li>
+                    <li><a href="#cards" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-ticket"></i> Boarding Cards</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-mono text-xs text-ink-secondary uppercase tracking-wider mb-3">Diretrizes</h3>
+                <ul class="space-y-2 font-medium text-sm text-ink-primary">
+                    <li><a href="#accessibility" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-eye"></i> Acessibilidade</a></li>
+                    <li><a href="#llm" class="hover:text-action-blue transition-colors flex items-center gap-2"><i class="ph-bold ph-robot"></i> LLM Guidelines</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Dark Mode Toggle -->
+        <div class="mt-auto pt-6 border-t border-paper-line">
+            <button onclick="toggleTheme()" class="flex items-center justify-between w-full bg-paper-card border border-paper-line p-2 rounded-lg text-xs font-bold text-ink-primary hover:border-action-blue transition-colors shadow-sm">
+                <span id="theme-text">LIGHT MODE</span>
+                <i id="theme-icon" class="ph-fill ph-sun text-lg text-action-blue"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="flex-1 md:ml-64 p-8 md:p-16 max-w-5xl mx-auto transition-colors duration-300">
+
+        <!-- HEADER -->
+        <header class="mb-20">
+            <h1 class="font-sans font-extrabold text-5xl text-ink-primary mb-4">Folio.</h1>
+            <p class="text-xl text-ink-secondary font-body max-w-2xl leading-relaxed">
+                Um sistema de design onde o <span class="text-action-blue font-bold">romantismo do passaporte</span> encontra a <span class="text-action-blue font-bold">precisão suíça</span>.
+            </p>
+        </header>
+
+        <!-- SEÇÃO: MARCA -->
+        <section id="brand" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">01. Identidade Visual</h2>
+                <span class="font-mono text-xs text-ink-utility">SVG LOGO · 1:1.4 RATIO</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="bg-paper-card border border-paper-line rounded-2xl p-12 flex items-center justify-center shadow-paper aspect-square">
+                    <!-- LOGO PRINCIPAL GRANDE -->
+                    <svg width="240" height="240" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Grupo para garantir consistência -->
+                        <g stroke-linecap="round" stroke-linejoin="round">
+                            <!-- 1. Borda Externa Grossa (Silhouette) -->
+                            <path d="M30 80 V20 H80 M30 50 H70" stroke="currentColor" stroke-width="22"/>
+
+                            <!-- 2. Máscara Vazada (Background Color) -->
+                            <path d="M30 80 V20 H80 M30 50 H70" class="stroke-paper-base" stroke-width="14"/>
+
+                            <!-- 3. Rota Interna (Thin Line) -->
+                            <path d="M30 80 V20 H80 M30 50 H70" stroke="currentColor" stroke-width="2"/>
+                        </g>
+
+                        <!-- 4. Nós (Stations) -->
+                        <circle cx="30" cy="80" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                        <circle cx="30" cy="50" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                        <circle cx="30" cy="20" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                        <circle cx="80" cy="20" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                        <circle cx="70" cy="50" r="3.5" class="fill-paper-base stroke-ink-primary" stroke-width="2"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 class="font-sans font-bold text-xl mb-4">The Guided Path</h3>
+                    <p class="text-ink-secondary mb-4 leading-relaxed">
+                        O logo do Folio representa o conceito de "Container Seguro". A borda grossa externa é o aplicativo (robusto, offline), enquanto a linha fina interna é a jornada fluida do usuário.
+                    </p>
+                    <div class="bg-blue-50 border-l-4 border-action-blue p-4">
+                        <p class="text-sm text-ink-primary font-medium dark:text-[#1C1E21]">
+                            <span class="font-bold">Nota de Uso:</span> O logo deve ser usado sempre em Ink Primary (via <code>currentColor</code>) sobre fundos claros para máximo contraste.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CORES: LIGHT & DARK -->
+        <section id="colors" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">02. Paleta de Cores</h2>
+                <span class="font-mono text-xs text-ink-utility">LIGHT & DARK MODE</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                <!-- Light Mode Preview -->
+                <div class="space-y-4">
+                    <h3 class="font-mono text-xs text-ink-secondary uppercase tracking-wider">Light Mode (Paper)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-lg border border-[#E6E0D9] bg-[#FBF9F6]">
+                            <div class="h-12 w-full bg-[#FBF9F6] rounded border border-gray-200 mb-2"></div>
+                            <p class="font-bold text-xs text-[#1C1E21]">Base: #FBF9F6</p>
+                        </div>
+                        <div class="p-4 rounded-lg border border-[#E6E0D9] bg-[#FBF9F6]">
+                            <div class="h-12 w-full bg-[#1C1E21] rounded mb-2"></div>
+                            <p class="font-bold text-xs text-[#1C1E21]">Ink: #1C1E21</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dark Mode Preview -->
+                <div class="space-y-4">
+                    <h3 class="font-mono text-xs text-ink-secondary uppercase tracking-wider">Dark Mode (Navy)</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 rounded-lg border border-[#2E466C] bg-[#0E1A2B]">
+                            <div class="h-12 w-full bg-[#0E1A2B] rounded border border-[#2E466C] mb-2"></div>
+                            <p class="font-bold text-xs text-[#FBF9F6]">Base: #0E1A2B</p>
+                        </div>
+                        <div class="p-4 rounded-lg border border-[#2E466C] bg-[#0E1A2B]">
+                            <div class="h-12 w-full bg-[#FBF9F6] rounded mb-2"></div>
+                            <p class="font-bold text-xs text-[#FBF9F6]">Ink: #FBF9F6</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabela de Referência -->
+            <div class="overflow-x-auto rounded-xl border border-paper-line shadow-sm">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-paper-card text-ink-utility font-mono text-xs uppercase">
+                        <tr>
+                            <th class="px-6 py-4 font-medium">Token Name</th>
+                            <th class="px-6 py-4 font-medium">Light Value</th>
+                            <th class="px-6 py-4 font-medium">Dark Value</th>
+                            <th class="px-6 py-4 font-medium">Uso</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-paper-line bg-paper-base text-ink-primary font-mono">
+                        <tr>
+                            <td class="px-6 py-4 font-bold">paper-base</td>
+                            <td class="px-6 py-4 text-ink-secondary">#FBF9F6</td>
+                            <td class="px-6 py-4 text-ink-secondary">#0E1A2B</td>
+                            <td class="px-6 py-4 font-body text-ink-utility">Fundo principal</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-bold">ink-primary</td>
+                            <td class="px-6 py-4 text-ink-secondary">#1C1E21</td>
+                            <td class="px-6 py-4 text-ink-secondary">#FBF9F6</td>
+                            <td class="px-6 py-4 font-body text-ink-utility">Texto Principal (Contrast > 13:1)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-bold">ink-utility</td>
+                            <td class="px-6 py-4 text-ink-secondary">#364152</td>
+                            <td class="px-6 py-4 text-action-blue">#94A3B8</td>
+                            <td class="px-6 py-4 font-body text-ink-utility">Metadados (Contrast > 4.5:1)</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 font-bold">action-blue</td>
+                            <td class="px-6 py-4 text-action-blue">#0055FF</td>
+                            <td class="px-6 py-4 text-action-blue">#60A5FA</td>
+                            <td class="px-6 py-4 font-body text-ink-utility">Ações e Links</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: TIPOGRAFIA -->
+        <section id="typography" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">03. Tipografia</h2>
+                <span class="font-mono text-xs text-ink-utility">THE TRIAD</span>
+            </div>
+            <div class="bg-paper-card border border-paper-line rounded-xl p-8 shadow-sm space-y-6">
+                <div>
+                    <span class="font-mono text-xs text-ink-utility block mb-1">HEADINGS (NUNITO)</span>
+                    <h1 class="font-sans font-extrabold text-4xl text-ink-primary">Kyoto: The Old Capital</h1>
+                </div>
+                <div>
+                    <span class="font-mono text-xs text-ink-utility block mb-1">BODY (INTER)</span>
+                    <p class="font-body text-ink-secondary leading-relaxed">
+                        Explore os templos antigos e os jardins zen. A cidade respira história em cada esquina.
+                        <a href="#" class="text-action-blue underline decoration-2">Ler guia completo</a>.
+                    </p>
+                </div>
+                <div>
+                    <span class="font-mono text-xs text-ink-utility block mb-1">DATA (JETBRAINS MONO)</span>
+                    <div class="flex gap-6 font-mono text-sm text-ink-primary bg-paper-base p-4 rounded border border-paper-line inline-block">
+                        <span>DEPART: 09:30</span>
+                        <span>|</span>
+                        <span>COST: ¥ 1200</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: ICONOGRAFIA -->
+        <section id="iconography" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">04. Iconografia</h2>
+                <span class="font-mono text-xs text-ink-utility">PHOSPHOR ICONS</span>
+            </div>
+            <div class="bg-paper-card border border-paper-line rounded-xl p-8 flex gap-8 justify-center">
+                <i class="ph-bold ph-house text-3xl text-ink-secondary hover:text-action-blue transition-colors cursor-pointer"></i>
+                <i class="ph-fill ph-map-trifold text-3xl text-action-blue cursor-pointer"></i>
+                <i class="ph-bold ph-ticket text-3xl text-ink-secondary hover:text-action-blue transition-colors cursor-pointer"></i>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: COMPONENTES UI -->
+        <section id="cards" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">05. Componentes</h2>
+                <span class="font-mono text-xs text-ink-utility">LIGHT/DARK READY</span>
+            </div>
+
+            <!-- Cards Demo -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- CARD EXEMPLO -->
+                <div class="bg-paper-card rounded-lg shadow-paper overflow-hidden border border-paper-line relative">
+                    <div class="p-5">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="font-mono text-[10px] text-ink-utility uppercase tracking-widest bg-paper-base px-2 py-1 rounded">Activity</span>
+                            <div class="border-2 border-stamp-sage text-stamp-sage font-sans font-extrabold text-[10px] px-2 py-0.5 rounded-full uppercase tracking-widest -rotate-2">
+                                Visited
+                            </div>
+                        </div>
+                        <h3 class="font-sans font-bold text-lg text-ink-primary leading-tight mb-2">Fushimi Inari Taisha</h3>
+                        <p class="font-body text-sm text-ink-secondary leading-snug line-clamp-2">
+                            Santuário xintoísta famoso pelos milhares de portões torii vermelhos.
+                        </p>
+                    </div>
+                    <!-- Picote -->
+                    <div class="relative h-4 flex items-center">
+                        <div class="absolute left-0 w-3 h-6 bg-paper-base rounded-r-full -ml-1.5 border-r border-paper-line"></div>
+                        <div class="w-full h-px border-b border-dashed border-paper-line mx-2"></div>
+                        <div class="absolute right-0 w-3 h-6 bg-paper-base rounded-l-full -mr-1.5 border-l border-paper-line"></div>
+                    </div>
+                    <div class="p-4 bg-paper-base/50 flex justify-between items-center">
+                        <div><p class="font-mono text-[10px] text-ink-utility">START</p><p class="font-mono text-sm font-medium text-ink-primary">08:00</p></div>
+                        <div class="w-px h-8 bg-paper-line"></div>
+                        <div><p class="font-mono text-[10px] text-ink-utility">COST</p><p class="font-mono text-sm font-medium text-ink-primary">Free</p></div>
+                        <div class="w-px h-8 bg-paper-line"></div>
+                        <button class="text-action-blue p-2 hover:bg-paper-line/20 rounded"><i class="ph-bold ph-map-trifold text-xl"></i></button>
+                    </div>
+                </div>
+
+                <!-- BUTTONS & INPUTS -->
+                <div class="space-y-6">
+                    <button class="w-full bg-action-blue hover:bg-action-hover text-white font-body font-semibold py-3 px-6 rounded-md shadow-sm transition-colors flex items-center justify-center gap-2">
+                        <i class="ph-bold ph-plus"></i> Adicionar
+                    </button>
+                    <input type="text" placeholder="Nome do local..." class="w-full bg-paper-card border-2 border-paper-line focus:border-action-blue rounded-md py-3 px-4 text-ink-primary font-body placeholder-ink-utility outline-none transition-colors">
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: ACESSIBILIDADE -->
+        <section id="accessibility" class="mb-24 scroll-mt-10">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">06. Acessibilidade</h2>
+                <span class="font-mono text-xs text-ink-utility">WCAG 2.1 AA COMPLIANT</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+                <div>
+                    <h3 class="font-sans font-bold text-lg mb-4 text-ink-primary">Regras de Contraste</h3>
+                    <p class="text-ink-secondary mb-4 leading-relaxed text-sm">
+                        O Folio garante que todo texto crítico tenha uma razão de contraste de pelo menos <strong>4.5:1</strong> (Padrão AA).
+                    </p>
+                    <ul class="space-y-3 mb-6 text-sm">
+                        <li class="flex items-start gap-2">
+                            <i class="ph-bold ph-check-circle text-stamp-sage mt-0.5"></i>
+                            <span class="text-ink-secondary"><strong>Ink Primary:</strong> Contraste > 13:1 (Excelente).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="ph-bold ph-check-circle text-stamp-sage mt-0.5"></i>
+                            <span class="text-ink-secondary"><strong>Ink Utility (Dark):</strong> Ajustado para #94A3B8 para passar de 4.5:1.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="ph-bold ph-check-circle text-stamp-sage mt-0.5"></i>
+                            <span class="text-ink-secondary"><strong>Stamps (Dark):</strong> Usam tons pastéis/neon para não sumir no fundo Navy.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bg-paper-card border border-paper-line rounded-xl p-6 shadow-sm">
+                    <h4 class="font-mono text-xs text-ink-utility uppercase mb-4">Contrast Check (Dark Mode)</h4>
+
+                    <!-- Exemplo Ruim vs Bom -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-[#1B2B44] p-4 rounded border border-red-500/30 opacity-70">
+                            <p class="text-[#2C4B70] font-bold text-sm mb-1">Navy on Navy</p>
+                            <div class="flex items-center gap-1 text-red-400 text-xs font-mono">
+                                <i class="ph-bold ph-x-circle"></i> 1.25:1 (Fail)
+                            </div>
+                        </div>
+                        <div class="bg-[#1B2B44] p-4 rounded border border-stamp-sage">
+                            <p class="text-[#93C5FD] font-bold text-sm mb-1">Blue 300 on Navy</p>
+                            <div class="flex items-center gap-1 text-stamp-sage text-xs font-mono">
+                                <i class="ph-bold ph-check-circle"></i> 5.6:1 (Pass AA)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO: LLM Guidelines (Atualizada com Regras de Contraste) -->
+        <section id="llm" class="scroll-mt-10 mb-24">
+            <div class="flex items-end justify-between border-b border-paper-line pb-4 mb-8">
+                <h2 class="font-sans font-bold text-2xl text-ink-primary">07. LLM Guidelines</h2>
+                <span class="font-mono text-xs text-ink-utility">PARA AGENTES IA</span>
+            </div>
+
+            <div class="bg-paper-card border border-paper-line rounded-xl overflow-hidden shadow-paper">
+                <div class="bg-ink-primary px-6 py-4 flex justify-between items-center">
+                    <span class="font-mono text-xs text-white uppercase tracking-widest">folio_system_context.txt</span>
+                    <button class="text-white hover:text-action-blue transition-colors text-xs font-bold" onclick="copyPrompt()">
+                        <i class="ph-bold ph-copy"></i> COPY
+                    </button>
+                </div>
+                <div class="p-6 overflow-x-auto bg-[#1e1e1e] text-gray-300 font-mono text-xs md:text-sm leading-relaxed" id="llm-prompt">
+<pre class="whitespace-pre-wrap">
+# ROLE
+You are an expert UI generator for "Folio", an offline-first travel utility app.
+Your goal is to generate interfaces that strictly adhere to the "Functional Nostalgia" aesthetic:
+a blend of passport tactile warmth (Paper & Ink) with Swiss design precision (Grid & Mono fonts).
+
+# DESIGN TOKENS
+
+## Colors (Theme: Paper & Ink)
+- Background: `bg-paper-base` (Use Tailwind Semantic Tokens)
+- Card Surface: `bg-paper-card`
+- Lines/Borders: `border-paper-line`
+- Text Primary: `text-ink-primary`
+- Text Secondary: `text-ink-secondary`
+- Text Utility/Meta: `text-ink-utility`
+- Action/Brand: `bg-action-blue` or `text-action-blue`
+
+## Typography (The Triad)
+1. **Nunito** (`font-sans`): Use for **Headings, City Names, Brand**. (Rounded, friendly).
+2. **Inter** (`font-body`): Use for **Body text, UI elements**. (Readable, structured).
+3. **JetBrains Mono** (`font-mono`): Use strictly for **Data** (Time, Cost, Coordinates, Codes).
+
+## Iconography
+- Library: Phosphor Icons
+- Style: Use `ph-bold` for standard UI icons. Use `ph-fill` for active states.
+- Implementation: `<i class="ph-bold ph-map-trifold"></i>`
+
+# COMPONENT PATTERNS
+
+## 1. Boarding Pass Card (The Core Component)
+A card that mimics a physical ticket with a perforated line.
+- **Container:** `bg-paper-card rounded-lg shadow-paper border border-paper-line`
+- **Header:** Activity Name (Nunito Bold) + Stamp Badge.
+- **Divider:** Dashed line with two semi-circle cutouts on sides.
+- **Footer:** Grid of data points (Start Time, Cost) using JetBrains Mono.
+
+## 2. Stamp Badges
+Status indicators that look like passport ink stamps.
+- **Structure:** Pill shape or Circle.
+- **Border:** `border-2` (Thick ink).
+- **Rotation:** Apply slight rotation (`-rotate-2` or `rotate-1`) for organic feel.
+- **Colors:** - Done: `text-stamp-sage`
+  - Plan: `text-stamp-navy`
+  - Skip: `text-stamp-amber`
+
+# ACCESSIBILITY RULES (WCAG 2.1 AA)
+1. **Minimum Contrast:** Ensure all normal text has a contrast ratio of at least 4.5:1 against the background.
+2. **Dark Mode Text:** NEVER use the standard Ink Utility color (#6B7785) on dark backgrounds. Use the adjusted `ink-utility` variable (Slate 400) which passes contrast checks.
+3. **Stamps in Dark Mode:** Do not use dark ink colors (like standard Navy) on dark cards. Use lighter, pastel variants defined in the CSS variables (e.g., Blue 300 for Navy).
+4. **Information Density:** Do not rely solely on color to convey state. Use icons and text labels (e.g., "Done" badge) along with color.
+
+# IMPLEMENTATION SETUP (Tailwind Config)
+Copy this configuration into your tailwind.config.js. It supports AUTOMATIC DARK MODE via CSS Variables.
+
+module.exports = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      colors: {
+        // SEMANTIC COLOR SYSTEM (Auto-switching)
+        paper: {
+          base: 'var(--paper-base)',   // Light: #FBF9F6 | Dark: #0E1A2B
+          card: 'var(--paper-card)',   // Light: #FFFFFF | Dark: #1B2B44
+          line: 'var(--paper-line)',   // Light: #E6E0D9 | Dark: #2E466C
+        },
+        ink: {
+          primary: 'var(--ink-primary)',     // Light: #1C1E21 | Dark: #FBF9F6
+          secondary: 'var(--ink-secondary)', // Light: #54585F | Dark: #CBD5E1
+          utility: 'var(--ink-utility)',     // Light: #364152 | Dark: #94A3B8
+        },
+        action: {
+          blue: 'var(--action-blue)',   // Light: #0055FF | Dark: #60A5FA
+          hover: 'var(--action-hover)',
+        },
+        stamp: {
+          sage: 'var(--stamp-sage)',    // Light: #4A7A67 | Dark: #6EE7B7
+          amber: 'var(--stamp-amber)',  // Light: #B57B2E | Dark: #FCD34D
+          navy: 'var(--stamp-navy)',    // Light: #2C4B70 | Dark: #93C5FD
+          brick: 'var(--stamp-brick)'   // Light: #C93A3A | Dark: #FCA5A5
+        }
+      },
+      fontFamily: {
+        sans: ['Nunito', 'sans-serif'],
+        body: ['Inter', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
+      }
+    }
+  }
+}
+</pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="mt-24 border-t border-paper-line pt-8 text-center md:text-left">
+            <p class="font-mono text-xs text-ink-secondary">
+                FOLIO Design System v3.7 · Created for Offline Travelers
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- JS: Theme Toggle & Copy -->
+    <script>
+        // Theme Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            const text = document.getElementById('theme-text');
+            const icon = document.getElementById('theme-icon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                text.innerText = "LIGHT MODE";
+                icon.className = "ph-fill ph-sun text-lg text-action-blue";
+            } else {
+                html.classList.add('dark');
+                text.innerText = "DARK MODE";
+                icon.className = "ph-fill ph-moon text-lg text-action-blue";
+            }
+        }
+
+        // Copy Logic
+        function copyPrompt() {
+            const promptText = document.getElementById('llm-prompt').innerText;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert("Configuração copiada!");
+            });
+        }
+        function copyColor(hex) {
+            navigator.clipboard.writeText(hex).then(() => {
+                alert("Cor copiada: " + hex);
+            });
+        }
+    </script>
+</body>
+</html>
