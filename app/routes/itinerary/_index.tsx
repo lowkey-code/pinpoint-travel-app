@@ -1,6 +1,9 @@
 import { Link, useNavigate } from "react-router"
+import { useState } from "react"
 import { useTrips } from "~/features/itinerary"
 import { Plus, Archive, Copy, Trash2 } from "lucide-react"
+import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
+import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
 
 export default function ItineraryIndex() {
   const navigate = useNavigate()
@@ -15,11 +18,25 @@ export default function ItineraryIndex() {
     deleteTrip,
   } = useTrips()
 
-  const handleCreateTrip = () => {
-    const name = prompt("Nome da viagem:")
-    if (!name) return
-    const trip = createNewTrip(name)
+  const [showCreateDialog, setShowCreateDialog] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; tripId: string | null }>({
+    open: false,
+    tripId: null,
+  })
+
+  const handleCreateTrip = (data: { name: string; description?: string; startDate?: string; endDate?: string }) => {
+    const trip = createNewTrip(data.name, {
+      description: data.description,
+      startDate: data.startDate,
+      endDate: data.endDate,
+    })
     navigate(`/itinerary/${trip.id}`)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (deleteConfirm.tripId) {
+      deleteTrip(deleteConfirm.tripId)
+    }
   }
 
   if (isLoading) {
@@ -38,13 +55,19 @@ export default function ItineraryIndex() {
       </header>
 
       <button
-        onClick={handleCreateTrip}
+        onClick={() => setShowCreateDialog(true)}
         className="w-full mb-8 p-4 border-2 border-dashed border-border rounded-xl hover:border-primary hover:bg-secondary/50 transition-colors flex items-center justify-center gap-2 text-muted-foreground hover:text-foreground"
         data-testid="create-trip-button"
       >
         <Plus className="w-5 h-5" />
         Nova Viagem
       </button>
+
+      <CreateTripDialog
+        open={showCreateDialog}
+        onOpenChange={setShowCreateDialog}
+        onCreate={handleCreateTrip}
+      />
 
       {activeTrips.length === 0 && archivedTrips.length === 0 && (
         <div className="text-center py-16">
@@ -125,11 +148,7 @@ export default function ItineraryIndex() {
                       <Archive className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => {
-                        if (confirm("Deletar permanentemente esta viagem?")) {
-                          deleteTrip(trip.id)
-                        }
-                      }}
+                      onClick={() => setDeleteConfirm({ open: true, tripId: trip.id })}
                       className="p-2 hover:bg-destructive/10 text-destructive rounded-lg transition-colors"
                       aria-label="Deletar viagem"
                     >
@@ -142,6 +161,17 @@ export default function ItineraryIndex() {
           </div>
         </section>
       )}
+
+      <ConfirmDialog
+        open={deleteConfirm.open}
+        onOpenChange={(open) => setDeleteConfirm({ open, tripId: null })}
+        title="Deletar Viagem"
+        description="Esta viagem será deletada permanentemente. Esta ação não pode ser desfeita."
+        confirmLabel="Deletar"
+        cancelLabel="Cancelar"
+        variant="danger"
+        onConfirm={handleDeleteConfirm}
+      />
     </div>
   )
 }
