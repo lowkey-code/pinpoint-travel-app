@@ -167,13 +167,41 @@ export function createDay(index: number, date?: string): Day {
   }
 }
 
+// Calculate days between two dates
+function calculateDaysBetween(startDate: string, endDate: string): number {
+  const start = new Date(startDate)
+  const end = new Date(endDate)
+  const diffTime = end.getTime() - start.getTime()
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  return Math.max(1, diffDays + 1) // +1 to include both start and end date
+}
+
+// Add days to a date
+function addDays(dateStr: string, days: number): string {
+  const date = new Date(dateStr)
+  date.setDate(date.getDate() + days)
+  return date.toISOString().split("T")[0]
+}
+
 // Create trip
 export function createTrip(name: string, partial?: Partial<Trip>): Trip {
   const now = Date.now()
+
+  // Calculate days based on date range
+  let days: Day[]
+  if (partial?.startDate && partial?.endDate) {
+    const numDays = calculateDaysBetween(partial.startDate, partial.endDate)
+    days = Array.from({ length: numDays }, (_, i) =>
+      createDay(i, addDays(partial.startDate!, i))
+    )
+  } else {
+    days = [createDay(0, partial?.startDate)]
+  }
+
   return {
     id: generateId(),
     name,
-    days: [createDay(0)],
+    days,
     items: [],
     createdAt: now,
     updatedAt: now,

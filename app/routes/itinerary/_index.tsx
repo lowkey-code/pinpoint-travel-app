@@ -164,7 +164,7 @@ export default function ItineraryIndex() {
 
       <ConfirmDialog
         open={deleteConfirm.open}
-        onOpenChange={(open) => setDeleteConfirm({ open, tripId: null })}
+        onOpenChange={(open) => setDeleteConfirm({ open, tripId: open ? deleteConfirm.tripId : null })}
         title="Deletar Viagem"
         description="Esta viagem será deletada permanentemente. Esta ação não pode ser desfeita."
         confirmLabel="Deletar"
