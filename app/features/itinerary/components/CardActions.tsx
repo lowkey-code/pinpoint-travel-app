@@ -1,19 +1,12 @@
 import type { ItineraryItem } from "~/features/itinerary"
-import { STATUS_LABELS, buildAMapUrl, copyToClipboard } from "~/features/itinerary"
+import { buildAMapUrl, copyToClipboard } from "~/features/itinerary"
 import { Copy, MapPin } from "@phosphor-icons/react"
 import { ItineraryMenu } from "./ItineraryMenu"
 import { useToast } from "~/hooks/use-toast"
 import { StampBadge } from "~/components/ui/folio"
-import type { StampVariant } from "~/components/ui/folio"
 
 interface CardActionsProps {
   item: ItineraryItem
-}
-
-const statusToStamp: Record<string, StampVariant> = {
-  planned: "navy",
-  done: "sage",
-  skipped: "amber",
 }
 
 export function CardActions({ item }: CardActionsProps) {
@@ -43,17 +36,12 @@ export function CardActions({ item }: CardActionsProps) {
 
   return (
     <div className="flex items-center gap-2 flex-wrap">
-      {/* Priority badge */}
+      {/* Priority badge (status is shown in card header) */}
       {item.priority > 0 && (
         <StampBadge variant={item.priority === 2 ? "brick" : "amber"} rotated>
           {item.priority === 1 ? "Importante" : "Imperdível"}
         </StampBadge>
       )}
-
-      {/* Status badge */}
-      <StampBadge variant={statusToStamp[item.status]}>
-        {STATUS_LABELS[item.status]}
-      </StampBadge>
 
       <div className="ml-auto flex items-center gap-1">
         {/* Copy button */}

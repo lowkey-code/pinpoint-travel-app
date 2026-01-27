@@ -14,6 +14,9 @@ type Pages = {
   "/": {
     params: {};
   };
+  "/settings": {
+    params: {};
+  };
   "/itinerary": {
     params: {};
   };
@@ -38,11 +41,15 @@ type Pages = {
 type RouteFiles = {
   "root.tsx": {
     id: "root";
-    page: "/" | "/itinerary" | "/itinerary/:tripId" | "/itinerary/:tripId/day/:date" | "/itinerary/:tripId/grid";
+    page: "/" | "/settings" | "/itinerary" | "/itinerary/:tripId" | "/itinerary/:tripId/day/:date" | "/itinerary/:tripId/grid";
   };
   "routes/_index.tsx": {
     id: "routes/_index";
     page: "/";
+  };
+  "routes/settings.tsx": {
+    id: "routes/settings";
+    page: "/settings";
   };
   "routes/itinerary/layout.tsx": {
     id: "routes/itinerary/layout";
@@ -69,6 +76,7 @@ type RouteFiles = {
 type RouteModules = {
   "root": typeof import("./app/root.tsx");
   "routes/_index": typeof import("./app/routes/_index.tsx");
+  "routes/settings": typeof import("./app/routes/settings.tsx");
   "routes/itinerary/layout": typeof import("./app/routes/itinerary/layout.tsx");
   "routes/itinerary/_index": typeof import("./app/routes/itinerary/_index.tsx");
   "routes/itinerary/$tripId/_index": typeof import("./app/routes/itinerary/$tripId/_index.tsx");

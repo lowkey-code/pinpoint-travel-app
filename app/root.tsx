@@ -5,12 +5,14 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import { ToastProvider } from "~/hooks/use-toast";
 import { ToastContainer } from "~/components/ui/Toast";
+import { BottomNav } from "~/components/ui/folio";
 
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
@@ -25,7 +27,7 @@ export const links: Route.LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -57,10 +59,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation()
+  // Hide bottom nav inside trip detail pages (has tripId in URL)
+  const isTripDetail = /^\/itinerary\/[^/]+/.test(location.pathname)
+
   return (
     <ToastProvider>
       <Outlet />
       <ToastContainer />
+      {!isTripDetail && <BottomNav />}
     </ToastProvider>
   );
 }

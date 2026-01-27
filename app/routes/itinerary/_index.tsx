@@ -4,6 +4,7 @@ import { useTrips } from "~/features/itinerary"
 import { Plus, Archive, Copy, Trash } from "@phosphor-icons/react"
 import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
 import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
+import { TripListSkeleton } from "~/components/ui/folio"
 
 export default function ItineraryIndex() {
   const navigate = useNavigate()
@@ -40,15 +41,11 @@ export default function ItineraryIndex() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-ink-secondary font-body">Carregando…</p>
-      </div>
-    )
+    return <TripListSkeleton />
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 py-8">
+    <div className="container max-w-4xl mx-auto p-4 py-8 pb-24">
       <header className="mb-8" data-testid="itinerary-header">
         <h1 className="text-3xl font-sans font-bold mb-2">Minhas Viagens</h1>
         <p className="text-ink-secondary font-body">Organize seus roteiros de viagem</p>

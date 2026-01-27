@@ -2,6 +2,7 @@ import { type RouteConfig, index, route, layout, prefix } from "@react-router/de
 
 export default [
   index("routes/_index.tsx"),
+  route("settings", "routes/settings.tsx"),
   ...prefix("itinerary", [
     layout("routes/itinerary/layout.tsx", [
       index("routes/itinerary/_index.tsx"),

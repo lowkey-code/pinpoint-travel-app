@@ -5,6 +5,7 @@ import { GridView } from "~/features/itinerary/components/GridView"
 import { UndoRedoBar } from "~/features/itinerary/components/UndoRedoBar"
 import { ExportImport } from "~/features/itinerary/components/ExportImport"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
+import { GridViewSkeleton } from "~/components/ui/folio"
 
 export default function TripGrid() {
   const { tripId } = useParams()
@@ -12,8 +13,10 @@ export default function TripGrid() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-ink-secondary font-body">Carregando…</p>
+      <div className="min-h-screen bg-paper-base">
+        <div className="container max-w-6xl mx-auto px-4 py-6">
+          <GridViewSkeleton />
+        </div>
       </div>
     )
   }
