@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router"
 import { useState, useMemo } from "react"
 import { useTrips } from "~/features/itinerary"
-import { Plus, Gear, Archive, Trash } from "@phosphor-icons/react"
+import { Plus, Bug, Archive, Trash } from "@phosphor-icons/react"
 import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
 import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
-import { TripListSkeleton, DepartureBoard, TicketStub } from "~/components/ui/folio"
+import { TripListSkeleton, DepartureBoard, TicketStub, InstallBanner, InstallInstructions } from "~/components/ui/folio"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
+import { usePWAInstall } from "~/hooks/use-pwa-install"
 import type { Trip } from "~/features/itinerary/lib/types"
 
 function formatDateShort(dateStr: string): string {
@@ -78,6 +79,17 @@ export default function ItineraryIndex() {
     open: false,
     tripId: null,
   })
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false)
+
+  const { canInstall, isIOS, isMobile, hasNativePrompt, install, dismiss } = usePWAInstall()
+
+  const handleInstall = async () => {
+    if (hasNativePrompt && !isIOS) {
+      await install()
+    } else {
+      setShowInstallInstructions(true)
+    }
+  }
 
   // Find the next upcoming trip (has startDate in the future or closest)
   const { nextTrip, otherTrips } = useMemo(() => {
@@ -145,17 +157,30 @@ export default function ItineraryIndex() {
               <p className="font-mono text-[10px] text-ink-utility tracking-widest">TRAVEL PLANNER</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <ThemeToggle />
-            <button
-              onClick={() => navigate("/settings")}
-              className="touch-target bg-paper-card border border-paper-line rounded-xl btn-press focus-ring"
-              aria-label="Configurações"
+            <a
+              href="https://github.com/antropic/folio/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-ink-utility/50 hover:text-ink-utility hover:bg-paper-line/50 rounded-lg transition-colors focus-ring"
+              aria-label="Relatar bug"
+              title="Relatar bug"
             >
-              <Gear weight="bold" className="text-ink-utility" />
-            </button>
+              <Bug weight="bold" className="w-4 h-4" />
+            </a>
           </div>
         </header>
+
+        {/* Install PWA Banner */}
+        {canInstall && (
+          <InstallBanner
+            isIOS={isIOS}
+            hasNativePrompt={hasNativePrompt}
+            onInstall={handleInstall}
+            onDismiss={dismiss}
+          />
+        )}
 
         {/* Next Trip - Departure Board */}
         {nextTrip && (
@@ -277,6 +302,13 @@ export default function ItineraryIndex() {
         cancelLabel="Cancelar"
         variant="danger"
         onConfirm={handleDeleteConfirm}
+      />
+
+      <InstallInstructions
+        open={showInstallInstructions}
+        onClose={() => setShowInstallInstructions(false)}
+        isIOS={isIOS}
+        isMobile={isMobile}
       />
     </div>
   )

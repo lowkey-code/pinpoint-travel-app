@@ -1,9 +1,24 @@
+import { useState } from "react"
 import { useNavigate } from "react-router"
-import { CaretLeft } from "@phosphor-icons/react"
+import { CaretLeft, DeviceMobile, Check } from "@phosphor-icons/react"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
+import { InstallInstructions } from "~/components/ui/folio"
+import { usePWAInstall } from "~/hooks/use-pwa-install"
 
 export default function Settings() {
   const navigate = useNavigate()
+  const { canInstall, isInstalled, isIOS, isMobile, hasNativePrompt, install, isDismissed } = usePWAInstall()
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false)
+
+  const showInstallSection = !isInstalled && (canInstall || isDismissed)
+
+  const handleInstall = async () => {
+    if (hasNativePrompt && !isIOS) {
+      await install()
+    } else {
+      setShowInstallInstructions(true)
+    }
+  }
 
   return (
     <div className="max-w-md mx-auto p-4 pb-24">
@@ -33,6 +48,49 @@ export default function Settings() {
             <ThemeToggle />
           </div>
         </section>
+
+        {/* Install Section */}
+        {showInstallSection && (
+          <section className="bg-paper-card border border-paper-line rounded-xl p-4">
+            <h2 className="font-sans font-semibold mb-3">Instalação</h2>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-action-blue/10 rounded-lg flex items-center justify-center">
+                  <DeviceMobile weight="fill" className="text-action-blue" />
+                </div>
+                <div>
+                  <p className="font-body">Instalar aplicativo</p>
+                  <p className="text-sm text-ink-secondary font-body">
+                    Acesse offline a qualquer momento
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleInstall}
+                className="px-4 py-2 bg-action-blue text-white text-sm font-body font-medium rounded-lg hover:bg-action-hover btn-press focus-ring"
+              >
+                Instalar
+              </button>
+            </div>
+          </section>
+        )}
+
+        {isInstalled && (
+          <section className="bg-paper-card border border-paper-line rounded-xl p-4">
+            <h2 className="font-sans font-semibold mb-3">Instalação</h2>
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-stamp-sage/10 rounded-lg flex items-center justify-center">
+                <Check weight="bold" className="text-stamp-sage" />
+              </div>
+              <div>
+                <p className="font-body text-ink-primary">Aplicativo instalado</p>
+                <p className="text-sm text-ink-secondary font-body">
+                  Você está usando o Folio como app
+                </p>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* Data Section */}
         <section className="bg-paper-card border border-paper-line rounded-xl p-4">
@@ -64,6 +122,13 @@ export default function Settings() {
           </div>
         </section>
       </div>
+
+      <InstallInstructions
+        open={showInstallInstructions}
+        onClose={() => setShowInstallInstructions(false)}
+        isIOS={isIOS}
+        isMobile={isMobile}
+      />
     </div>
   )
 }

@@ -541,6 +541,46 @@ html {
 .barcode span:nth-child(even) { height: 70%; }
 .barcode span:nth-child(3n) { width: 3px; }
 
+/* Animate-in utilities */
+.animate-in {
+  animation-duration: var(--duration-normal);
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.slide-in-from-top-2 {
+  --slide-from-y: -8px;
+  animation-name: slide-in-y;
+}
+
+.slide-in-from-bottom-4 {
+  --slide-from-y: 16px;
+  animation-name: slide-in-y;
+}
+
+@keyframes slide-in-y {
+  from {
+    opacity: 0;
+    transform: translateY(var(--slide-from-y));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.duration-200 { animation-duration: 200ms; }
+.duration-300 { animation-duration: 300ms; }
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *,

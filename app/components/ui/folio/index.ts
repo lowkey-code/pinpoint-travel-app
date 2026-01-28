@@ -18,6 +18,7 @@ export { TicketStub } from "./TicketStub"
 
 // Layout
 export { BottomNav } from "./BottomNav"
+export { InstallBanner, InstallInstructions, IOSInstallInstructions } from "./InstallBanner"
 
 // Loading states
 export { Skeleton, CardSkeleton, DayViewSkeleton, TripCardSkeleton, TripListSkeleton, GridViewSkeleton } from "./Skeleton"
