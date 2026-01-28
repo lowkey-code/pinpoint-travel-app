@@ -1,4 +1,4 @@
-import { Sun, Moon, Desktop } from "@phosphor-icons/react"
+import { Scroll, Compass, Desktop } from "@phosphor-icons/react"
 import { useTheme } from "~/hooks/use-theme"
 
 export function ThemeToggle() {
@@ -14,17 +14,17 @@ export function ThemeToggle() {
     <button
       onClick={cycleTheme}
       className="p-2 hover:bg-secondary rounded-lg transition-colors"
-      aria-label="Alternar tema"
+      aria-label="Alternar aparência"
       title={
         theme === "light"
-          ? "Modo claro"
+          ? "Parchment"
           : theme === "dark"
-          ? "Modo escuro"
-          : "Modo sistema"
+          ? "Blueprint"
+          : "Sistema"
       }
     >
-      {theme === "light" && <Sun className="w-5 h-5" weight="bold" />}
-      {theme === "dark" && <Moon className="w-5 h-5" weight="bold" />}
+      {theme === "light" && <Scroll className="w-5 h-5" weight="bold" />}
+      {theme === "dark" && <Compass className="w-5 h-5" weight="bold" />}
       {theme === "system" && <Desktop className="w-5 h-5" weight="bold" />}
     </button>
   )

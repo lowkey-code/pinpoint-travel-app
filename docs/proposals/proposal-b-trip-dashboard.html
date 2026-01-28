@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta B - Trip Dashboard | Folio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@600;700;800&display=swap">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: { base: '#FBF9F6', card: '#FFFFFF', line: '#E6E0D9' },
+            ink: { primary: '#1C1E21', secondary: '#54585F', utility: '#364152' },
+            action: { blue: '#0055FF', hover: '#0044CC' },
+            stamp: { sage: '#4A7A67', amber: '#B57B2E', navy: '#2C4B70', brick: '#C93A3A' }
+          },
+          fontFamily: {
+            sans: ['Nunito', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-paper-base min-h-screen">
+
+  <!-- ========================================== -->
+  <!-- PROPOSTA B: TRIP DASHBOARD                 -->
+  <!-- Conceito: Dashboard com métricas e stats   -->
+  <!-- - Home com cards de estatísticas           -->
+  <!-- - Horizontal scroll para seleção de dias   -->
+  <!-- - Cards mais compactos e densos            -->
+  <!-- ========================================== -->
+
+  <div class="max-w-md mx-auto pb-20">
+
+    <!-- PARTE 1: HOME SCREEN - Dashboard Style -->
+    <section class="space-y-5">
+
+      <!-- Header com gradiente sutil -->
+      <header class="bg-gradient-to-b from-paper-card to-paper-base pt-6 pb-4 px-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-sans font-bold text-ink-primary">Folio</h1>
+            <p class="text-ink-secondary font-body text-sm">Seu diário de viagens</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <!-- Theme Toggle -->
+            <button class="p-2.5 hover:bg-paper-line rounded-xl transition-colors" title="Parchment Mode">
+              <i class="ph-bold ph-scroll text-xl text-ink-utility"></i>
+            </button>
+            <button class="w-10 h-10 bg-action-blue rounded-full flex items-center justify-center shadow-lg">
+              <i class="ph-bold ph-plus text-white text-xl"></i>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Quick Stats Row -->
+      <div class="px-4">
+        <div class="grid grid-cols-3 gap-3">
+          <div class="bg-paper-card rounded-xl border border-paper-line p-3 text-center">
+            <p class="font-mono text-2xl font-bold text-action-blue">3</p>
+            <p class="text-xs text-ink-utility font-body">Viagens</p>
+          </div>
+          <div class="bg-paper-card rounded-xl border border-paper-line p-3 text-center">
+            <p class="font-mono text-2xl font-bold text-stamp-sage">47</p>
+            <p class="text-xs text-ink-utility font-body">Locais</p>
+          </div>
+          <div class="bg-paper-card rounded-xl border border-paper-line p-3 text-center">
+            <p class="font-mono text-2xl font-bold text-stamp-navy">21</p>
+            <p class="text-xs text-ink-utility font-body">Dias</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Viagem Ativa - Card grande -->
+      <div class="px-4">
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="font-sans font-semibold text-ink-primary">Viagem Ativa</h2>
+          <span class="bg-stamp-sage/10 text-stamp-sage text-xs font-mono px-2 py-1 rounded-full">
+            <i class="ph-fill ph-circle text-[8px] mr-1 animate-pulse"></i>Em andamento
+          </span>
+        </div>
+
+        <div class="bg-paper-card rounded-2xl border border-paper-line shadow-sm overflow-hidden">
+          <div class="p-4">
+            <div class="flex items-start gap-4">
+              <!-- Ícone grande -->
+              <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-stamp-navy/20 to-stamp-sage/20 flex items-center justify-center shrink-0">
+                <span class="text-3xl">🇯🇵</span>
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-sans font-bold text-xl text-ink-primary">Japão 2025</h3>
+                <p class="text-ink-secondary font-body text-sm mt-0.5">12 dias · 42 atividades</p>
+
+                <!-- Tags de cidades -->
+                <div class="flex flex-wrap gap-1.5 mt-2">
+                  <span class="bg-paper-base text-ink-utility text-xs font-body px-2 py-0.5 rounded-full">Tóquio</span>
+                  <span class="bg-paper-base text-ink-utility text-xs font-body px-2 py-0.5 rounded-full">Kyoto</span>
+                  <span class="bg-paper-base text-ink-utility text-xs font-body px-2 py-0.5 rounded-full">Osaka</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Barra de progresso detalhada -->
+          <div class="px-4 py-3 bg-paper-base/50 border-t border-paper-line">
+            <div class="flex items-center justify-between text-xs mb-2">
+              <span class="font-body text-ink-secondary">Progresso do planejamento</span>
+              <span class="font-mono text-ink-primary font-medium">73%</span>
+            </div>
+            <div class="h-2 bg-paper-line rounded-full overflow-hidden flex">
+              <div class="h-full bg-stamp-sage" style="width: 45%"></div>
+              <div class="h-full bg-stamp-amber" style="width: 28%"></div>
+            </div>
+            <div class="flex justify-between mt-2 text-[10px] font-mono text-ink-utility">
+              <span><i class="ph-fill ph-check-circle text-stamp-sage mr-0.5"></i>19 feitos</span>
+              <span><i class="ph-fill ph-clock text-stamp-amber mr-0.5"></i>12 planejados</span>
+              <span><i class="ph-bold ph-circle-dashed mr-0.5"></i>11 pendentes</span>
+            </div>
+          </div>
+
+          <!-- Ação principal -->
+          <button class="w-full py-3 bg-action-blue text-white font-body font-medium hover:bg-action-hover transition-colors flex items-center justify-center gap-2">
+            <i class="ph-bold ph-arrow-right"></i>
+            Continuar Planejando
+          </button>
+        </div>
+      </div>
+
+      <!-- Outras viagens horizontal scroll -->
+      <div>
+        <div class="flex items-center justify-between px-4 mb-3">
+          <h2 class="font-sans font-semibold text-ink-primary">Outras Viagens</h2>
+          <button class="text-action-blue text-sm font-body font-medium">Ver todas</button>
+        </div>
+
+        <div class="flex gap-3 overflow-x-auto px-4 pb-2 snap-x">
+          <!-- Card horizontal compacto -->
+          <div class="bg-paper-card rounded-xl border border-paper-line p-3 min-w-[180px] snap-start">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🇧🇷</span>
+              <span class="text-xs font-mono text-ink-utility">5 DIAS</span>
+            </div>
+            <h4 class="font-sans font-semibold text-ink-primary text-sm">Serra Gaúcha</h4>
+            <p class="text-xs text-ink-secondary font-body">Dez 2025</p>
+          </div>
+
+          <div class="bg-paper-card rounded-xl border border-paper-line p-3 min-w-[180px] snap-start opacity-60">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-xl">🇵🇹</span>
+              <span class="text-xs font-mono text-stamp-sage">CONCLUÍDA</span>
+            </div>
+            <h4 class="font-sans font-semibold text-ink-primary text-sm">Portugal</h4>
+            <p class="text-xs text-ink-secondary font-body">Set 2024</p>
+          </div>
+
+          <!-- Botão nova viagem inline -->
+          <div class="bg-paper-card/50 rounded-xl border-2 border-dashed border-paper-line p-3 min-w-[140px] snap-start flex flex-col items-center justify-center hover:border-action-blue hover:bg-action-blue/5 cursor-pointer transition-all">
+            <i class="ph-bold ph-plus text-2xl text-ink-utility mb-1"></i>
+            <span class="text-xs font-body text-ink-utility">Nova</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Divisor -->
+    <div class="h-4 bg-paper-line/30 my-4"></div>
+
+    <!-- PARTE 2: DAY VIEW - Horizontal Day Selector -->
+    <section class="space-y-4">
+
+      <!-- Header da viagem (compacto) -->
+      <div class="px-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <button class="p-2 hover:bg-paper-card rounded-lg">
+            <i class="ph-bold ph-arrow-left text-ink-primary"></i>
+          </button>
+          <div>
+            <h2 class="font-sans font-bold text-lg text-ink-primary">Japão 2025</h2>
+            <p class="text-xs text-ink-secondary font-body">12-24 Mar 2025</p>
+          </div>
+        </div>
+        <div class="flex gap-1">
+          <button class="p-2 hover:bg-paper-card rounded-lg">
+            <i class="ph-bold ph-calendar-blank text-ink-utility"></i>
+          </button>
+          <button class="p-2 hover:bg-paper-card rounded-lg">
+            <i class="ph-bold ph-squares-four text-ink-utility"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Day selector horizontal com scroll -->
+      <div class="overflow-x-auto">
+        <div class="flex gap-2 px-4 pb-2 min-w-max">
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl hover:bg-paper-card border border-transparent hover:border-paper-line transition-all min-w-[56px]">
+            <span class="text-[10px] font-mono text-ink-utility">QUA</span>
+            <span class="text-lg font-sans font-bold text-ink-secondary">12</span>
+            <div class="flex gap-0.5 mt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-sage"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-sage"></span>
+            </div>
+          </button>
+
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl hover:bg-paper-card border border-transparent hover:border-paper-line transition-all min-w-[56px]">
+            <span class="text-[10px] font-mono text-ink-utility">QUI</span>
+            <span class="text-lg font-sans font-bold text-ink-secondary">13</span>
+            <div class="flex gap-0.5 mt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-sage"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-amber"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-navy"></span>
+            </div>
+          </button>
+
+          <!-- Dia atual/selecionado -->
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl bg-action-blue text-white min-w-[56px] shadow-md">
+            <span class="text-[10px] font-mono opacity-80">SEX</span>
+            <span class="text-lg font-sans font-bold">14</span>
+            <div class="flex gap-0.5 mt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-white/80"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/80"></span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/50"></span>
+            </div>
+          </button>
+
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl hover:bg-paper-card border border-transparent hover:border-paper-line transition-all min-w-[56px]">
+            <span class="text-[10px] font-mono text-ink-utility">SÁB</span>
+            <span class="text-lg font-sans font-bold text-ink-secondary">15</span>
+            <div class="flex gap-0.5 mt-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-stamp-navy"></span>
+            </div>
+          </button>
+
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl hover:bg-paper-card border border-transparent hover:border-paper-line transition-all min-w-[56px]">
+            <span class="text-[10px] font-mono text-ink-utility">DOM</span>
+            <span class="text-lg font-sans font-bold text-ink-secondary">16</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-paper-line mt-1"></span>
+          </button>
+
+          <button class="flex flex-col items-center px-3 py-2 rounded-xl hover:bg-paper-card border border-transparent hover:border-paper-line transition-all min-w-[56px]">
+            <span class="text-[10px] font-mono text-ink-utility">SEG</span>
+            <span class="text-lg font-sans font-bold text-ink-secondary">17</span>
+            <span class="w-1.5 h-1.5 rounded-full bg-paper-line mt-1"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Info do dia selecionado -->
+      <div class="px-4">
+        <div class="bg-paper-card rounded-xl border border-paper-line p-3 flex items-center justify-between">
+          <div>
+            <h3 class="font-sans font-bold text-ink-primary">Dia 3 · Kyoto</h3>
+            <p class="text-xs text-ink-secondary font-body">Sexta-feira, 14 de março</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-paper-base text-ink-utility text-xs font-mono px-2 py-1 rounded-lg">
+              5 itens
+            </span>
+            <button class="p-2 hover:bg-paper-line rounded-lg">
+              <i class="ph-bold ph-arrows-down-up text-ink-utility"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segment pills (mais compactos) -->
+      <div class="px-4">
+        <div class="inline-flex bg-paper-card rounded-full border border-paper-line p-1">
+          <button class="px-4 py-1.5 rounded-full bg-action-blue text-white text-sm font-body font-medium">
+            Manhã
+          </button>
+          <button class="px-4 py-1.5 rounded-full text-ink-secondary text-sm font-body font-medium hover:bg-paper-line/50">
+            Tarde
+          </button>
+          <button class="px-4 py-1.5 rounded-full text-ink-secondary text-sm font-body font-medium hover:bg-paper-line/50">
+            Noite
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de cards compactos -->
+      <div class="px-4 space-y-3">
+        <!-- Card compacto 1 -->
+        <div class="bg-paper-card rounded-xl border border-paper-line p-3 flex gap-3">
+          <div class="w-12 h-12 rounded-lg bg-stamp-navy/10 flex items-center justify-center shrink-0">
+            <i class="ph-fill ph-bank text-xl text-stamp-navy"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="font-mono text-xs text-ink-utility">08:00</span>
+              <span class="border border-stamp-sage text-stamp-sage text-[9px] font-sans font-bold px-1.5 rounded-full -rotate-1">FEITO</span>
+            </div>
+            <h4 class="font-sans font-semibold text-ink-primary text-sm truncate">Fushimi Inari Taisha</h4>
+            <div class="flex items-center gap-3 mt-1 text-xs text-ink-utility font-mono">
+              <span><i class="ph-bold ph-clock mr-0.5"></i>2h</span>
+              <span class="text-stamp-sage">Grátis</span>
+            </div>
+          </div>
+          <button class="p-2 hover:bg-paper-line rounded-lg self-center">
+            <i class="ph-bold ph-dots-three-vertical text-ink-utility"></i>
+          </button>
+        </div>
+
+        <!-- Card compacto 2 -->
+        <div class="bg-paper-card rounded-xl border border-paper-line border-l-4 border-l-stamp-amber p-3 flex gap-3">
+          <div class="w-12 h-12 rounded-lg bg-stamp-amber/10 flex items-center justify-center shrink-0">
+            <i class="ph-fill ph-fork-knife text-xl text-stamp-amber"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-0.5">
+              <span class="font-mono text-xs text-ink-utility">10:30</span>
+              <span class="border border-stamp-navy text-stamp-navy text-[9px] font-sans font-bold px-1.5 rounded-full rotate-1">PLANEJADO</span>
+            </div>
+            <h4 class="font-sans font-semibold text-ink-primary text-sm truncate">Nishiki Market</h4>
+            <div class="flex items-center gap-3 mt-1 text-xs text-ink-utility font-mono">
+              <span><i class="ph-bold ph-clock mr-0.5"></i>1h30</span>
+              <span>¥2,000</span>
+            </div>
+          </div>
+          <button class="p-2 hover:bg-paper-line rounded-lg self-center">
+            <i class="ph-bold ph-dots-three-vertical text-ink-utility"></i>
+          </button>
+        </div>
+
+        <!-- Empty state elegante para adicionar -->
+        <button class="w-full py-6 border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-action-blue/5 transition-all flex flex-col items-center justify-center gap-1 text-ink-secondary hover:text-action-blue group">
+          <i class="ph-bold ph-plus text-2xl group-hover:scale-110 transition-transform"></i>
+          <span class="text-sm font-body">Adicionar atividade</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-paper-card border-t border-paper-line">
+      <div class="max-w-md mx-auto flex justify-around py-2">
+        <button class="flex flex-col items-center py-2 px-4 text-action-blue">
+          <i class="ph-fill ph-house text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Início</span>
+        </button>
+        <button class="flex flex-col items-center py-2 px-4 text-ink-utility">
+          <i class="ph-bold ph-airplane text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Viagens</span>
+        </button>
+        <button class="flex flex-col items-center py-2 px-4 text-ink-utility">
+          <i class="ph-bold ph-gear text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Ajustes</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <div class="fixed top-4 right-4 bg-stamp-amber text-white px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-2">
+    <span>PROPOSTA B</span>
+    <span class="opacity-60">|</span>
+    <span class="opacity-80">Folio + Vellum</span>
+  </div>
+
+</body>
+</html>

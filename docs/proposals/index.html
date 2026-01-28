@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Folio UI Proposals - Device Preview</title>
+  <link rel="stylesheet" href="devices.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Nunito:wght@600;700;800&display=swap">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #1C1E21 0%, #2C4B70 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+      color: white;
+    }
+
+    .header h1 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 2rem;
+      margin: 0 0 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .header p {
+      opacity: 0.7;
+      margin: 0;
+    }
+
+    .proposal-selector {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .proposal-btn {
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 9999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .proposal-btn:hover {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    .proposal-btn.active {
+      background: #0055FF;
+      border-color: #0055FF;
+    }
+
+    .proposal-btn .badge {
+      background: rgba(0,0,0,0.3);
+      padding: 0.125rem 0.5rem;
+      border-radius: 4px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+    }
+
+    /* ================================
+       DESKTOP: Show device frame
+       ================================ */
+    .device-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 1rem;
+    }
+
+    .marvel-device .screen {
+      background: #FBF9F6;
+    }
+
+    .marvel-device .screen iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ================================
+       MOBILE: Fullscreen iframe, no frame
+       ================================ */
+    .mobile-container {
+      display: none;
+    }
+
+    .mobile-container iframe {
+      width: 100%;
+      height: 70vh;
+      border: none;
+      border-radius: 1rem;
+      background: #FBF9F6;
+    }
+
+    
+    /* Info card below device */
+    .proposal-info {
+      max-width: 400px;
+      margin: 2rem auto 0;
+      background: rgba(255,255,255,0.1);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      color: white;
+    }
+
+    .proposal-info h2 {
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.25rem;
+      margin: 0 0 0.5rem;
+    }
+
+    .proposal-info p {
+      opacity: 0.8;
+      margin: 0 0 1rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
+    }
+
+    .proposal-info .features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .proposal-info .features li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      padding: 0.5rem 0;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .proposal-info .features li i {
+      color: #FCD34D;
+    }
+
+    /* Compare mode */
+    .compare-container {
+      display: none;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+    }
+
+    .compare-container.active {
+      display: flex;
+    }
+
+    .compare-item {
+      text-align: center;
+    }
+
+    .compare-item h3 {
+      color: white;
+      font-family: 'Nunito', sans-serif;
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    .compare-item .marvel-device {
+      transform: scale(0.6);
+      transform-origin: top center;
+    }
+
+    .mode-toggle {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .mode-toggle button {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white;
+      padding: 0.5rem 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-toggle button:first-child {
+      border-radius: 0.5rem 0 0 0.5rem;
+    }
+
+    .mode-toggle button:last-child {
+      border-radius: 0 0.5rem 0.5rem 0;
+    }
+
+    .mode-toggle button.active {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .single-view {
+      display: block;
+    }
+
+    .single-view.hidden {
+      display: none;
+    }
+
+    /* ================================
+       RESPONSIVE: Mobile breakpoint
+       ================================ */
+    @media (max-width: 640px) {
+      body {
+        padding: 1rem;
+        padding-bottom: 2rem;
+      }
+
+      .header {
+        margin-bottom: 1.5rem;
+      }
+
+      .header h1 {
+        font-size: 1.5rem;
+      }
+
+      .header p {
+        font-size: 0.875rem;
+      }
+
+      /* Hide device frame, show fullscreen iframe */
+      .device-container {
+        display: none !important;
+      }
+
+      .mobile-container {
+        display: block;
+      }
+
+      /* Hide compare mode on mobile */
+      .mode-toggle {
+        display: none;
+      }
+
+      .compare-container {
+        display: none !important;
+      }
+
+      /* Adjust proposal buttons for mobile */
+      .proposal-selector {
+        gap: 0.375rem;
+        margin-bottom: 1rem;
+      }
+
+      .proposal-btn {
+        padding: 0.625rem 1rem;
+        font-size: 0.8125rem;
+      }
+
+      .proposal-btn .badge {
+        padding: 0.125rem 0.375rem;
+        font-size: 0.6875rem;
+      }
+
+      /* Hide long text on very small screens */
+      .proposal-btn .btn-text {
+        display: none;
+      }
+
+      .proposal-info {
+        margin-top: 1.5rem;
+        padding: 1rem;
+      }
+
+      .proposal-info h2 {
+        font-size: 1.125rem;
+      }
+
+      .proposal-info .features li {
+        font-size: 0.8125rem;
+      }
+    }
+
+    /* Tablet: smaller device frame */
+    @media (min-width: 641px) and (max-width: 900px) {
+      .marvel-device {
+        transform: scale(0.8);
+        transform-origin: top center;
+      }
+
+      .compare-container .marvel-device {
+        transform: scale(0.5);
+      }
+    }
+
+    /* ================================
+       VOTING CTA - Minimal footprint
+       ================================ */
+    .vote-cta {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #10B981;
+      color: white;
+      padding: 0.875rem 1.25rem;
+      border-radius: 9999px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+      transition: all 0.2s ease-out;
+      z-index: 100;
+    }
+
+    .vote-cta:hover {
+      background: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5);
+    }
+
+    .vote-cta:active {
+      transform: translateY(0);
+    }
+
+    .vote-cta i {
+      font-size: 1.125rem;
+    }
+
+    .vote-arrow {
+      opacity: 0.7;
+      font-size: 0.875rem !important;
+    }
+
+    /* Mobile: Compact vote button with pulse animation */
+    @media (max-width: 640px) {
+      .vote-cta {
+        bottom: 1rem;
+        right: 1rem;
+        padding: 0.75rem 1rem;
+        font-size: 0.8125rem;
+        animation: pulse-vote 2s ease-in-out infinite;
+      }
+
+      .vote-cta .vote-text {
+        display: none;
+      }
+
+      .vote-arrow {
+        display: none;
+      }
+
+      /* Pulse animation to draw attention */
+      @keyframes pulse-vote {
+        0%, 100% {
+          box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+        }
+        50% {
+          box-shadow: 0 4px 30px rgba(16, 185, 129, 0.7), 0 0 0 8px rgba(16, 185, 129, 0.15);
+        }
+      }
+
+      /* Arrow pointing to vote button */
+      .vote-hint {
+        display: flex !important;
+      }
+    }
+
+    /* Vote hint arrow - hidden on desktop */
+    .vote-hint {
+      display: none;
+      position: fixed;
+      bottom: 4rem;
+      right: 1rem;
+      color: white;
+      font-size: 0.75rem;
+      font-family: 'Inter', sans-serif;
+      align-items: center;
+      gap: 0.375rem;
+      opacity: 0.8;
+      animation: bounce-hint 1.5s ease-in-out infinite;
+      z-index: 99;
+    }
+
+    .vote-hint i {
+      font-size: 1rem;
+    }
+
+    @keyframes bounce-hint {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(4px);
+      }
+    }
+
+    /* Instruction label above preview */
+    .preview-hint {
+      text-align: center;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.75rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .preview-hint i {
+      font-size: 1rem;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 640px) {
+      .preview-hint {
+        font-size: 0.7rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <h1>
+      <i class="ph-fill ph-map-trifold"></i>
+      Folio UI Proposals
+    </h1>
+    <p>Vellum Design System - Device Preview</p>
+  </header>
+
+  <!-- Floating Vote CTA -->
+  <a href="https://strawpoll.com/wAg3QBoGly8" target="_blank" rel="noopener" class="vote-cta">
+    <i class="ph-fill ph-check-square"></i>
+    <span class="vote-text">Votar na favorita</span>
+    <i class="ph-bold ph-arrow-square-out vote-arrow"></i>
+  </a>
+
+  <div class="mode-toggle">
+    <button class="active" onclick="setMode('single')">
+      <i class="ph-bold ph-device-mobile"></i> Single View
+    </button>
+    <button onclick="setMode('compare')">
+      <i class="ph-bold ph-squares-four"></i> Compare All
+    </button>
+  </div>
+
+  <div class="single-view">
+    <nav class="proposal-selector">
+      <button class="proposal-btn active" onclick="loadProposal('a')">
+        <span class="badge">A</span>
+        <span class="btn-text">Journey Chronicle</span>
+      </button>
+      <button class="proposal-btn" onclick="loadProposal('b')">
+        <span class="badge">B</span>
+        <span class="btn-text">Trip Dashboard</span>
+      </button>
+      <button class="proposal-btn" onclick="loadProposal('c')">
+        <span class="badge">C</span>
+        <span class="btn-text">Boarding Gate</span>
+      </button>
+    </nav>
+
+    <!-- Instruction label above preview -->
+    <p class="preview-hint">
+      <i class="ph-bold ph-hand-swipe-right"></i>
+      Navegue pela proposta · Troque entre A, B e C acima
+    </p>
+
+    <!-- Desktop: Device frame -->
+    <div class="device-container">
+      <div class="marvel-device iphone-x">
+        <div class="notch">
+          <div class="camera"></div>
+          <div class="speaker"></div>
+        </div>
+        <div class="top-bar"></div>
+        <div class="sleep"></div>
+        <div class="bottom-bar"></div>
+        <div class="volume"></div>
+        <div class="overflow">
+          <div class="shadow shadow--tr"></div>
+          <div class="shadow shadow--tl"></div>
+          <div class="shadow shadow--br"></div>
+          <div class="shadow shadow--bl"></div>
+        </div>
+        <div class="inner-shadow"></div>
+        <div class="screen">
+          <iframe id="proposal-frame-desktop" src="proposal-a-journey-chronicle.html"></iframe>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile: Fullscreen iframe without device frame -->
+    <div class="mobile-container">
+      <iframe id="proposal-frame-mobile" src="proposal-a-journey-chronicle.html"></iframe>
+    </div>
+
+    <!-- Mobile vote hint arrow -->
+    <div class="vote-hint">
+      <span>Vote aqui</span>
+      <i class="ph-bold ph-arrow-down"></i>
+    </div>
+
+    <div class="proposal-info" id="proposal-info">
+      <h2 id="info-title">A - Journey Chronicle</h2>
+      <p id="info-desc">Viagem como uma história/diário com timeline vertical conectada.</p>
+      <ul class="features" id="info-features">
+        <li><i class="ph-bold ph-star"></i> Home com "Próxima Aventura" em destaque</li>
+        <li><i class="ph-bold ph-star"></i> Timeline vertical com dots conectados</li>
+        <li><i class="ph-bold ph-star"></i> Mini calendário horizontal no day header</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="compare-container">
+    <div class="compare-item">
+      <div class="marvel-device iphone-x">
+        <div class="notch"><div class="camera"></div><div class="speaker"></div></div>
+        <div class="top-bar"></div>
+        <div class="sleep"></div>
+        <div class="bottom-bar"></div>
+        <div class="volume"></div>
+        <div class="overflow">
+          <div class="shadow shadow--tr"></div>
+          <div class="shadow shadow--tl"></div>
+          <div class="shadow shadow--br"></div>
+          <div class="shadow shadow--bl"></div>
+        </div>
+        <div class="inner-shadow"></div>
+        <div class="screen">
+          <iframe src="proposal-a-journey-chronicle.html"></iframe>
+        </div>
+      </div>
+      <h3>A - Journey Chronicle</h3>
+    </div>
+
+    <div class="compare-item">
+      <div class="marvel-device iphone-x">
+        <div class="notch"><div class="camera"></div><div class="speaker"></div></div>
+        <div class="top-bar"></div>
+        <div class="sleep"></div>
+        <div class="bottom-bar"></div>
+        <div class="volume"></div>
+        <div class="overflow">
+          <div class="shadow shadow--tr"></div>
+          <div class="shadow shadow--tl"></div>
+          <div class="shadow shadow--br"></div>
+          <div class="shadow shadow--bl"></div>
+        </div>
+        <div class="inner-shadow"></div>
+        <div class="screen">
+          <iframe src="proposal-b-trip-dashboard.html"></iframe>
+        </div>
+      </div>
+      <h3>B - Trip Dashboard</h3>
+    </div>
+
+    <div class="compare-item">
+      <div class="marvel-device iphone-x">
+        <div class="notch"><div class="camera"></div><div class="speaker"></div></div>
+        <div class="top-bar"></div>
+        <div class="sleep"></div>
+        <div class="bottom-bar"></div>
+        <div class="volume"></div>
+        <div class="overflow">
+          <div class="shadow shadow--tr"></div>
+          <div class="shadow shadow--tl"></div>
+          <div class="shadow shadow--br"></div>
+          <div class="shadow shadow--bl"></div>
+        </div>
+        <div class="inner-shadow"></div>
+        <div class="screen">
+          <iframe src="proposal-c-boarding-gate.html"></iframe>
+        </div>
+      </div>
+      <h3>C - Boarding Gate</h3>
+    </div>
+  </div>
+
+  <script>
+    const proposals = {
+      a: {
+        title: 'A - Journey Chronicle',
+        desc: 'Viagem como uma história/diário com timeline vertical conectada.',
+        features: [
+          'Home com "Próxima Aventura" em destaque',
+          'Timeline vertical com dots conectados',
+          'Mini calendário horizontal no day header'
+        ],
+        url: 'proposal-a-journey-chronicle.html'
+      },
+      b: {
+        title: 'B - Trip Dashboard',
+        desc: 'Métricas e estatísticas com horizontal scroll para dias.',
+        features: [
+          'Quick stats: viagens, locais, dias',
+          'Barra de progresso detalhada',
+          'Day selector horizontal com scroll'
+        ],
+        url: 'proposal-b-trip-dashboard.html'
+      },
+      c: {
+        title: 'C - Boarding Gate',
+        desc: 'Inspiração em painéis de aeroporto e cartões de embarque. Micro-interações aprimoradas.',
+        features: [
+          'Departure board style (dark header)',
+          'Trip cards como tickets de avião',
+          'Animações e feedback visual aprimorados'
+        ],
+        url: 'proposal-c-boarding-gate.html'
+      }
+    };
+
+    function loadProposal(id) {
+      const proposal = proposals[id];
+
+      // Update both iframes (desktop and mobile)
+      const desktopFrame = document.getElementById('proposal-frame-desktop');
+      const mobileFrame = document.getElementById('proposal-frame-mobile');
+
+      if (desktopFrame) desktopFrame.src = proposal.url;
+      if (mobileFrame) mobileFrame.src = proposal.url;
+
+      // Update info
+      document.getElementById('info-title').textContent = proposal.title;
+      document.getElementById('info-desc').textContent = proposal.desc;
+
+      const featuresEl = document.getElementById('info-features');
+      featuresEl.innerHTML = proposal.features.map(f =>
+        `<li><i class="ph-bold ph-star"></i> ${f}</li>`
+      ).join('');
+
+      // Update buttons
+      document.querySelectorAll('.proposal-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.closest('.proposal-btn').classList.add('active');
+    }
+
+    function setMode(mode) {
+      const singleView = document.querySelector('.single-view');
+      const compareView = document.querySelector('.compare-container');
+      const buttons = document.querySelectorAll('.mode-toggle button');
+
+      buttons.forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      if (mode === 'single') {
+        singleView.classList.remove('hidden');
+        compareView.classList.remove('active');
+      } else {
+        singleView.classList.add('hidden');
+        compareView.classList.add('active');
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -37,7 +37,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
-                const theme = localStorage.getItem('pinpoint_theme') || 'system';
+                const theme = localStorage.getItem('folio_theme') || 'system';
                 const effective = theme === 'system'
                   ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
                   : theme;

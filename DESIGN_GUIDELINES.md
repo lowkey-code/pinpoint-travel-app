@@ -1,12 +1,25 @@
-# Folio Design System — LLM Guidelines
+# Vellum Design System — LLM Guidelines
 
-> Diretrizes para agentes de IA gerarem interfaces que seguem o Design System "Folio"
+> Diretrizes para agentes de IA gerarem interfaces que seguem o Design System "Vellum" para o app "Folio"
 
 ## ROLE
 
 You are an expert UI generator for "Folio", an offline-first travel utility app.
+The design system is called **Vellum** — "The Archival Substrate".
+
 Your goal is to generate interfaces that strictly adhere to the "Functional Nostalgia" aesthetic:
-a blend of passport tactile warmth (Paper & Ink) with Swiss design precision (Grid & Mono fonts).
+a blend of archival warmth (Paper & Ink) with Swiss design precision (Grid & Mono fonts).
+
+### The Three Pillars of Vellum
+
+1. **Texture (Organicity):** Warm off-whites (#FBF9F6), not clinical white. Ink absorbed, not floating.
+2. **Translucency (Layers):** Cards as overlapping sheets creating physical depth with shadows.
+3. **Permanence (Offline-First):** Robust like archival documents, built to last without connection.
+
+### Theme Aliases (UI Copy Only)
+
+- **Light Mode** → "Parchment Mode" (warm, tactile, sunlit)
+- **Dark Mode** → "Blueprint Mode" (technical, precise, navy)
 
 ## COMPONENT REUSABILITY (CRITICAL)
 
@@ -254,14 +267,88 @@ Use this logo structure with semantic tokens for automatic theme adaptation:
 
 ## Design Philosophy
 
-**"Functional Nostalgia"** — Where the romanticism of passports meets Swiss precision.
+**"Functional Nostalgia"** — Where archival warmth meets Swiss precision.
 
-- **Paper & Ink:** Warm, tactile neutrals inspired by physical documents
-- **Typography Triad:** Clear hierarchy with purpose (Heading/Body/Data)
-- **Boarding Pass Cards:** Every activity feels like a collectible stamp
+- **Vellum Texture:** Warm, tactile neutrals inspired by archival documents (never #FFFFFF pure)
+- **Typography Triad:** Clear hierarchy with purpose (Nunito/Inter/JetBrains Mono)
+- **Boarding Pass Cards:** Every activity feels like a collectible travel stamp
 - **Precision:** Monospace fonts for data, consistent spacing, deliberate borders
 - **Accessibility First:** WCAG 2.1 AA compliant with 4.5:1+ contrast ratios
 - **Reusability First:** Component library grows organically through reuse and extension
+
+## Design Engineering Practices (Emil)
+
+This project integrates **Emil's Design Engineering Principles** for polished, accessible interfaces. These guidelines complement Vellum and provide deep expertise in specific areas:
+
+### Animation & Transitions
+
+Follow Emil's easing principles for all motion:
+
+- **User-initiated interactions:** `ease-out` (150-250ms)
+- **Page transitions:** `ease-in-out` (max 300-400ms)
+- **Hover/color changes:** `ease`
+- **Skip animations for frequently-used interactions** (>100x daily)
+- **Always support `prefers-reduced-motion`** — Never assume animation support
+
+**Key rule:** Never use `transition: all` (already in Vellum, Emil reinforces)
+
+*Reference:* Emil's `animations.md` module for springs, timing, and easing flowcharts
+
+### Forms & Controls
+
+Build robust, accessible forms:
+
+- **Input minimum size:** 16px+ to prevent iOS auto-zoom
+- **Submit on Enter or Cmd+Enter** (not just button clicks)
+- **Button states:** Clear hover, active, disabled, loading states
+- **Form validation:** Show errors clearly; don't block submission unnecessarily
+- **Checkboxes/radios:** Use semantic `<input>` elements; enhance with Ark UI primitives
+
+*Reference:* Emil's `forms-controls.md` module for input patterns, button states, and validation
+
+### Touch & Keyboard Navigation
+
+Ensure Folio works seamlessly on mobile and desktop:
+
+- **Touch targets:** 44px minimum (Vellum suggests 48px; use 48px in Folio for safety)
+- **Hover effects:** Use `@media (hover: hover)` to disable on touch devices
+- **Keyboard navigation:** All interactive elements must be tab-accessible
+- **Focus indicators:** Use `focus-visible:ring-*` (never remove with `outline: none`)
+- **Icon-only buttons:** Always include `aria-label`
+- **Keyboard scrolling:** Use `scrollIntoView()` to scroll focused elements into view
+
+*Reference:* Emil's `touch-accessibility.md` module for mobile UX, keyboard patterns, and a11y
+
+### UI Polish & Typography
+
+Maintain visual consistency and prevent layout shift:
+
+- **No layout shift:** Use hardcoded dimensions for dynamic content
+- **Font weight consistency:** Never change weight on hover/selected (causes shift)
+- **Numeric consistency:** Use `font-variant-numeric: tabular-nums` for changing numbers
+- **Shadows & gradients:** Use semantic tokens; keep shadows subtle
+- **Dark mode text:** Use adjusted `ink-utility` (Slate 400) on dark backgrounds for WCAG AA
+
+*Reference:* Emil's `ui-polish.md` module for typography, shadows, gradients, dark mode
+
+### Performance Optimization
+
+Keep Folio fast for offline-first experience:
+
+- **Virtualization:** Use for long lists (e.g., Itinerary with 100+ activities)
+- **Preloading:** Lazy-load components that aren't immediately visible
+- **Bundle size:** Prefer reusing components over creating new ones
+
+*Reference:* Emil's `performance.md` module for virtualization patterns and optimization techniques
+
+### Marketing Pages & Landing Pages
+
+When building marketing surfaces (e.g., landing page, docs):
+
+- **More elaborate animations allowed** (unlike product UI)
+- **Follow Emil's marketing guidelines** for engagement while maintaining accessibility
+
+*Reference:* Emil's `marketing.md` module for landing pages and promotional content
 
 ## Component Development Workflow
 
@@ -272,6 +359,19 @@ When implementing a new feature:
 3. **Reuse or extend** → Use existing components; add props if needed
 4. **Create only when necessary** → New component only if no similar pattern exists
 5. **Document new components** → Add to design system showcase for future reference
+
+## Emil's Design Engineering Skill
+
+For detailed guidance on specific design engineering topics, you can invoke Emil's Design Engineering Skill:
+
+- **Animations:** Easing, timing, springs, reduced-motion support
+- **Forms & Controls:** Input patterns, validation, button states
+- **Touch & Accessibility:** Mobile UX, keyboard navigation, aria labels
+- **UI Polish:** Typography, shadows, gradients, dark mode, layout shift prevention
+- **Performance:** Virtualization, preloading, optimization
+- **Marketing Pages:** Landing pages, elaborate animations, engagement
+
+The skill is installed globally at `~/.claude/skills/emil-design-engineering/` and available for use in any project.
 
 > **📚 Future: Storybook Integration**
 >
@@ -286,5 +386,5 @@ When implementing a new feature:
 
 ---
 
-**Design System Version:** 3.7
-**Reference:** See `/docs/folio-design-system.html` for complete visual showcase
+**Vellum Design System v1.0** — *The Archival Substrate for Folio*
+**Reference:** See `/docs/vellum-design-system.html` for complete visual showcase

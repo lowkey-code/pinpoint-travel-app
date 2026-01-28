@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proposta C - Boarding Gate | Folio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Nunito:wght@600;700;800&display=swap">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: { base: '#FBF9F6', card: '#FFFFFF', line: '#E6E0D9' },
+            ink: { primary: '#1C1E21', secondary: '#54585F', utility: '#364152' },
+            action: { blue: '#0055FF', hover: '#0044CC' },
+            stamp: { sage: '#4A7A67', amber: '#B57B2E', navy: '#2C4B70', brick: '#C93A3A' }
+          },
+          fontFamily: {
+            sans: ['Nunito', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* ======================================
+       VELLUM DESIGN SYSTEM - ANIMATIONS
+       Following Emil's Design Engineering
+       ====================================== */
+
+    /* Respect user preference for reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+
+    /* Base transition tokens */
+    :root {
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
+      --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+      --duration-fast: 150ms;
+      --duration-normal: 200ms;
+      --duration-slow: 300ms;
+    }
+
+    /* Ticket notch effect */
+    .ticket-notch {
+      position: relative;
+    }
+    .ticket-notch::before,
+    .ticket-notch::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 32px;
+      background: #FBF9F6;
+    }
+    .ticket-notch::before {
+      left: -8px;
+      border-radius: 0 100px 100px 0;
+    }
+    .ticket-notch::after {
+      right: -8px;
+      border-radius: 100px 0 0 100px;
+    }
+
+    /* ======================================
+       MICRO-INTERACTIONS & HOVER STATES
+       ====================================== */
+
+    /* Interactive cards - subtle lift on hover */
+    .card-interactive {
+      transition: transform var(--duration-fast) var(--ease-out),
+                  box-shadow var(--duration-fast) var(--ease-out);
+    }
+    @media (hover: hover) {
+      .card-interactive:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      }
+    }
+    .card-interactive:active {
+      transform: translateY(0);
+    }
+
+    /* Button press effect */
+    .btn-press {
+      transition: transform var(--duration-fast) var(--ease-out),
+                  background-color var(--duration-fast) var(--ease-out);
+    }
+    .btn-press:active {
+      transform: scale(0.97);
+    }
+
+    /* Icon rotation on hover */
+    .icon-rotate {
+      transition: transform var(--duration-normal) var(--ease-out);
+    }
+    @media (hover: hover) {
+      .group:hover .icon-rotate {
+        transform: rotate(90deg);
+      }
+    }
+
+    /* ======================================
+       DEPARTURE BOARD ANIMATIONS
+       ====================================== */
+
+    /* Flip animation for countdown */
+    @keyframes flip-down {
+      0% { transform: rotateX(0deg); }
+      50% { transform: rotateX(-90deg); }
+      100% { transform: rotateX(0deg); }
+    }
+
+    .flip-number {
+      display: inline-block;
+      perspective: 200px;
+    }
+
+    .flip-number span {
+      display: inline-block;
+      animation: flip-down 0.6s ease-in-out;
+      transform-style: preserve-3d;
+    }
+
+    /* Pulsing live indicator */
+    @keyframes pulse-live {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .pulse-live {
+      animation: pulse-live 2s ease-in-out infinite;
+    }
+
+    /* Shimmer loading effect for skeleton */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .skeleton {
+      background: linear-gradient(
+        90deg,
+        #E6E0D9 25%,
+        #F5F3F0 50%,
+        #E6E0D9 75%
+      );
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    /* ======================================
+       STAGGER ANIMATIONS FOR LISTS
+       ====================================== */
+
+    @keyframes fade-up {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stagger-item {
+      animation: fade-up var(--duration-slow) var(--ease-out) forwards;
+      opacity: 0;
+    }
+
+    .stagger-item:nth-child(1) { animation-delay: 0ms; }
+    .stagger-item:nth-child(2) { animation-delay: 50ms; }
+    .stagger-item:nth-child(3) { animation-delay: 100ms; }
+    .stagger-item:nth-child(4) { animation-delay: 150ms; }
+    .stagger-item:nth-child(5) { animation-delay: 200ms; }
+
+    /* ======================================
+       STAMP ANIMATION
+       ====================================== */
+
+    @keyframes stamp-appear {
+      0% {
+        opacity: 0;
+        transform: scale(1.5) rotate(-20deg);
+      }
+      60% {
+        opacity: 1;
+        transform: scale(0.95) rotate(-12deg);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) rotate(-12deg);
+      }
+    }
+
+    .stamp-animated {
+      animation: stamp-appear 0.4s var(--ease-out) forwards;
+    }
+
+    /* ======================================
+       PROGRESS BAR ANIMATIONS
+       ====================================== */
+
+    @keyframes progress-fill {
+      from { width: 0; }
+    }
+
+    .progress-animated {
+      animation: progress-fill 0.8s var(--ease-out) forwards;
+    }
+
+    /* Progress glow effect */
+    .progress-glow {
+      position: relative;
+    }
+    .progress-glow::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 20px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4));
+      border-radius: inherit;
+    }
+
+    /* ======================================
+       FOCUS STATES (Accessibility)
+       ====================================== */
+
+    .focus-ring:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 85, 255, 0.3);
+    }
+
+    /* ======================================
+       FAB ANIMATION
+       ====================================== */
+
+    @keyframes fab-appear {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .fab-animated {
+      animation: fab-appear 0.3s var(--ease-out) 0.5s forwards;
+      opacity: 0;
+    }
+
+    /* FAB ripple effect on click */
+    .fab-ripple {
+      position: relative;
+      overflow: hidden;
+    }
+    .fab-ripple::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 70%);
+      transform: scale(0);
+      transition: transform 0.3s ease-out;
+    }
+    .fab-ripple:active::before {
+      transform: scale(2);
+    }
+
+    /* ======================================
+       TYPOGRAPHY - Tabular nums for data
+       ====================================== */
+
+    .tabular-nums {
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ======================================
+       TOUCH TARGETS (48px minimum)
+       ====================================== */
+
+    .touch-target {
+      min-width: 48px;
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ======================================
+       SEGMENT BUTTON TRANSITIONS
+       ====================================== */
+
+    .segment-btn {
+      transition: background-color var(--duration-fast) var(--ease-out),
+                  color var(--duration-fast) var(--ease-out),
+                  transform var(--duration-fast) var(--ease-out);
+    }
+    .segment-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Active indicator slide */
+    .segment-indicator {
+      transition: transform var(--duration-normal) var(--ease-out);
+    }
+
+    /* ======================================
+       BOARDING PASS CARD ENHANCEMENTS
+       ====================================== */
+
+    /* Subtle paper texture overlay */
+    .paper-texture {
+      position: relative;
+    }
+    .paper-texture::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      opacity: 0.02;
+      pointer-events: none;
+      border-radius: inherit;
+    }
+
+    /* Barcode decoration */
+    .barcode {
+      display: flex;
+      gap: 1px;
+      height: 24px;
+      opacity: 0.15;
+    }
+    .barcode span {
+      width: 2px;
+      background: currentColor;
+      border-radius: 1px;
+    }
+    .barcode span:nth-child(odd) { height: 100%; }
+    .barcode span:nth-child(even) { height: 70%; }
+    .barcode span:nth-child(3n) { width: 3px; }
+
+    /* ======================================
+       BOTTOM NAV ACTIVE INDICATOR
+       ====================================== */
+
+    .nav-item {
+      position: relative;
+      transition: color var(--duration-fast) var(--ease-out);
+    }
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body class="bg-paper-base min-h-screen">
+
+  <!-- ========================================== -->
+  <!-- PROPOSTA C: BOARDING GATE (Enhanced)       -->
+  <!-- Conceito: Inspirado em cartões de embarque -->
+  <!-- + Micro-interactions e animações sutis     -->
+  <!-- + Touch targets de 48px                    -->
+  <!-- + Feedback visual aprimorado               -->
+  <!-- ========================================== -->
+
+  <div class="max-w-md mx-auto pb-20">
+
+    <!-- PARTE 1: HOME SCREEN - Airport Departure Board Style -->
+    <section class="p-4 space-y-6">
+
+      <!-- Header minimalista -->
+      <header class="flex items-center justify-between pt-2">
+        <div class="flex items-center gap-3">
+          <!-- Logo estilizado com hover effect -->
+          <div class="w-10 h-10 bg-ink-primary rounded-lg flex items-center justify-center transition-transform duration-150 ease-out hover:scale-105">
+            <i class="ph-fill ph-map-trifold text-paper-base text-xl"></i>
+          </div>
+          <div>
+            <h1 class="font-sans font-bold text-xl text-ink-primary leading-none">Folio</h1>
+            <p class="font-mono text-[10px] text-ink-utility tracking-widest">TRAVEL PLANNER</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <!-- Theme Toggle: Parchment - 48px touch target -->
+          <button class="touch-target hover:bg-paper-card border border-paper-line rounded-xl btn-press focus-ring" title="Parchment Mode" aria-label="Alternar para modo Parchment">
+            <i class="ph-bold ph-scroll text-lg text-ink-utility"></i>
+          </button>
+          <button class="touch-target bg-paper-card border border-paper-line rounded-xl btn-press focus-ring" aria-label="Configurações">
+            <i class="ph-bold ph-gear text-ink-utility"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Departure Board Style - Próxima viagem -->
+      <div class="bg-ink-primary rounded-2xl overflow-hidden shadow-lg card-interactive stagger-item">
+        <!-- Header do painel -->
+        <div class="px-4 py-2.5 bg-ink-primary/80 border-b border-white/10 flex items-center justify-between">
+          <span class="font-mono text-[10px] text-white/60 tracking-widest">PRÓXIMA PARTIDA</span>
+          <span class="font-mono text-[10px] text-stamp-sage tracking-wider flex items-center gap-1.5">
+            <span class="w-2 h-2 bg-stamp-sage rounded-full pulse-live"></span>
+            AO VIVO
+          </span>
+        </div>
+
+        <!-- Info principal estilo aeroporto -->
+        <div class="p-4">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <p class="font-mono text-[10px] text-white/50 mb-1">DESTINO</p>
+              <h2 class="font-sans font-bold text-3xl text-white leading-none tracking-tight">JAPÃO</h2>
+              <p class="font-body text-sm text-white/70 mt-1">Tóquio → Kyoto → Osaka</p>
+            </div>
+            <div class="text-right">
+              <p class="font-mono text-[10px] text-white/50 mb-1">EMBARQUE EM</p>
+              <div class="flip-number">
+                <span class="font-mono text-4xl font-bold text-stamp-amber leading-none tabular-nums">12</span>
+              </div>
+              <p class="font-mono text-xs text-white/70">DIAS</p>
+            </div>
+          </div>
+
+          <!-- Data pills com hover -->
+          <div class="flex gap-3">
+            <div class="bg-white/10 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15">
+              <p class="font-mono text-[9px] text-white/50">PARTIDA</p>
+              <p class="font-mono text-sm text-white font-medium tabular-nums">12 MAR 2025</p>
+            </div>
+            <div class="bg-white/10 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15">
+              <p class="font-mono text-[9px] text-white/50">RETORNO</p>
+              <p class="font-mono text-sm text-white font-medium tabular-nums">24 MAR 2025</p>
+            </div>
+            <div class="bg-white/10 rounded-lg px-3 py-2.5 transition-colors duration-150 hover:bg-white/15">
+              <p class="font-mono text-[9px] text-white/50">DURAÇÃO</p>
+              <p class="font-mono text-sm text-white font-medium tabular-nums">12 DIAS</p>
+            </div>
+          </div>
+
+          <!-- Progress bar com animação -->
+          <div class="mt-4">
+            <div class="flex justify-between text-[10px] font-mono text-white/50 mb-1.5">
+              <span>PLANEJAMENTO</span>
+              <span class="tabular-nums">18/42 itens</span>
+            </div>
+            <div class="h-1.5 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full bg-stamp-amber rounded-full progress-animated progress-glow" style="width: 43%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ação com ripple effect -->
+        <button class="w-full py-3.5 bg-action-blue hover:bg-action-hover text-white font-body font-medium btn-press focus-ring flex items-center justify-center gap-2 group">
+          <span>Abrir Itinerário</span>
+          <i class="ph-bold ph-arrow-right transition-transform duration-150 group-hover:translate-x-1"></i>
+        </button>
+      </div>
+
+      <!-- Outras viagens como tickets -->
+      <div class="stagger-item" style="animation-delay: 100ms">
+        <h3 class="font-mono text-[10px] text-ink-utility tracking-widest mb-3">OUTRAS VIAGENS</h3>
+
+        <div class="space-y-3">
+          <!-- Ticket card com hover lift -->
+          <button class="w-full bg-paper-card rounded-xl border border-paper-line overflow-hidden flex card-interactive focus-ring text-left">
+            <!-- Stub esquerdo -->
+            <div class="w-20 bg-stamp-amber/10 p-3 flex flex-col items-center justify-center border-r border-dashed border-paper-line shrink-0">
+              <span class="text-2xl mb-1">🇧🇷</span>
+              <span class="font-mono text-[9px] text-ink-utility text-center">DEZ 2025</span>
+            </div>
+            <!-- Conteúdo principal -->
+            <div class="flex-1 p-3 flex items-center justify-between min-w-0">
+              <div class="min-w-0">
+                <h4 class="font-sans font-bold text-ink-primary truncate">Serra Gaúcha</h4>
+                <p class="font-mono text-xs text-ink-utility tabular-nums">5 dias · 12 itens</p>
+              </div>
+              <i class="ph-bold ph-caret-right text-ink-utility shrink-0 ml-2 transition-transform duration-150 group-hover:translate-x-1"></i>
+            </div>
+          </button>
+
+          <!-- Ticket concluído com stamp -->
+          <button class="w-full bg-paper-card rounded-xl border border-paper-line overflow-hidden flex opacity-70 card-interactive focus-ring text-left">
+            <div class="w-20 bg-stamp-sage/10 p-3 flex flex-col items-center justify-center border-r border-dashed border-paper-line relative shrink-0">
+              <span class="text-2xl mb-1">🇵🇹</span>
+              <span class="font-mono text-[9px] text-ink-utility text-center">SET 2024</span>
+              <!-- Stamp de concluído animado -->
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="border-2 border-stamp-sage text-stamp-sage font-sans font-bold text-[10px] px-2 py-0.5 rounded-full -rotate-12 bg-paper-card/90 stamp-animated">
+                  CONCLUÍDA
+                </span>
+              </div>
+            </div>
+            <div class="flex-1 p-3 flex items-center justify-between min-w-0">
+              <div class="min-w-0">
+                <h4 class="font-sans font-bold text-ink-primary truncate">Portugal</h4>
+                <p class="font-mono text-xs text-ink-utility tabular-nums">14 dias · 38 itens</p>
+              </div>
+              <i class="ph-bold ph-caret-right text-ink-utility shrink-0 ml-2"></i>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Botão nova viagem com better feedback -->
+      <button class="w-full py-4 bg-paper-card border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-action-blue/5 btn-press focus-ring flex items-center justify-center gap-3 group stagger-item" style="animation-delay: 150ms">
+        <div class="w-12 h-12 bg-paper-line/50 rounded-full flex items-center justify-center group-hover:bg-action-blue/10 transition-colors duration-150">
+          <i class="ph-bold ph-plus text-xl text-ink-utility group-hover:text-action-blue icon-rotate"></i>
+        </div>
+        <div class="text-left">
+          <p class="font-body font-medium text-ink-primary">Criar Nova Viagem</p>
+          <p class="font-body text-xs text-ink-secondary">Planeje sua próxima aventura</p>
+        </div>
+      </button>
+    </section>
+
+    <!-- Divisor com padrão sutil -->
+    <div class="h-4 bg-paper-line/30 relative overflow-hidden">
+      <div class="absolute inset-0 opacity-30" style="background-image: repeating-linear-gradient(90deg, transparent, transparent 8px, #E6E0D9 8px, #E6E0D9 9px)"></div>
+    </div>
+
+    <!-- PARTE 2: DAY VIEW - Gate Display Style -->
+    <section class="p-4 space-y-4">
+
+      <!-- Day Header como display de gate -->
+      <div class="bg-paper-card rounded-2xl border border-paper-line overflow-hidden shadow-sm paper-texture stagger-item">
+        <!-- Barra superior com navegação - touch targets adequados -->
+        <div class="flex items-center justify-between px-1 py-1 bg-paper-base/50 border-b border-paper-line">
+          <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Dia anterior">
+            <i class="ph-bold ph-caret-left text-ink-utility"></i>
+          </button>
+          <div class="flex items-center gap-1">
+            <button class="px-3 py-2 hover:bg-paper-line rounded-lg font-mono text-xs text-ink-utility btn-press focus-ring flex items-center gap-1.5">
+              <i class="ph-bold ph-calendar-blank"></i>
+              <span class="hidden sm:inline">Calendário</span>
+            </button>
+            <button class="px-3 py-2 hover:bg-paper-line rounded-lg font-mono text-xs text-ink-utility btn-press focus-ring flex items-center gap-1.5">
+              <i class="ph-bold ph-squares-four"></i>
+              <span class="hidden sm:inline">Grade</span>
+            </button>
+          </div>
+          <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Próximo dia">
+            <i class="ph-bold ph-caret-right text-ink-utility"></i>
+          </button>
+        </div>
+
+        <!-- Display principal do dia -->
+        <div class="p-4 text-center">
+          <div class="inline-flex items-center gap-4">
+            <!-- Número do dia grande -->
+            <div class="relative">
+              <span class="font-mono text-6xl font-bold text-action-blue leading-none tabular-nums">03</span>
+              <span class="absolute -top-1 -right-2 font-mono text-[9px] bg-action-blue text-white px-1.5 py-0.5 rounded">
+                DIA
+              </span>
+            </div>
+
+            <!-- Divisor vertical -->
+            <div class="w-px h-16 bg-paper-line"></div>
+
+            <!-- Info do dia -->
+            <div class="text-left">
+              <h2 class="font-sans font-bold text-2xl text-ink-primary">Kyoto</h2>
+              <p class="font-mono text-xs text-ink-utility uppercase tracking-wider">Sexta-feira</p>
+              <p class="font-mono text-sm text-ink-secondary tabular-nums">15 Mar 2025</p>
+            </div>
+          </div>
+
+          <!-- Mini progress com ícones -->
+          <div class="mt-4 flex items-center justify-center gap-6 text-xs font-mono">
+            <span class="text-stamp-sage flex items-center gap-1">
+              <i class="ph-fill ph-check-circle"></i>
+              <span class="tabular-nums">2</span> feitos
+            </span>
+            <span class="text-stamp-navy flex items-center gap-1">
+              <i class="ph-fill ph-clock"></i>
+              <span class="tabular-nums">3</span> planejados
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Segment tabs como boarding zones - touch friendly -->
+      <div class="grid grid-cols-3 gap-2 stagger-item" style="animation-delay: 50ms">
+        <button class="segment-btn bg-action-blue text-white rounded-xl p-3 text-center focus-ring">
+          <i class="ph-fill ph-sun-horizon text-xl mb-1"></i>
+          <p class="font-body text-xs font-medium">Manhã</p>
+          <p class="font-mono text-[10px] opacity-70 tabular-nums">2 itens</p>
+        </button>
+        <button class="segment-btn bg-paper-card border border-paper-line rounded-xl p-3 text-center hover:bg-paper-line/30 focus-ring">
+          <i class="ph-bold ph-sun text-xl text-ink-utility mb-1"></i>
+          <p class="font-body text-xs font-medium text-ink-secondary">Tarde</p>
+          <p class="font-mono text-[10px] text-ink-utility tabular-nums">2 itens</p>
+        </button>
+        <button class="segment-btn bg-paper-card border border-paper-line rounded-xl p-3 text-center hover:bg-paper-line/30 focus-ring">
+          <i class="ph-bold ph-moon-stars text-xl text-ink-utility mb-1"></i>
+          <p class="font-body text-xs font-medium text-ink-secondary">Noite</p>
+          <p class="font-mono text-[10px] text-ink-utility tabular-nums">1 item</p>
+        </button>
+      </div>
+
+      <!-- Cards de atividade estilo boarding pass completo -->
+      <div class="space-y-4">
+        <!-- Boarding pass card 1 -->
+        <div class="bg-paper-card rounded-xl border border-paper-line overflow-hidden shadow-sm card-interactive paper-texture stagger-item" style="animation-delay: 100ms">
+          <!-- Header com tipo e status -->
+          <div class="px-4 pt-4 pb-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-10 h-10 bg-stamp-navy/10 rounded-lg flex items-center justify-center shrink-0">
+                  <i class="ph-fill ph-bank text-stamp-navy text-lg"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-mono text-[10px] text-ink-utility uppercase tracking-wider">Templo</p>
+                  <h4 class="font-sans font-bold text-ink-primary truncate">Fushimi Inari Taisha</h4>
+                </div>
+              </div>
+              <div class="border-2 border-stamp-sage text-stamp-sage font-sans font-bold text-[10px] px-2 py-0.5 rounded-full -rotate-2 shrink-0 whitespace-nowrap">
+                VISITADO
+              </div>
+            </div>
+            <p class="text-sm text-ink-secondary font-body mt-2 line-clamp-2">
+              Santuário xintoísta famoso pelos milhares de portões torii vermelhos.
+            </p>
+          </div>
+
+          <!-- Divider perfurado -->
+          <div class="ticket-notch h-4 flex items-center border-t border-b border-dashed border-paper-line bg-paper-base/30">
+            <div class="w-full border-b border-dashed border-paper-line/50"></div>
+          </div>
+
+          <!-- Footer com dados e barcode decorativo -->
+          <div class="px-4 py-3 flex items-center gap-2">
+            <div class="flex-1 grid grid-cols-3 gap-3">
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">HORÁRIO</p>
+                <p class="font-mono text-sm font-medium text-ink-primary tabular-nums">08:00</p>
+              </div>
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">DURAÇÃO</p>
+                <p class="font-mono text-sm font-medium text-ink-primary">2h</p>
+              </div>
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">CUSTO</p>
+                <p class="font-mono text-sm font-medium text-stamp-sage">Grátis</p>
+              </div>
+            </div>
+
+            <!-- Barcode decorativo -->
+            <div class="barcode text-ink-primary hidden sm:flex">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="flex gap-0.5 ml-1">
+              <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Ver no mapa">
+                <i class="ph-bold ph-map-pin text-ink-utility"></i>
+              </button>
+              <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Mais opções">
+                <i class="ph-bold ph-dots-three text-ink-utility"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Boarding pass card 2 com destaque -->
+        <div class="bg-paper-card rounded-xl border border-paper-line border-l-4 border-l-stamp-amber overflow-hidden shadow-sm card-interactive paper-texture stagger-item" style="animation-delay: 150ms">
+          <div class="px-4 pt-4 pb-3">
+            <div class="flex items-start justify-between gap-2">
+              <div class="flex items-center gap-2 min-w-0">
+                <span class="w-10 h-10 bg-stamp-amber/10 rounded-lg flex items-center justify-center shrink-0">
+                  <i class="ph-fill ph-fork-knife text-stamp-amber text-lg"></i>
+                </span>
+                <div class="min-w-0">
+                  <p class="font-mono text-[10px] text-ink-utility uppercase tracking-wider">Comida</p>
+                  <h4 class="font-sans font-bold text-ink-primary truncate">Nishiki Market</h4>
+                </div>
+              </div>
+              <div class="flex items-center gap-1.5 shrink-0">
+                <span class="border-2 border-stamp-amber text-stamp-amber font-sans font-bold text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5">
+                  <i class="ph-fill ph-star text-[8px]"></i> IMPERDÍVEL
+                </span>
+                <div class="border-2 border-stamp-navy text-stamp-navy font-sans font-bold text-[10px] px-2 py-0.5 rounded-full rotate-1 whitespace-nowrap">
+                  PLANEJADO
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ticket-notch h-4 flex items-center border-t border-b border-dashed border-paper-line bg-paper-base/30">
+            <div class="w-full border-b border-dashed border-paper-line/50"></div>
+          </div>
+
+          <div class="px-4 py-3 flex items-center gap-2">
+            <div class="flex-1 grid grid-cols-3 gap-3">
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">HORÁRIO</p>
+                <p class="font-mono text-sm font-medium text-ink-primary tabular-nums">10:30</p>
+              </div>
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">DURAÇÃO</p>
+                <p class="font-mono text-sm font-medium text-ink-primary">1h30</p>
+              </div>
+              <div>
+                <p class="font-mono text-[9px] text-ink-utility">CUSTO</p>
+                <p class="font-mono text-sm font-medium text-ink-primary tabular-nums">¥2,000</p>
+              </div>
+            </div>
+
+            <div class="barcode text-ink-primary hidden sm:flex">
+              <span></span><span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span><span></span>
+            </div>
+
+            <div class="flex gap-0.5 ml-1">
+              <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Ver no mapa">
+                <i class="ph-bold ph-map-pin text-ink-utility"></i>
+              </button>
+              <button class="touch-target hover:bg-paper-line rounded-lg btn-press focus-ring" aria-label="Mais opções">
+                <i class="ph-bold ph-dots-three text-ink-utility"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAB com animação e ripple -->
+      <button
+        class="fixed bottom-24 right-4 w-14 h-14 bg-action-blue text-white rounded-full shadow-lg hover:bg-action-hover fab-ripple fab-animated focus-ring flex items-center justify-center"
+        aria-label="Adicionar atividade"
+      >
+        <i class="ph-bold ph-plus text-2xl"></i>
+      </button>
+    </section>
+
+    <!-- Bottom Nav com indicador ativo -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-paper-card border-t border-paper-line" role="navigation" aria-label="Navegação principal">
+      <div class="max-w-md mx-auto flex justify-around py-1">
+        <button class="nav-item active flex flex-col items-center py-2 px-6 text-action-blue focus-ring rounded-lg" aria-current="page">
+          <i class="ph-fill ph-house text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Início</span>
+        </button>
+        <button class="nav-item flex flex-col items-center py-2 px-6 text-ink-utility hover:text-ink-primary focus-ring rounded-lg">
+          <i class="ph-bold ph-airplane text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Viagens</span>
+        </button>
+        <button class="nav-item flex flex-col items-center py-2 px-6 text-ink-utility hover:text-ink-primary focus-ring rounded-lg">
+          <i class="ph-bold ph-gear text-2xl"></i>
+          <span class="text-xs font-body mt-0.5">Ajustes</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <!-- Badge da proposta -->
+  <div class="fixed top-4 right-4 bg-stamp-sage text-white px-3 py-1.5 rounded-full text-xs font-mono flex items-center gap-2 shadow-md">
+    <span>PROPOSTA C</span>
+    <span class="opacity-60">|</span>
+    <span class="opacity-80">Enhanced</span>
+  </div>
+
+</body>
+</html>

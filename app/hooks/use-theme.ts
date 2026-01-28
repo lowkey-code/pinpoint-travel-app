@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const STORAGE_KEY = "pinpoint_theme"
+const STORAGE_KEY = "folio_theme"
 type Theme = "light" | "dark" | "system"
 
 function getSystemTheme(): "light" | "dark" {
