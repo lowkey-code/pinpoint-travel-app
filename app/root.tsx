@@ -5,7 +5,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -62,15 +61,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  const location = useLocation()
-  // Hide bottom nav inside trip detail pages (has tripId in URL)
-  const isTripDetail = /^\/itinerary\/[^/]+/.test(location.pathname)
-
   return (
     <ToastProvider>
       <Outlet />
       <ToastContainer />
-      {!isTripDetail && <BottomNav />}
+      <BottomNav />
     </ToastProvider>
   );
 }

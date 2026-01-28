@@ -209,6 +209,11 @@ html {
   padding-right: var(--safe-right);
 }
 
+/* FAB safe area positioning - accounts for BottomNav */
+.safe-bottom-fab {
+  bottom: calc(7rem + var(--safe-bottom));
+}
+
 /* Folio Boarding Pass perforation effect */
 .perforation {
   background-image: repeating-linear-gradient(
@@ -580,6 +585,29 @@ html {
 
 .duration-200 { animation-duration: 200ms; }
 .duration-300 { animation-duration: 300ms; }
+
+/* Bookmark tab - horizontal, arrow pointing left (into the app) */
+.bookmark-tab-left {
+  clip-path: polygon(20% 0, 100% 0, 100% 100%, 20% 100%, 0 50%);
+  border-radius: 0;
+}
+
+/* Slide in from right animation */
+.slide-in-from-right-2 {
+  --slide-from-x: 8px;
+  animation-name: slide-in-x;
+}
+
+@keyframes slide-in-x {
+  from {
+    opacity: 0;
+    transform: translateX(var(--slide-from-x));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {

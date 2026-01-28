@@ -1,9 +1,14 @@
 import { useState } from "react"
 import { useItinerary } from "~/features/itinerary"
 import { GridDayColumn } from "./GridDayColumn"
+import { TripActionsMenu } from "./TripActionsMenu"
 import { Skeleton } from "~/components/ui/folio"
 
-export function GridView() {
+interface GridViewProps {
+  tripId: string
+}
+
+export function GridView({ tripId }: GridViewProps) {
   const { days, isLoading } = useItinerary()
   const [reorderMode, setReorderMode] = useState(false)
 
@@ -26,19 +31,24 @@ export function GridView() {
   return (
     <div className="h-full flex flex-col">
       {/* Toolbar */}
-      <div className="flex items-center justify-between p-4 border-b border-paper-line bg-paper-base">
-        <h2 className="text-lg font-sans font-bold">Visão Geral</h2>
-        <button
-          onClick={() => setReorderMode(!reorderMode)}
-          className={`px-3 py-1.5 rounded-lg border text-sm transition-colors font-body ${
-            reorderMode
-              ? "bg-action-blue text-white border-action-blue"
-              : "border-paper-line hover:bg-secondary"
-          }`}
-        >
-          {reorderMode ? "Concluir" : "Reordenar"}
-        </button>
+      <div className="bg-paper-card border border-paper-line rounded-lg overflow-hidden mb-4">
+        <div className="flex items-center justify-between p-4">
+          <h2 className="text-lg font-sans font-bold">Visão Geral</h2>
+          <button
+            onClick={() => setReorderMode(!reorderMode)}
+            className={`px-3 py-1.5 rounded-lg border text-sm transition-colors font-body ${
+              reorderMode
+                ? "bg-action-blue text-white border-action-blue"
+                : "border-paper-line hover:bg-secondary"
+            }`}
+          >
+            {reorderMode ? "Concluir" : "Reordenar"}
+          </button>
+        </div>
       </div>
+
+      {/* Bookmark menu - fixed to right edge of screen */}
+      <TripActionsMenu tripId={tripId} />
 
       {/* Grid - horizontal scroll */}
       <div className="flex-1 overflow-x-auto overflow-y-hidden">
@@ -48,6 +58,7 @@ export function GridView() {
               key={day.index}
               day={day}
               dayIndex={day.index}
+              tripId={tripId}
               reorderMode={reorderMode}
             />
           ))}

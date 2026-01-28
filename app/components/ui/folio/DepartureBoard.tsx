@@ -1,11 +1,16 @@
 import { cn } from "~/lib/utils"
-import { ArrowRight } from "@phosphor-icons/react"
+import { ArrowRight, MapPin, Airplane } from "@phosphor-icons/react"
 import { FlipCounter } from "./FlipCounter"
+
+type BoardStatus = "upcoming" | "ongoing" | "completed"
 
 interface DepartureBoardProps {
   destination: string
   route?: string
-  daysUntil: number
+  status?: BoardStatus
+  daysUntil?: number
+  currentDay?: number
+  totalDays?: number
   departureDate: string
   returnDate: string
   duration: string
@@ -17,7 +22,10 @@ interface DepartureBoardProps {
 export function DepartureBoard({
   destination,
   route,
-  daysUntil,
+  status = "upcoming",
+  daysUntil = 0,
+  currentDay,
+  totalDays,
   departureDate,
   returnDate,
   duration,
@@ -29,46 +37,69 @@ export function DepartureBoard({
     ? Math.round((progress.current / progress.total) * 100)
     : 0
 
+  const isOngoing = status === "ongoing"
+
   return (
     <div
       className={cn(
-        "bg-ink-primary rounded-2xl overflow-hidden shadow-lg card-interactive",
+        "bg-[#0E1A2B] rounded-2xl overflow-hidden shadow-lg card-interactive",
         className
       )}
     >
       {/* Header */}
-      <div className="px-4 py-2.5 bg-ink-primary/80 border-b border-white/10 flex items-center justify-between">
+      <div className="px-4 py-2.5 bg-black/20 border-b border-white/10 flex items-center justify-between">
         <span className="font-mono text-[10px] text-white/60 tracking-widest">
-          PRÓXIMA PARTIDA
+          {isOngoing ? "VIAGEM EM ANDAMENTO" : "PRÓXIMA PARTIDA"}
         </span>
-        <span className="font-mono text-[10px] text-stamp-sage tracking-wider flex items-center gap-1.5">
-          <span className="w-2 h-2 bg-stamp-sage rounded-full pulse-live" />
-          AO VIVO
+        <span
+          className={cn(
+            "font-mono text-[10px] tracking-wider flex items-center gap-1.5",
+            isOngoing ? "text-action-blue" : "text-stamp-sage"
+          )}
+        >
+          <span
+            className={cn(
+              "w-2 h-2 rounded-full pulse-live",
+              isOngoing ? "bg-action-blue" : "bg-stamp-sage"
+            )}
+          />
+          {isOngoing ? "AGORA" : "AO VIVO"}
         </span>
       </div>
 
       {/* Main content */}
       <div className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <p className="font-mono text-[10px] text-white/50 mb-1">DESTINO</p>
-            <h2 className="font-sans font-bold text-3xl text-white leading-none tracking-tight uppercase">
+        <div className="flex items-start justify-between mb-4">
+          <div className="flex-1 min-w-0">
+            <p className="font-mono text-[10px] text-white/50 mb-1">
+              {isOngoing ? "VOCÊ ESTÁ EM" : "DESTINO"}
+            </p>
+            <h2 className="font-sans font-bold text-3xl text-white leading-none tracking-tight uppercase truncate">
               {destination}
             </h2>
             {route && (
-              <p className="font-body text-sm text-white/70 mt-1">{route}</p>
+              <p className="font-body text-sm text-white/70 mt-1 truncate">{route}</p>
             )}
           </div>
-          <div className="text-right">
-            <p className="font-mono text-[10px] text-white/50 mb-1">EMBARQUE EM</p>
-            <FlipCounter
-              value={daysUntil}
-              size="lg"
-              className="text-stamp-amber"
-            />
-            <p className="font-mono text-xs text-white/70">
-              {daysUntil === 1 ? "DIA" : "DIAS"}
-            </p>
+          <div className="text-right shrink-0 ml-4">
+            {isOngoing ? (
+              <>
+                <p className="font-mono text-[10px] text-white/50 mb-1">DIA</p>
+                <div className="flex items-baseline gap-1 justify-end">
+                  <FlipCounter value={currentDay || 1} size="lg" className="text-action-blue" />
+                  <span className="font-mono text-lg text-white/50">/</span>
+                  <span className="font-mono text-lg text-white/70">{totalDays}</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="font-mono text-[10px] text-white/50 mb-1">EMBARQUE EM</p>
+                <FlipCounter value={daysUntil || 0} size="lg" className="text-stamp-amber" />
+                <p className="font-mono text-xs text-white/70">
+                  {daysUntil === 1 ? "DIA" : "DIAS"}
+                </p>
+              </>
+            )}
           </div>
         </div>
 
@@ -97,14 +128,17 @@ export function DepartureBoard({
         {/* Progress bar */}
         <div className="mt-4">
           <div className="flex justify-between text-[10px] font-mono text-white/50 mb-1.5">
-            <span>PLANEJAMENTO</span>
+            <span>{isOngoing ? "PROGRESSO" : "PLANEJAMENTO"}</span>
             <span className="tabular-nums">
               {progress.current}/{progress.total} itens
             </span>
           </div>
           <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-stamp-amber rounded-full progress-animated progress-glow"
+              className={cn(
+                "h-full rounded-full progress-animated progress-glow",
+                isOngoing ? "bg-action-blue" : "bg-stamp-amber"
+              )}
               style={{ width: `${progressPercent}%` }}
             />
           </div>
@@ -116,11 +150,20 @@ export function DepartureBoard({
         onClick={onOpen}
         className="w-full py-3.5 bg-action-blue hover:bg-action-hover text-white font-body font-medium btn-press focus-ring flex items-center justify-center gap-2 group"
       >
-        <span>Abrir Itinerário</span>
-        <ArrowRight
-          weight="bold"
-          className="transition-transform duration-150 group-hover:translate-x-1"
-        />
+        {isOngoing ? (
+          <>
+            <MapPin weight="fill" className="w-4 h-4" />
+            <span>Ver Dia Atual</span>
+          </>
+        ) : (
+          <>
+            <span>Abrir Itinerário</span>
+            <ArrowRight
+              weight="bold"
+              className="transition-transform duration-150 group-hover:translate-x-1"
+            />
+          </>
+        )}
       </button>
     </div>
   )

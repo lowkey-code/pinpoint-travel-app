@@ -19,9 +19,9 @@ export function FAB({
     <button
       onClick={onClick}
       className={cn(
-        "fixed bottom-24 right-4 w-14 h-14 bg-action-blue text-white rounded-full shadow-lg",
+        "fixed bottom-28 right-4 w-14 h-14 bg-action-blue text-white rounded-full shadow-lg",
         "hover:bg-action-hover focus-ring flex items-center justify-center",
-        "fab-ripple z-20",
+        "fab-ripple z-30 safe-bottom-fab",
         animated && "fab-animated",
         className
       )}

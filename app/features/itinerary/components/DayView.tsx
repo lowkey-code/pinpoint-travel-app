@@ -4,13 +4,19 @@ import { useItinerary, SEGMENTS, SEGMENT_LABELS, getRenderableItemsForSegment, g
 import { formatDatePtBR, getWeekdayPtBR } from "~/features/itinerary/lib/dates"
 import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
+import { TripActionsMenu } from "./TripActionsMenu"
 import type { Segment } from "~/features/itinerary"
 import { DayViewSkeleton, GateHeader, SegmentTabs, FAB } from "~/components/ui/folio"
 
-export function DayView() {
+interface DayViewProps {
+  initialDayIndex?: number
+  tripId: string
+}
+
+export function DayView({ initialDayIndex = 0, tripId }: DayViewProps) {
   const navigate = useNavigate()
   const { trip, items, days, isLoading } = useItinerary()
-  const [selectedDayIndex, setSelectedDayIndex] = useState(0)
+  const [selectedDayIndex, setSelectedDayIndex] = useState(initialDayIndex)
   const [selectedSegment, setSelectedSegment] = useState<Segment>("morning")
   const [drawerOpen, setDrawerOpen] = useState(false)
 
@@ -49,7 +55,7 @@ export function DayView() {
   }))
 
   return (
-    <div className="space-y-4 pb-24 px-4">
+    <div className="space-y-4 pb-32 px-4">
       {/* Gate Header */}
       <div className="stagger-item">
         <GateHeader
@@ -65,6 +71,9 @@ export function DayView() {
           hasNext={selectedDayIndex < days.length - 1}
         />
       </div>
+
+      {/* Bookmark menu - fixed to right edge of screen */}
+      <TripActionsMenu tripId={tripId} />
 
       {/* Segment Tabs */}
       <div className="stagger-item" style={{ animationDelay: "50ms" }}>
