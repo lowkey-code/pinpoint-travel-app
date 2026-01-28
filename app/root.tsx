@@ -17,6 +17,9 @@ import { BottomNav } from "~/components/ui/folio";
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
   { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
+  { rel: "icon", href: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
+  { rel: "icon", href: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
+  { rel: "apple-touch-icon", href: "/apple-touch-icon.png", sizes: "180x180" },
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
   { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
   {
@@ -74,14 +77,14 @@ export default function App() {
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let details = "Ocorreu um erro inesperado.";
   let stack: string | undefined;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? "404" : "Erro";
     details =
       error.status === 404
-        ? "The requested page could not be found."
+        ? "A página solicitada não foi encontrada."
         : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
@@ -89,11 +92,22 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   }
 
   return (
-    <main className="p-4">
-      <h1>{message}</h1>
-      <p>{details}</p>
+    <main className="min-h-screen bg-paper-base flex flex-col items-center justify-center p-6 text-center">
+      <img
+        src="/logo.svg"
+        alt="Folio"
+        className="w-16 h-16 rounded-xl mb-6 opacity-50"
+      />
+      <h1 className="font-sans font-bold text-4xl text-ink-primary mb-2">{message}</h1>
+      <p className="text-ink-secondary font-body mb-6">{details}</p>
+      <a
+        href="/"
+        className="px-4 py-2 bg-action-blue text-white rounded-lg font-body font-medium hover:bg-action-hover btn-press focus-ring"
+      >
+        Voltar ao início
+      </a>
       {stack && (
-        <pre className="overflow-x-auto">
+        <pre className="mt-8 p-4 bg-paper-card border border-paper-line rounded-lg text-left overflow-x-auto text-xs font-mono text-ink-utility max-w-full">
           <code>{stack}</code>
         </pre>
       )}

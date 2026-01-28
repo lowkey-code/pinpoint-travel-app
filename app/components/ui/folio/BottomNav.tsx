@@ -15,20 +15,25 @@ const navItems: NavItem[] = [
 
 export function BottomNav() {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-paper-card border-t border-paper-line safe-bottom md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-paper-card/95 backdrop-blur-sm border-t border-paper-line safe-bottom md:hidden">
       <div className="flex items-center justify-around h-16">
         {navItems.map((item) => (
           <NavLink
             key={item.href}
             to={item.href}
+            end={item.href === "/"}
             className={({ isActive }) =>
-              `flex flex-col items-center justify-center gap-1 px-4 py-2 min-w-[64px] tap-target transition-colors ${
+              `relative flex flex-col items-center justify-center gap-1 px-4 py-2 min-w-[64px] touch-target btn-press transition-colors ${
                 isActive ? "text-action-blue" : "text-ink-secondary hover:text-ink-primary"
               }`
             }
           >
             {({ isActive }) => (
               <>
+                {/* Active indicator dot */}
+                {isActive && (
+                  <span className="absolute top-1 w-1 h-1 rounded-full bg-action-blue" />
+                )}
                 <item.icon
                   weight={isActive ? "fill" : "regular"}
                   className="w-6 h-6"

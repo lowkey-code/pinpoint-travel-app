@@ -1,6 +1,7 @@
 import { cn } from "~/lib/utils"
 import { StampBadge } from "./StampBadge"
 import { PerforatedDivider } from "./PerforatedDivider"
+import { Barcode } from "./Barcode"
 import type { StampVariant } from "./types"
 
 interface DataItem {
@@ -18,6 +19,8 @@ interface BoardingPassCardProps {
   dataItems?: DataItem[]
   actions?: React.ReactNode
   accentColor?: string
+  showBarcode?: boolean
+  interactive?: boolean
   className?: string
   children?: React.ReactNode
 }
@@ -31,16 +34,21 @@ export function BoardingPassCard({
   dataItems,
   actions,
   accentColor,
+  showBarcode = false,
+  interactive = true,
   className,
   children,
 }: BoardingPassCardProps) {
   return (
     <div
       className={cn(
-        "bg-paper-card border border-paper-line rounded-xl shadow-sm overflow-hidden",
+        "bg-paper-card border border-paper-line rounded-xl shadow-sm overflow-hidden relative",
+        interactive && "card-interactive",
         className
       )}
     >
+      {/* Paper texture overlay */}
+      <div className="paper-texture" />
       {/* Accent stripe */}
       {accentColor && (
         <div className="h-1" style={{ backgroundColor: accentColor }} />
@@ -80,22 +88,29 @@ export function BoardingPassCard({
 
       {/* Data section */}
       {dataItems && dataItems.length > 0 && (
-        <div className="px-4 pb-4 grid grid-cols-2 gap-3">
-          {dataItems.map((item, index) => (
-            <div key={index}>
-              <p className="text-xs uppercase tracking-wide text-ink-utility">
-                {item.label}
-              </p>
-              <p
-                className={cn(
-                  "text-sm font-medium text-ink-primary mt-0.5",
-                  item.mono && "font-mono tabular-nums"
-                )}
-              >
-                {item.value}
-              </p>
+        <div className="px-4 pb-4">
+          <div className="grid grid-cols-2 gap-3">
+            {dataItems.map((item, index) => (
+              <div key={index}>
+                <p className="text-xs uppercase tracking-wide text-ink-utility">
+                  {item.label}
+                </p>
+                <p
+                  className={cn(
+                    "text-sm font-medium text-ink-primary mt-0.5",
+                    item.mono && "font-mono tabular-nums"
+                  )}
+                >
+                  {item.value}
+                </p>
+              </div>
+            ))}
+          </div>
+          {showBarcode && (
+            <div className="mt-3 flex justify-end">
+              <Barcode bars={12} className="h-6 opacity-30" />
             </div>
-          ))}
+          )}
         </div>
       )}
 

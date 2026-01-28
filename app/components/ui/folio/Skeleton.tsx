@@ -8,7 +8,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse bg-paper-line/50 rounded",
+        "skeleton-shimmer bg-paper-line/50 rounded",
         className
       )}
     />
@@ -33,21 +33,37 @@ export function CardSkeleton() {
 
 export function DayViewSkeleton() {
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between py-2">
-        <Skeleton className="w-10 h-10 rounded-lg" />
-        <div className="text-center">
-          <Skeleton className="h-6 w-32 mx-auto" />
-          <Skeleton className="h-4 w-24 mx-auto mt-1" />
+    <div className="space-y-4 pb-24 px-4">
+      {/* GateHeader skeleton */}
+      <div className="bg-paper-card border border-paper-line rounded-xl p-4">
+        <div className="flex items-center justify-between mb-4">
+          <Skeleton className="w-10 h-10 rounded-lg" />
+          <div className="flex gap-2">
+            <Skeleton className="w-10 h-10 rounded-lg" />
+            <Skeleton className="w-10 h-10 rounded-lg" />
+          </div>
         </div>
-        <Skeleton className="w-10 h-10 rounded-lg" />
+        <div className="flex items-center gap-4">
+          <div className="flex items-baseline gap-2">
+            <Skeleton className="w-16 h-16 rounded-lg" />
+          </div>
+          <div className="h-12 w-px bg-paper-line" />
+          <div className="flex-1">
+            <Skeleton className="h-6 w-32 mb-2" />
+            <Skeleton className="h-4 w-48" />
+          </div>
+        </div>
       </div>
-      <div className="flex gap-2 border-b border-paper-line pb-2">
-        <Skeleton className="h-10 flex-1" />
-        <Skeleton className="h-10 flex-1" />
-        <Skeleton className="h-10 flex-1" />
+
+      {/* SegmentTabs skeleton */}
+      <div className="grid grid-cols-3 gap-2">
+        <Skeleton className="h-14 rounded-xl" />
+        <Skeleton className="h-14 rounded-xl" />
+        <Skeleton className="h-14 rounded-xl" />
       </div>
-      <div className="space-y-4 px-2">
+
+      {/* Cards skeleton */}
+      <div className="space-y-4">
         <CardSkeleton />
         <CardSkeleton />
       </div>
@@ -78,16 +94,50 @@ export function TripCardSkeleton() {
 
 export function TripListSkeleton() {
   return (
-    <div className="container max-w-4xl mx-auto p-4 py-8">
-      <div className="mb-8">
-        <Skeleton className="h-9 w-48 mb-2" />
-        <Skeleton className="h-5 w-64" />
-      </div>
-      <Skeleton className="w-full h-14 mb-8 rounded-xl" />
-      <div className="space-y-3">
-        <TripCardSkeleton />
-        <TripCardSkeleton />
-        <TripCardSkeleton />
+    <div className="max-w-md mx-auto pb-24">
+      <div className="p-4 space-y-6">
+        {/* Header skeleton */}
+        <header className="flex items-center justify-between pt-2">
+          <div className="flex items-center gap-3">
+            <Skeleton className="w-10 h-10 rounded-lg" />
+            <div>
+              <Skeleton className="h-5 w-16 mb-1" />
+              <Skeleton className="h-3 w-24" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton className="w-10 h-10 rounded-xl" />
+            <Skeleton className="w-10 h-10 rounded-xl" />
+          </div>
+        </header>
+
+        {/* DepartureBoard skeleton */}
+        <div className="bg-ink-primary rounded-2xl p-5">
+          <div className="flex items-start justify-between mb-4">
+            <Skeleton className="h-8 w-48 bg-paper-line/20" />
+            <Skeleton className="h-6 w-16 rounded-full bg-paper-line/20" />
+          </div>
+          <Skeleton className="h-4 w-64 mb-6 bg-paper-line/20" />
+          <div className="flex items-end justify-between">
+            <Skeleton className="h-20 w-24 bg-paper-line/20" />
+            <Skeleton className="h-10 w-32 rounded-xl bg-paper-line/20" />
+          </div>
+        </div>
+
+        {/* TicketStub skeleton */}
+        <div className="space-y-3">
+          <Skeleton className="h-3 w-32" />
+          <div className="bg-paper-card border border-paper-line rounded-xl p-3 flex gap-3">
+            <Skeleton className="w-16 h-16 rounded-lg" />
+            <div className="flex-1">
+              <Skeleton className="h-5 w-32 mb-2" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+          </div>
+        </div>
+
+        {/* Create button skeleton */}
+        <Skeleton className="h-20 w-full rounded-xl border-2 border-dashed border-paper-line" />
       </div>
     </div>
   )

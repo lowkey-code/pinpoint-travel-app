@@ -116,6 +116,7 @@ export function ItineraryCard({
         }}
         accentColor={item.city ? "var(--action-blue)" : undefined}
         dataItems={dataItems.length > 0 ? dataItems : undefined}
+        showBarcode={dataItems.length > 0}
         actions={
           reorderMode && dayIndex !== undefined && segment ? (
             <ReorderControls

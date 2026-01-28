@@ -22,6 +22,17 @@ export function createLocalDate(dateStr: string): Date {
 }
 
 /**
+ * Get weekday name in Portuguese from date string (YYYY-MM-DD)
+ */
+export function getWeekdayPtBR(dateStr: string): string {
+  const { year, month, day } = parseDateString(dateStr)
+  const date = new Date(year, month - 1, day)
+  const formatter = new Intl.DateTimeFormat("pt-BR", { weekday: "long" })
+  const weekday = formatter.format(date)
+  return weekday.charAt(0).toUpperCase() + weekday.slice(1)
+}
+
+/**
  * Format date string (YYYY-MM-DD) to Portuguese format
  */
 export function formatDatePtBR(dateStr: string, options: { short?: boolean } = {}): string {
