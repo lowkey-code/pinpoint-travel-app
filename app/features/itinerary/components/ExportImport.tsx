@@ -146,7 +146,7 @@ export function ExportImport({ tripId }: ExportImportProps) {
         aria-hidden="true"
       />
 
-      <Dialog.Root open={dialogOpen} onOpenChange={(details) => details.open ? null : handleClose()}>
+      <Dialog.Root open={dialogOpen} onOpenChange={(details) => details.open ? null : handleClose()} lazyMount unmountOnExit>
         <Portal>
           <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-40" />
           <Dialog.Positioner className="fixed inset-0 z-50 flex items-center justify-center p-4">

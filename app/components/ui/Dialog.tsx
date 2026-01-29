@@ -12,7 +12,7 @@ interface DialogProps {
 
 export function Dialog({ open, onOpenChange, title, description, children }: DialogProps) {
   return (
-    <ArkDialog.Root open={open} onOpenChange={(e) => onOpenChange(e.open)}>
+    <ArkDialog.Root open={open} onOpenChange={(e) => onOpenChange(e.open)} lazyMount unmountOnExit>
       <Portal>
         <ArkDialog.Backdrop className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[55] animate-in fade-in duration-200" />
         <ArkDialog.Positioner className="fixed inset-0 z-[60] flex items-center justify-center p-4">

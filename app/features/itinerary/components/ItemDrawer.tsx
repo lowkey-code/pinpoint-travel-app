@@ -1,12 +1,16 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
-import { useItinerary, SEGMENTS, SEGMENT_LABELS, extractDate, daysBetween } from "~/features/itinerary"
+import { useItinerary, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
+import { extractDate, daysBetween } from "../lib/dates"
 import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
-import { X, ArrowRight } from "@phosphor-icons/react"
+import { X, ArrowRight, Clock, CurrencyDollar, CheckCircle } from "@phosphor-icons/react"
+import { cn } from "~/lib/utils"
 import { TypeSelector } from "./TypeSelector"
+import { EmojiPicker } from "./EmojiPicker"
+import { LocationFields } from "./LocationFields"
+import { NotesLinksSection } from "./NotesLinksSection"
 import { StayFields } from "./StayFields"
 import { TransportFields } from "./TransportFields"
-import { LinksEditor } from "./LinksEditor"
 
 interface ItemDrawerProps {
   open: boolean
@@ -15,6 +19,32 @@ interface ItemDrawerProps {
   segment: Segment
   item?: ItineraryItem
 }
+
+const SEGMENT_DEFAULT_TIMES: Record<Segment, string> = {
+  morning: "09:00",
+  afternoon: "14:00",
+  evening: "19:00",
+}
+
+const ITEM_DEFAULT_EMOJI: Record<ItemType, string> = {
+  activity: "🎯",
+  transport: "✈️",
+  stay: "🏨",
+  dayTrip: "🗺️",
+  quick: "⭐",
+}
+
+const STATUS_OPTIONS: { value: ItemStatus; label: string }[] = [
+  { value: "planned", label: "Planejado" },
+  { value: "done", label: "Feito" },
+  { value: "skipped", label: "Pulado" },
+]
+
+const PRIORITY_OPTIONS: { value: ItemPriority; label: string }[] = [
+  { value: 0, label: "Normal" },
+  { value: 1, label: "Importante" },
+  { value: 2, label: "Imperdível" },
+]
 
 export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: ItemDrawerProps) {
   const { addItem, updateItem, convertQuickToActivity, trip } = useItinerary()
@@ -42,6 +72,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const [destinationCity, setDestinationCity] = useState("")
   const [transportError, setTransportError] = useState("")
 
+  // Load existing item data
   useEffect(() => {
     if (item) {
       setItemType(item.itemType)
@@ -68,6 +99,28 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     }
   }, [item, open])
 
+  // Smart defaults for new items
+  useEffect(() => {
+    if (!item && open) {
+      // Default time based on segment
+      if (!timeLabel) {
+        setTimeLabel(SEGMENT_DEFAULT_TIMES[segment])
+      }
+      // Default emoji based on type
+      if (!icon) {
+        setIcon(ITEM_DEFAULT_EMOJI[itemType])
+      }
+    }
+  }, [segment, item, open, timeLabel, icon, itemType])
+
+  // Update emoji when type changes (for new items)
+  useEffect(() => {
+    if (!item && open) {
+      setIcon(ITEM_DEFAULT_EMOJI[itemType])
+    }
+  }, [itemType, item, open])
+
+  // Handle day trip type
   useEffect(() => {
     if (itemType === "dayTrip") {
       setIsDayTrip(true)
@@ -76,6 +129,34 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       setCoversSegments([])
     }
   }, [itemType])
+
+  // Reset form when dialog closes
+  useEffect(() => {
+    if (!open && !item) {
+      setItemType("activity")
+      setTitle("")
+      setIcon("")
+      setTimeLabel("")
+      setDurationText("")
+      setCostText("")
+      setCity("")
+      setAddressText("")
+      setLat("")
+      setLng("")
+      setLinks([])
+      setNotes("")
+      setStatus("planned")
+      setPriority(0)
+      setIsDayTrip(false)
+      setCoversSegments([])
+      setBreakfastIncluded(false)
+      setDepartureDateTime("")
+      setArrivalDateTime("")
+      setOriginCity("")
+      setDestinationCity("")
+      setTransportError("")
+    }
+  }, [open, item])
 
   const handleSave = () => {
     if (itemType !== "quick" && !title.trim()) {
@@ -149,28 +230,6 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
   const handleClose = () => {
     onOpenChange(false)
-    setItemType("activity")
-    setTitle("")
-    setIcon("")
-    setTimeLabel("")
-    setDurationText("")
-    setCostText("")
-    setCity("")
-    setAddressText("")
-    setLat("")
-    setLng("")
-    setLinks([])
-    setNotes("")
-    setStatus("planned")
-    setPriority(0)
-    setIsDayTrip(false)
-    setCoversSegments([])
-    setBreakfastIncluded(false)
-    setDepartureDateTime("")
-    setArrivalDateTime("")
-    setOriginCity("")
-    setDestinationCity("")
-    setTransportError("")
   }
 
   const toggleSegment = (seg: Segment) => {
@@ -189,27 +248,34 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     handleClose()
   }
 
+  // Key forces Dialog to remount when opening, fixing state sync issues
+  const dialogKey = open ? "drawer-open" : "drawer-closed"
+
   return (
-    <Dialog.Root open={open} onOpenChange={(details) => onOpenChange(details.open)}>
+    <Dialog.Root key={dialogKey} open={open} onOpenChange={(details) => onOpenChange(details.open)}>
       <Portal>
-        <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-40" />
+        <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm" />
         <Dialog.Positioner className="fixed inset-0 z-50 flex items-end">
-          <Dialog.Content className="bg-paper-base w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto" data-testid={item ? `edit-item-drawer-${item.id}` : "item-drawer"}>
+          <Dialog.Content
+            className="bg-paper-base w-full max-h-[90vh] rounded-t-2xl shadow-xl overflow-y-auto animate-in slide-in-from-bottom duration-300"
+            data-testid={item ? `edit-item-drawer-${item.id}` : "item-drawer"}
+          >
             {/* Header */}
             <div className="sticky top-0 bg-paper-base border-b border-paper-line p-4 z-10">
               <div className="flex items-center justify-between">
-                <Dialog.Title className="text-xl font-sans font-bold">
+                <Dialog.Title className="text-xl font-sans font-bold text-ink-primary">
                   {item ? "Editar Item" : "Novo Item"}
                 </Dialog.Title>
                 <Dialog.CloseTrigger asChild>
                   <button
-                    className="p-2 hover:bg-secondary rounded-lg tap-target"
+                    className="p-2 hover:bg-secondary rounded-lg tap-target transition-colors"
                     aria-label="Fechar"
                   >
                     <X className="w-5 h-5" weight="bold" />
                   </button>
                 </Dialog.CloseTrigger>
               </div>
+
               {isQuickItem && (
                 <div className="mt-3 p-3 bg-action-blue/10 border border-action-blue/20 rounded-lg">
                   <p className="text-sm text-ink-secondary mb-2 font-body">
@@ -227,216 +293,173 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
             </div>
 
             {/* Form */}
-            <div className="p-4 space-y-4">
+            <div className="p-4 space-y-5">
+              {/* Type Selector */}
               <TypeSelector value={itemType} onChange={setItemType} />
 
-              {/* Title */}
-              <div>
-                <label className="block text-sm font-medium mb-1 font-body">
-                  Título {isTitleRequired && <span className="text-stamp-brick">*</span>}
-                </label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
-                  placeholder={itemType === "quick" ? "Opcional para items rápidos" : "Nome do lugar ou atividade"}
-                  aria-required={isTitleRequired}
-                  aria-invalid={isTitleRequired && !title.trim()}
-                  data-testid="item-title-input"
-                />
-                {isTitleRequired && !title.trim() && (
-                  <p className="text-xs text-stamp-brick mt-1" role="alert">
-                    Título é obrigatório
-                  </p>
-                )}
-              </div>
-
-              {/* Icon */}
-              <div>
-                <label className="block text-sm font-medium mb-1 font-body">Ícone (emoji)</label>
-                <input
-                  type="text"
-                  value={icon}
-                  onChange={(e) => setIcon(e.target.value)}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none"
-                  placeholder="🍕"
-                  maxLength={2}
-                  aria-label="Ícone emoji"
-                />
-              </div>
-
-              {/* Time & Duration */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Essential Fields Card */}
+              <div className="space-y-4 p-4 bg-paper-card rounded-xl border border-paper-line">
+                {/* Title */}
                 <div>
-                  <label htmlFor="time-label" className="block text-sm font-medium mb-1 font-body">
-                    Horário
+                  <label className="block text-sm font-medium mb-1.5 font-body text-ink-primary">
+                    Título {isTitleRequired && <span className="text-stamp-brick">*</span>}
                   </label>
-                  <input
-                    id="time-label"
-                    type="text"
-                    value={timeLabel}
-                    onChange={(e) => setTimeLabel(e.target.value)}
-                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
-                    placeholder="09:00"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className={cn(
+                        "w-full px-3 py-2.5 border rounded-lg bg-paper-base focus:ring-2 focus:ring-action-blue outline-none font-body transition-colors",
+                        isTitleRequired && !title.trim()
+                          ? "border-paper-line"
+                          : title.trim()
+                          ? "border-stamp-sage"
+                          : "border-paper-line"
+                      )}
+                      placeholder={itemType === "quick" ? "Opcional para items rápidos" : "Nome do lugar ou atividade"}
+                      aria-required={isTitleRequired}
+                      aria-invalid={isTitleRequired && !title.trim()}
+                      data-testid="item-title-input"
+                    />
+                    {title.trim() && (
+                      <CheckCircle
+                        weight="fill"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-stamp-sage"
+                      />
+                    )}
+                  </div>
+                  {isTitleRequired && !title.trim() && (
+                    <p className="text-xs text-stamp-brick mt-1 font-body" role="alert">
+                      Título é obrigatório
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <label htmlFor="duration-text" className="block text-sm font-medium mb-1 font-body">
-                    Duração
-                  </label>
-                  <input
-                    id="duration-text"
-                    type="text"
-                    value={durationText}
-                    onChange={(e) => setDurationText(e.target.value)}
-                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
-                    placeholder="2h 30min"
-                  />
+
+                {/* Emoji Picker */}
+                <EmojiPicker value={icon} onChange={setIcon} itemType={itemType} />
+              </div>
+
+              {/* Time & Duration Card */}
+              <div className="p-4 bg-paper-card rounded-xl border border-paper-line">
+                <div className="flex items-center gap-2 mb-3">
+                  <Clock weight="bold" className="w-4 h-4 text-ink-utility" />
+                  <span className="text-sm font-medium font-body text-ink-primary">Horário</span>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label htmlFor="time-label" className="block text-xs font-medium mb-1 font-body text-ink-secondary">
+                      Início
+                    </label>
+                    <input
+                      id="time-label"
+                      type="text"
+                      value={timeLabel}
+                      onChange={(e) => setTimeLabel(e.target.value)}
+                      className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-base focus:ring-2 focus:ring-action-blue outline-none font-mono text-sm"
+                      placeholder="09:00"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="duration-text" className="block text-xs font-medium mb-1 font-body text-ink-secondary">
+                      Duração
+                    </label>
+                    <input
+                      id="duration-text"
+                      type="text"
+                      value={durationText}
+                      onChange={(e) => setDurationText(e.target.value)}
+                      className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-base focus:ring-2 focus:ring-action-blue outline-none font-mono text-sm"
+                      placeholder="2h 30min"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Cost */}
-              <div>
-                <label htmlFor="cost-text" className="block text-sm font-medium mb-1 font-body">
-                  Custo
-                </label>
+              {/* Cost Card */}
+              <div className="p-4 bg-paper-card rounded-xl border border-paper-line">
+                <div className="flex items-center gap-2 mb-3">
+                  <CurrencyDollar weight="bold" className="w-4 h-4 text-ink-utility" />
+                  <span className="text-sm font-medium font-body text-ink-primary">Custo</span>
+                </div>
                 <input
-                  id="cost-text"
                   type="text"
                   value={costText}
                   onChange={(e) => setCostText(e.target.value)}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
+                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-base focus:ring-2 focus:ring-action-blue outline-none font-mono text-sm"
                   placeholder="R$ 50,00"
+                  aria-label="Custo estimado"
                 />
               </div>
 
-              {/* City */}
-              <div>
-                <label htmlFor="city" className="block text-sm font-medium mb-1 font-body">
-                  Cidade
-                </label>
-                <input
-                  id="city"
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
-                  placeholder="São Paulo"
-                />
-              </div>
+              {/* Location Fields (Collapsible) */}
+              <LocationFields
+                city={city}
+                addressText={addressText}
+                lat={lat}
+                lng={lng}
+                onCityChange={setCity}
+                onAddressChange={setAddressText}
+                onLatChange={setLat}
+                onLngChange={setLng}
+              />
 
-              {/* Address */}
-              <div>
-                <label htmlFor="address-text" className="block text-sm font-medium mb-1 font-body">
-                  Endereço
-                </label>
-                <input
-                  id="address-text"
-                  type="text"
-                  value={addressText}
-                  onChange={(e) => setAddressText(e.target.value)}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body"
-                  placeholder="Rua, número, bairro"
-                  data-testid="item-address-input"
-                />
-              </div>
+              {/* Notes & Links (Collapsible) */}
+              <NotesLinksSection
+                notes={notes}
+                links={links}
+                onNotesChange={setNotes}
+                onLinksChange={setLinks}
+              />
 
-              {/* Coordinates */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Status & Priority */}
+              <div className="p-4 bg-paper-card rounded-xl border border-paper-line space-y-4">
+                {/* Status */}
                 <div>
-                  <label htmlFor="lat" className="block text-sm font-medium mb-1 font-body">
-                    Latitude
-                  </label>
-                  <input
-                    id="lat"
-                    type="text"
-                    inputMode="decimal"
-                    value={lat}
-                    onChange={(e) => setLat(e.target.value)}
-                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
-                    placeholder="-23.550520"
-                  />
+                  <label className="block text-sm font-medium mb-2 font-body text-ink-primary">Status</label>
+                  <div className="flex gap-2">
+                    {STATUS_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setStatus(opt.value)}
+                        className={cn(
+                          "flex-1 px-3 py-2 rounded-lg border transition-colors font-body text-sm tap-target",
+                          status === opt.value
+                            ? "bg-action-blue text-white border-action-blue"
+                            : "border-paper-line hover:bg-secondary bg-paper-base"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
+
+                {/* Priority */}
                 <div>
-                  <label htmlFor="lng" className="block text-sm font-medium mb-1 font-body">
-                    Longitude
-                  </label>
-                  <input
-                    id="lng"
-                    type="text"
-                    inputMode="decimal"
-                    value={lng}
-                    onChange={(e) => setLng(e.target.value)}
-                    className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-mono"
-                    placeholder="-46.633308"
-                  />
+                  <label className="block text-sm font-medium mb-2 font-body text-ink-primary">Prioridade</label>
+                  <div className="flex gap-2">
+                    {PRIORITY_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setPriority(opt.value)}
+                        className={cn(
+                          "flex-1 px-3 py-2 rounded-lg border transition-colors font-body text-sm tap-target",
+                          priority === opt.value
+                            ? "bg-action-blue text-white border-action-blue"
+                            : "border-paper-line hover:bg-secondary bg-paper-base"
+                        )}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              <LinksEditor links={links} onChange={setLinks} />
-
-              {/* Notes */}
-              <div>
-                <label htmlFor="notes" className="block text-sm font-medium mb-1 font-body">
-                  Observações
-                </label>
-                <textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none resize-none font-body"
-                  placeholder="Notas adicionais…"
-                />
-              </div>
-
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-medium mb-2 font-body">Status</label>
-                <div className="flex gap-2">
-                  {(["planned", "done", "skipped"] as ItemStatus[]).map((s) => (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setStatus(s)}
-                      className={`px-4 py-2 rounded-lg border transition-colors font-body ${
-                        status === s
-                          ? "bg-action-blue text-white border-action-blue"
-                          : "border-paper-line hover:bg-secondary"
-                      }`}
-                    >
-                      {s === "planned" && "Planejado"}
-                      {s === "done" && "Feito"}
-                      {s === "skipped" && "Pulado"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Priority */}
-              <div>
-                <label className="block text-sm font-medium mb-2 font-body">Prioridade</label>
-                <div className="flex gap-2">
-                  {([0, 1, 2] as ItemPriority[]).map((p) => (
-                    <button
-                      key={p}
-                      type="button"
-                      onClick={() => setPriority(p)}
-                      className={`px-4 py-2 rounded-lg border transition-colors font-body ${
-                        priority === p
-                          ? "bg-action-blue text-white border-action-blue"
-                          : "border-paper-line hover:bg-secondary"
-                      }`}
-                    >
-                      {p === 0 && "Normal"}
-                      {p === 1 && "Importante"}
-                      {p === 2 && "Imperdível"}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
+              {/* Conditional Fields */}
               {itemType === "stay" && (
                 <StayFields
                   breakfastIncluded={breakfastIncluded}
@@ -459,8 +482,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
               )}
 
               {itemType === "dayTrip" && (
-                <div className="space-y-3 p-3 border border-paper-line rounded-lg bg-secondary/30">
-                  <p className="text-sm font-medium font-body">Períodos cobertos pelo Dia Inteiro</p>
+                <div className="space-y-3 p-4 border border-paper-line rounded-xl bg-paper-card">
+                  <p className="text-sm font-medium font-body text-ink-primary">Períodos cobertos pelo Dia Inteiro</p>
                   <p className="text-xs text-ink-secondary font-body">
                     Este item aparece no período <strong>{SEGMENT_LABELS[segment]}</strong> (principal).
                     Selecione períodos adicionais que ele cobre:
@@ -472,13 +495,14 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                         type="button"
                         onClick={() => toggleSegment(seg)}
                         disabled={seg === segment}
-                        className={`px-3 py-2 rounded-lg border text-sm transition-colors font-body ${
+                        className={cn(
+                          "flex-1 px-3 py-2 rounded-lg border text-sm transition-colors font-body tap-target",
                           seg === segment
                             ? "bg-action-blue text-white border-action-blue"
                             : coversSegments.includes(seg)
                             ? "bg-secondary border-action-blue"
-                            : "border-paper-line hover:bg-secondary"
-                        }`}
+                            : "border-paper-line hover:bg-secondary bg-paper-base"
+                        )}
                         data-testid={`daytrip-segment-${seg}`}
                       >
                         {SEGMENT_LABELS[seg]}
@@ -502,7 +526,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
                 type="button"
                 onClick={handleSave}
                 disabled={!canSave}
-                className="flex-1 px-4 py-3 rounded-lg bg-action-blue text-white hover:bg-action-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors tap-target font-body"
+                className="flex-1 px-4 py-3 rounded-lg bg-action-blue text-white hover:bg-action-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors tap-target font-body font-medium"
                 data-testid="save-item"
               >
                 {item ? "Salvar" : "Adicionar"}

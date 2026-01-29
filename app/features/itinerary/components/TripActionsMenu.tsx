@@ -181,7 +181,7 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
         aria-hidden="true"
       />
 
-      <Dialog.Root open={dialogOpen} onOpenChange={(details) => details.open ? null : handleClose()}>
+      <Dialog.Root open={dialogOpen} onOpenChange={(details) => details.open ? null : handleClose()} lazyMount unmountOnExit>
         <Portal>
           <Dialog.Backdrop className="fixed inset-0 bg-black/50 z-[55] backdrop-blur-sm" />
           <Dialog.Positioner className="fixed inset-0 z-[60] flex items-center justify-center p-4">
