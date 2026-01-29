@@ -70,6 +70,21 @@ export default function App() {
   );
 }
 
+export function HydrateFallback() {
+  return (
+    <div className="min-h-screen bg-paper-base flex flex-col items-center justify-center">
+      <img
+        src="/logo.svg"
+        alt="Folio"
+        className="w-16 h-16 rounded-xl mb-4 animate-pulse"
+      />
+      <p className="font-mono text-xs text-ink-utility tracking-widest">
+        CARREGANDO…
+      </p>
+    </div>
+  );
+}
+
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "Ocorreu um erro inesperado.";

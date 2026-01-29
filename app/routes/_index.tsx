@@ -1,30 +1,27 @@
 import { useNavigate } from "react-router"
 import { useState, useMemo } from "react"
 import { useTrips } from "~/features/itinerary"
-import { Plus, Bug, ArrowCounterClockwise, Trash, Archive } from "@phosphor-icons/react"
+import { List, Plus, ChartBar, Airplane } from "@phosphor-icons/react"
 import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
-import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
 import {
   TripListSkeleton,
   DepartureBoard,
-  TicketStub,
   InstallBanner,
   InstallInstructions,
   EmptyState,
   PerforatedDivider,
+  Greeting,
+  NextActivityCard,
+  QuickActions,
 } from "~/components/ui/folio"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
 import { usePWAInstall } from "~/hooks/use-pwa-install"
-import type { Trip } from "~/features/itinerary/lib/types"
+import type { Trip, ItineraryItem } from "~/features/itinerary/lib/types"
+import { ITEM_TYPE_ICONS } from "~/features/itinerary"
 
 function formatDateShort(dateStr: string): string {
   const date = new Date(dateStr + "T00:00:00")
   return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).toUpperCase()
-}
-
-function formatMonthYear(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
-  return date.toLocaleDateString("pt-BR", { month: "short", year: "numeric" }).toUpperCase()
 }
 
 function getDaysUntil(dateStr: string): number {
@@ -50,28 +47,6 @@ function getTripProgress(trip: Trip): { current: number; total: number } {
   return { current, total }
 }
 
-function getCountryEmoji(name: string): string {
-  const lower = name.toLowerCase()
-  if (lower.includes("japão") || lower.includes("japan") || lower.includes("tóquio") || lower.includes("kyoto")) return "🇯🇵"
-  if (lower.includes("portugal") || lower.includes("lisboa")) return "🇵🇹"
-  if (lower.includes("brasil") || lower.includes("brazil") || lower.includes("serra") || lower.includes("rio")) return "🇧🇷"
-  if (lower.includes("italia") || lower.includes("italy") || lower.includes("roma") || lower.includes("veneza")) return "🇮🇹"
-  if (lower.includes("espanha") || lower.includes("spain") || lower.includes("madrid") || lower.includes("barcelona")) return "🇪🇸"
-  if (lower.includes("frança") || lower.includes("france") || lower.includes("paris")) return "🇫🇷"
-  if (lower.includes("alemanha") || lower.includes("germany") || lower.includes("berlim")) return "🇩🇪"
-  if (lower.includes("eua") || lower.includes("usa") || lower.includes("estados unidos") || lower.includes("new york")) return "🇺🇸"
-  if (lower.includes("argentina") || lower.includes("buenos aires")) return "🇦🇷"
-  if (lower.includes("chile") || lower.includes("santiago")) return "🇨🇱"
-  if (lower.includes("peru") || lower.includes("lima") || lower.includes("machu")) return "🇵🇪"
-  if (lower.includes("méxico") || lower.includes("mexico")) return "🇲🇽"
-  if (lower.includes("canadá") || lower.includes("canada")) return "🇨🇦"
-  if (lower.includes("reino unido") || lower.includes("uk") || lower.includes("londres") || lower.includes("london")) return "🇬🇧"
-  if (lower.includes("grécia") || lower.includes("greece") || lower.includes("atenas")) return "🇬🇷"
-  if (lower.includes("tailândia") || lower.includes("thailand") || lower.includes("bangkok")) return "🇹🇭"
-  if (lower.includes("coreia") || lower.includes("korea") || lower.includes("seul")) return "🇰🇷"
-  return "✈️"
-}
-
 type TripStatus = "upcoming" | "ongoing" | "completed"
 
 function getTripStatus(trip: Trip): { status: TripStatus; daysUntil: number; currentDay?: number } {
@@ -84,7 +59,6 @@ function getTripStatus(trip: Trip): { status: TripStatus; daysUntil: number; cur
 
   const startDate = new Date(trip.startDate + "T00:00:00")
   const endDate = trip.endDate ? new Date(trip.endDate + "T00:00:00") : null
-
   const daysUntil = getDaysUntil(trip.startDate)
 
   if (today < startDate) {
@@ -101,22 +75,61 @@ function getTripStatus(trip: Trip): { status: TripStatus; daysUntil: number; cur
   return { status: "ongoing", daysUntil: 0, currentDay }
 }
 
+function getNextActivity(trip: Trip): ItineraryItem | null {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  if (!trip.startDate) return trip.items.find(i => i.status === "planned") || null
+
+  const startDate = new Date(trip.startDate + "T00:00:00")
+  const daysDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+  const currentDayIndex = Math.max(0, daysDiff)
+
+  // Find first planned item from current day onwards
+  const plannedItems = trip.items
+    .filter(item => item.status === "planned" && item.dayIndex >= currentDayIndex)
+    .sort((a, b) => {
+      if (a.dayIndex !== b.dayIndex) return a.dayIndex - b.dayIndex
+      const segmentOrder = { morning: 0, afternoon: 1, evening: 2 }
+      return segmentOrder[a.segment] - segmentOrder[b.segment]
+    })
+
+  return plannedItems[0] || null
+}
+
+function getActivityTimeLabel(item: ItineraryItem, trip: Trip): string {
+  if (!trip.startDate) return item.timeLabel || "Em breve"
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const startDate = new Date(trip.startDate + "T00:00:00")
+  const daysDiff = Math.floor((today.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
+  const currentDayIndex = Math.max(0, daysDiff)
+
+  const daysUntilActivity = item.dayIndex - currentDayIndex
+
+  let dayLabel = ""
+  if (daysUntilActivity === 0) {
+    dayLabel = "HOJE"
+  } else if (daysUntilActivity === 1) {
+    dayLabel = "AMANHÃ"
+  } else {
+    dayLabel = `EM ${daysUntilActivity} DIAS`
+  }
+
+  if (item.timeLabel) {
+    return `${dayLabel} · ${item.timeLabel}`
+  }
+
+  const segmentLabels = { morning: "Manhã", afternoon: "Tarde", evening: "Noite" }
+  return `${dayLabel} · ${segmentLabels[item.segment]}`
+}
+
 export default function Home() {
   const navigate = useNavigate()
-  const {
-    activeTrips,
-    archivedTrips,
-    isLoading,
-    createNewTrip,
-    restoreTrip,
-    deleteTrip,
-  } = useTrips()
+  const { activeTrips, archivedTrips, isLoading, createNewTrip } = useTrips()
 
   const [showCreateDialog, setShowCreateDialog] = useState(false)
-  const [deleteConfirm, setDeleteConfirm] = useState<{ open: boolean; tripId: string | null }>({
-    open: false,
-    tripId: null,
-  })
   const [showInstallInstructions, setShowInstallInstructions] = useState(false)
 
   const { canInstall, isIOS, isMobile, hasNativePrompt, install, dismiss } = usePWAInstall()
@@ -129,19 +142,22 @@ export default function Home() {
     }
   }
 
-  const { heroTrip, otherTrips, heroStatus, heroCurrentDay } = useMemo(() => {
+  // Find hero trip (ongoing or next upcoming)
+  const { heroTrip, heroStatus, heroCurrentDay, nextActivity } = useMemo(() => {
     if (activeTrips.length === 0) {
-      return { heroTrip: null, otherTrips: [], heroStatus: "upcoming" as TripStatus }
+      return { heroTrip: null, heroStatus: "upcoming" as TripStatus, nextActivity: null }
     }
 
+    // First, check for ongoing trips
     for (const trip of activeTrips) {
       const { status, currentDay } = getTripStatus(trip)
       if (status === "ongoing") {
-        const others = activeTrips.filter(t => t.id !== trip.id)
-        return { heroTrip: trip, otherTrips: others, heroStatus: status, heroCurrentDay: currentDay }
+        const activity = getNextActivity(trip)
+        return { heroTrip: trip, heroStatus: status, heroCurrentDay: currentDay, nextActivity: activity }
       }
     }
 
+    // No ongoing trips, find the next upcoming one
     const upcomingTrips = activeTrips
       .filter(t => t.startDate)
       .map(t => ({ trip: t, daysUntil: getDaysUntil(t.startDate!) }))
@@ -150,14 +166,17 @@ export default function Home() {
 
     if (upcomingTrips.length > 0) {
       const next = upcomingTrips[0].trip
-      const others = activeTrips.filter(t => t.id !== next.id)
-      return { heroTrip: next, otherTrips: others, heroStatus: "upcoming" as TripStatus }
+      const activity = getNextActivity(next)
+      return { heroTrip: next, heroStatus: "upcoming" as TripStatus, nextActivity: activity }
     }
 
+    // No upcoming trips with dates, use first active trip
+    const firstTrip = activeTrips[0]
+    const activity = getNextActivity(firstTrip)
     return {
-      heroTrip: activeTrips[0],
-      otherTrips: activeTrips.slice(1),
+      heroTrip: firstTrip,
       heroStatus: "upcoming" as TripStatus,
+      nextActivity: activity,
     }
   }, [activeTrips])
 
@@ -170,13 +189,26 @@ export default function Home() {
     navigate(`/itinerary/${trip.id}`)
   }
 
-  const handleDeleteConfirm = () => {
-    if (deleteConfirm.tripId) {
-      deleteTrip(deleteConfirm.tripId)
-    }
-  }
-
   const hasAnyTrips = activeTrips.length > 0 || archivedTrips.length > 0
+
+  // Quick actions config
+  const quickActions = [
+    {
+      icon: <List weight="bold" className="w-5 h-5 text-ink-utility group-hover:text-action-blue transition-colors" />,
+      label: "Viagens",
+      href: "/itinerary",
+    },
+    {
+      icon: <Plus weight="bold" className="w-5 h-5 text-ink-utility group-hover:text-action-blue transition-colors" />,
+      label: "Nova",
+      onClick: () => setShowCreateDialog(true),
+    },
+    {
+      icon: <ChartBar weight="bold" className="w-5 h-5 text-ink-utility group-hover:text-action-blue transition-colors" />,
+      label: "Stats",
+      href: "/settings",
+    },
+  ]
 
   if (isLoading) {
     return <TripListSkeleton />
@@ -199,19 +231,7 @@ export default function Home() {
                 <p className="font-mono text-[10px] text-ink-utility tracking-widest">TRAVEL PLANNER</p>
               </div>
             </div>
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-              <a
-                href="https://github.com/antropic/folio/issues/new"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-ink-utility/50 hover:text-ink-utility hover:bg-paper-line/50 rounded-lg transition-colors focus-ring"
-                aria-label="Relatar bug"
-                title="Relatar bug"
-              >
-                <Bug weight="bold" className="w-4 h-4" />
-              </a>
-            </div>
+            <ThemeToggle />
           </header>
 
           {/* Install PWA Banner */}
@@ -224,6 +244,9 @@ export default function Home() {
             />
           )}
 
+          {/* Greeting */}
+          <Greeting className="stagger-item" />
+
           {/* Empty State */}
           {!hasAnyTrips && (
             <EmptyState onCreateTrip={() => setShowCreateDialog(true)} />
@@ -231,7 +254,7 @@ export default function Home() {
 
           {/* Hero Trip - Departure Board */}
           {heroTrip && (
-            <div className="stagger-item">
+            <div className="stagger-item" style={{ animationDelay: "50ms" }}>
               <DepartureBoard
                 destination={heroTrip.name}
                 route={heroTrip.description}
@@ -248,96 +271,36 @@ export default function Home() {
             </div>
           )}
 
-          {/* Other Trips */}
-          {otherTrips.length > 0 && (
+          {/* Next Activity Preview */}
+          {heroTrip && nextActivity && (
             <div className="stagger-item" style={{ animationDelay: "100ms" }}>
               <PerforatedDivider className="mb-4" />
 
               <h3 className="font-mono text-[10px] text-ink-utility tracking-widest mb-3">
-                SUAS JORNADAS
+                PRÓXIMA ATIVIDADE
               </h3>
-              <div className="space-y-3">
-                {otherTrips.map((trip) => (
-                  <TicketStub
-                    key={trip.id}
-                    emoji={getCountryEmoji(trip.name)}
-                    dateLabel={trip.startDate ? formatMonthYear(trip.startDate) : "—"}
-                    title={trip.name}
-                    meta={`${getTripDuration(trip)} dias · ${trip.items.length} itens`}
-                    onClick={() => navigate(`/itinerary/${trip.id}`)}
-                  />
-                ))}
-              </div>
+
+              <NextActivityCard
+                icon={nextActivity.icon || ITEM_TYPE_ICONS[nextActivity.itemType]}
+                title={nextActivity.title || "Sem título"}
+                location={nextActivity.city}
+                timeLabel={getActivityTimeLabel(nextActivity, heroTrip)}
+                durationText={nextActivity.durationText}
+                onClick={() => navigate(`/itinerary/${heroTrip.id}`)}
+              />
             </div>
           )}
 
-          {/* Create Trip Button */}
+          {/* Quick Actions */}
           {hasAnyTrips && (
-            <button
-              onClick={() => setShowCreateDialog(true)}
-              className="w-full py-4 bg-paper-card border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-action-blue/5 btn-press focus-ring flex items-center justify-center gap-3 group stagger-item"
-              style={{ animationDelay: "150ms" }}
-              data-testid="create-trip-button"
-            >
-              <div className="w-12 h-12 bg-paper-line/50 rounded-full flex items-center justify-center group-hover:bg-action-blue/10 transition-colors duration-150">
-                <Plus weight="bold" className="text-xl text-ink-utility group-hover:text-action-blue icon-rotate" />
-              </div>
-              <div className="text-left">
-                <p className="font-body font-medium text-ink-primary">Planejar Nova Viagem</p>
-                <p className="font-body text-xs text-ink-secondary">Sua próxima aventura começa aqui</p>
-              </div>
-            </button>
-          )}
-
-          {/* Archived Trips */}
-          {archivedTrips.length > 0 && (
-            <div className="stagger-item" style={{ animationDelay: "200ms" }}>
+            <div className="stagger-item" style={{ animationDelay: "150ms" }}>
               <PerforatedDivider className="mb-4" />
 
-              <details className="group">
-                <summary className="flex items-center gap-2 cursor-pointer list-none font-mono text-[10px] text-ink-utility tracking-widest mb-3 hover:text-ink-secondary transition-colors">
-                  <Archive weight="bold" className="w-3.5 h-3.5" />
-                  <span>MEMÓRIAS ({archivedTrips.length})</span>
-                  <span className="ml-auto text-ink-utility/50 group-open:rotate-90 transition-transform">▶</span>
-                </summary>
+              <h3 className="font-mono text-[10px] text-ink-utility tracking-widest mb-3">
+                ATALHOS
+              </h3>
 
-                <div className="space-y-3 mt-3">
-                  {archivedTrips.map((trip) => (
-                    <div key={trip.id} className="relative">
-                      <TicketStub
-                        emoji={getCountryEmoji(trip.name)}
-                        dateLabel={trip.startDate ? formatMonthYear(trip.startDate) : "—"}
-                        title={trip.name}
-                        meta={`${getTripDuration(trip)} dias · ${trip.items.length} itens`}
-                        completed
-                        onClick={() => navigate(`/itinerary/${trip.id}`)}
-                      />
-                      <div className="flex gap-2 justify-end mt-2">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            restoreTrip(trip.id)
-                          }}
-                          className="px-3 py-1.5 text-xs font-mono text-ink-utility hover:bg-paper-line rounded-lg btn-press focus-ring flex items-center gap-1.5"
-                        >
-                          <ArrowCounterClockwise weight="bold" className="w-3.5 h-3.5" />
-                          Restaurar
-                        </button>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            setDeleteConfirm({ open: true, tripId: trip.id })
-                          }}
-                          className="px-3 py-1.5 text-xs font-mono text-stamp-brick hover:bg-stamp-brick/10 rounded-lg btn-press focus-ring flex items-center gap-1.5"
-                        >
-                          <Trash weight="bold" className="w-3.5 h-3.5" />
-                          Deletar
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </details>
+              <QuickActions actions={quickActions} />
             </div>
           )}
         </section>
@@ -346,17 +309,6 @@ export default function Home() {
           open={showCreateDialog}
           onOpenChange={setShowCreateDialog}
           onCreate={handleCreateTrip}
-        />
-
-        <ConfirmDialog
-          open={deleteConfirm.open}
-          onOpenChange={(open) => setDeleteConfirm({ open, tripId: open ? deleteConfirm.tripId : null })}
-          title="Deletar Viagem"
-          description="Esta viagem será deletada permanentemente. Esta ação não pode ser desfeita."
-          confirmLabel="Deletar"
-          cancelLabel="Cancelar"
-          variant="danger"
-          onConfirm={handleDeleteConfirm}
         />
 
         <InstallInstructions

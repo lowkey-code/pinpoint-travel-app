@@ -1,30 +1,29 @@
 import { useNavigate } from "react-router"
-import { useState, useMemo } from "react"
+import { useState } from "react"
 import { useTrips } from "~/features/itinerary"
-import { Plus, Bug, Archive, Trash } from "@phosphor-icons/react"
+import { Plus, Archive, ArrowCounterClockwise, Trash } from "@phosphor-icons/react"
 import { CreateTripDialog } from "~/features/itinerary/components/CreateTripDialog"
 import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
-import { TripListSkeleton, DepartureBoard, TicketStub, InstallBanner, InstallInstructions } from "~/components/ui/folio"
-import { ThemeToggle } from "~/components/ui/ThemeToggle"
-import { usePWAInstall } from "~/hooks/use-pwa-install"
+import {
+  TripListSkeleton,
+  TripTimelineCard,
+  TripsEmptyState,
+  PerforatedDivider,
+} from "~/components/ui/folio"
 import type { Trip } from "~/features/itinerary/lib/types"
 
-function formatDateShort(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
-  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }).toUpperCase()
-}
+function formatDateRange(startDate?: string, endDate?: string): string {
+  if (!startDate) return "Sem data"
 
-function formatMonthYear(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
-  return date.toLocaleDateString("pt-BR", { month: "short", year: "numeric" }).toUpperCase()
-}
+  const start = new Date(startDate + "T00:00:00")
+  const startStr = start.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
 
-function getDaysUntil(dateStr: string): number {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const target = new Date(dateStr + "T00:00:00")
-  const diff = target.getTime() - today.getTime()
-  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+  if (!endDate) return startStr
+
+  const end = new Date(endDate + "T00:00:00")
+  const endStr = end.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
+
+  return `${startStr} - ${endStr}`
 }
 
 function getTripDuration(trip: Trip): string {
@@ -32,9 +31,9 @@ function getTripDuration(trip: Trip): string {
     const start = new Date(trip.startDate + "T00:00:00")
     const end = new Date(trip.endDate + "T00:00:00")
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    return `${days} DIAS`
+    return `${days} dias`
   }
-  return `${trip.days.length} DIAS`
+  return `${trip.days.length} dias`
 }
 
 function getTripProgress(trip: Trip): { current: number; total: number } {
@@ -60,7 +59,28 @@ function getCountryEmoji(name: string): string {
   if (lower.includes("canadá") || lower.includes("canada")) return "🇨🇦"
   if (lower.includes("reino unido") || lower.includes("uk") || lower.includes("londres") || lower.includes("london")) return "🇬🇧"
   if (lower.includes("grécia") || lower.includes("greece") || lower.includes("atenas")) return "🇬🇷"
+  if (lower.includes("tailândia") || lower.includes("thailand") || lower.includes("bangkok")) return "🇹🇭"
+  if (lower.includes("coreia") || lower.includes("korea") || lower.includes("seul")) return "🇰🇷"
   return "✈️"
+}
+
+function getTripStatusLabel(trip: Trip): string | undefined {
+  if (trip.items.length === 0) return "Planejamento"
+
+  const progress = getTripProgress(trip)
+  if (progress.current === progress.total && progress.total > 0) return undefined // Show progress bar instead
+  if (progress.current === 0) return "Planejamento"
+
+  return undefined // Show progress bar
+}
+
+type TimelinePosition = "first" | "middle" | "last" | "only"
+
+function getTimelinePosition(index: number, total: number): TimelinePosition {
+  if (total === 1) return "only"
+  if (index === 0) return "first"
+  if (index === total - 1) return "last"
+  return "middle"
 }
 
 export default function ItineraryIndex() {
@@ -79,48 +99,6 @@ export default function ItineraryIndex() {
     open: false,
     tripId: null,
   })
-  const [showInstallInstructions, setShowInstallInstructions] = useState(false)
-
-  const { canInstall, isIOS, isMobile, hasNativePrompt, install, dismiss } = usePWAInstall()
-
-  const handleInstall = async () => {
-    if (hasNativePrompt && !isIOS) {
-      await install()
-    } else {
-      setShowInstallInstructions(true)
-    }
-  }
-
-  // Find the next upcoming trip (has startDate in the future or closest)
-  const { nextTrip, otherTrips } = useMemo(() => {
-    if (activeTrips.length === 0) return { nextTrip: null, otherTrips: [] }
-
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-
-    const tripsWithDates = activeTrips
-      .filter(t => t.startDate)
-      .map(t => ({
-        trip: t,
-        daysUntil: getDaysUntil(t.startDate!),
-      }))
-      .sort((a, b) => a.daysUntil - b.daysUntil)
-
-    // Find first trip that hasn't ended yet
-    const upcoming = tripsWithDates.find(t => {
-      if (!t.trip.endDate) return t.daysUntil >= -7 // Show trips up to 7 days past start if no end date
-      const endDate = new Date(t.trip.endDate + "T00:00:00")
-      return endDate >= today
-    })
-
-    if (upcoming) {
-      const others = activeTrips.filter(t => t.id !== upcoming.trip.id)
-      return { nextTrip: upcoming.trip, otherTrips: others }
-    }
-
-    // No upcoming trips with dates, use first active trip
-    return { nextTrip: activeTrips[0], otherTrips: activeTrips.slice(1) }
-  }, [activeTrips])
 
   const handleCreateTrip = (data: { name: string; description?: string; startDate?: string; endDate?: string }) => {
     const trip = createNewTrip(data.name, {
@@ -137,6 +115,8 @@ export default function ItineraryIndex() {
     }
   }
 
+  const hasAnyTrips = activeTrips.length > 0 || archivedTrips.length > 0
+
   if (isLoading) {
     return <TripListSkeleton />
   }
@@ -144,75 +124,48 @@ export default function ItineraryIndex() {
   return (
     <div className="min-h-screen bg-paper-base">
       <div className="max-w-md mx-auto pb-24">
-        <section className="p-4 space-y-6">
-          {/* Header */}
-          <header className="flex items-center justify-between pt-2">
-            <div className="flex items-center gap-3">
-              <img
-                src="/logo.svg"
-                alt="Folio"
-                className="w-10 h-10 rounded-lg transition-transform duration-150 ease-out hover:scale-105"
-              />
-              <div>
-                <h1 className="font-sans font-bold text-xl text-ink-primary leading-none">Folio</h1>
-                <p className="font-mono text-[10px] text-ink-utility tracking-widest">TRAVEL PLANNER</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <ThemeToggle />
-              <a
-                href="https://github.com/antropic/folio/issues/new"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-ink-utility/50 hover:text-ink-utility hover:bg-paper-line/50 rounded-lg transition-colors focus-ring"
-                aria-label="Relatar bug"
-                title="Relatar bug"
-              >
-                <Bug weight="bold" className="w-4 h-4" />
-              </a>
-            </div>
-          </header>
+        {/* Header */}
+        <header className="sticky top-0 z-10 bg-paper-base/95 backdrop-blur-sm border-b border-paper-line">
+          <div className="flex items-center justify-between p-4">
+            <h1 className="font-sans font-bold text-xl text-ink-primary">
+              Minhas Jornadas
+            </h1>
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="p-2 bg-action-blue text-white rounded-lg hover:bg-action-hover btn-press focus-ring"
+              aria-label="Criar viagem"
+            >
+              <Plus weight="bold" className="w-5 h-5" />
+            </button>
+          </div>
+        </header>
 
-          {/* Install PWA Banner */}
-          {canInstall && (
-            <InstallBanner
-              isIOS={isIOS}
-              hasNativePrompt={hasNativePrompt}
-              onInstall={handleInstall}
-              onDismiss={dismiss}
-            />
+        <section className="p-4">
+          {/* Empty State */}
+          {!hasAnyTrips && (
+            <TripsEmptyState onCreateTrip={() => setShowCreateDialog(true)} />
           )}
 
-          {/* Next Trip - Departure Board */}
-          {nextTrip && (
-            <div className="stagger-item">
-              <DepartureBoard
-                destination={nextTrip.name}
-                route={nextTrip.description}
-                daysUntil={nextTrip.startDate ? Math.max(0, getDaysUntil(nextTrip.startDate)) : 0}
-                departureDate={nextTrip.startDate ? formatDateShort(nextTrip.startDate) : "—"}
-                returnDate={nextTrip.endDate ? formatDateShort(nextTrip.endDate) : "—"}
-                duration={getTripDuration(nextTrip)}
-                progress={getTripProgress(nextTrip)}
-                onOpen={() => navigate(`/itinerary/${nextTrip.id}`)}
-              />
-            </div>
-          )}
+          {/* Active Trips */}
+          {activeTrips.length > 0 && (
+            <div className="mb-6">
+              <h2 className="font-mono text-[10px] text-ink-utility tracking-widest mb-4 flex items-center gap-2">
+                <span className="w-2 h-2 bg-action-blue rounded-full" />
+                ATIVAS ({activeTrips.length})
+              </h2>
 
-          {/* Other Trips */}
-          {otherTrips.length > 0 && (
-            <div className="stagger-item" style={{ animationDelay: "100ms" }}>
-              <h3 className="font-mono text-[10px] text-ink-utility tracking-widest mb-3">
-                OUTRAS VIAGENS
-              </h3>
-              <div className="space-y-3">
-                {otherTrips.map((trip) => (
-                  <TicketStub
+              <div className="stagger-item">
+                {activeTrips.map((trip, index) => (
+                  <TripTimelineCard
                     key={trip.id}
                     emoji={getCountryEmoji(trip.name)}
-                    dateLabel={trip.startDate ? formatMonthYear(trip.startDate) : "—"}
                     title={trip.name}
-                    meta={`${trip.days.length} dias · ${trip.items.length} itens`}
+                    dateRange={formatDateRange(trip.startDate, trip.endDate)}
+                    duration={getTripDuration(trip)}
+                    progress={trip.items.length > 0 ? getTripProgress(trip) : undefined}
+                    statusLabel={getTripStatusLabel(trip)}
+                    state="active"
+                    position={getTimelinePosition(index, activeTrips.length)}
                     onClick={() => navigate(`/itinerary/${trip.id}`)}
                   />
                 ))}
@@ -220,71 +173,79 @@ export default function ItineraryIndex() {
             </div>
           )}
 
-          {/* Create Trip Button */}
-          <button
-            onClick={() => setShowCreateDialog(true)}
-            className="w-full py-4 bg-paper-card border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-action-blue/5 btn-press focus-ring flex items-center justify-center gap-3 group stagger-item"
-            style={{ animationDelay: "150ms" }}
-            data-testid="create-trip-button"
-          >
-            <div className="w-12 h-12 bg-paper-line/50 rounded-full flex items-center justify-center group-hover:bg-action-blue/10 transition-colors duration-150">
-              <Plus weight="bold" className="text-xl text-ink-utility group-hover:text-action-blue icon-rotate" />
-            </div>
-            <div className="text-left">
-              <p className="font-body font-medium text-ink-primary">Criar Nova Viagem</p>
-              <p className="font-body text-xs text-ink-secondary">Planeje sua próxima aventura</p>
-            </div>
-          </button>
+          {/* Archived Trips */}
+          {archivedTrips.length > 0 && (
+            <div>
+              {activeTrips.length > 0 && <PerforatedDivider className="mb-6" />}
 
-          {/* Empty State */}
-          {activeTrips.length === 0 && archivedTrips.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-ink-secondary font-body">Nenhuma viagem criada ainda.</p>
+              <details className="group" open={activeTrips.length === 0}>
+                <summary className="font-mono text-[10px] text-ink-utility tracking-widest mb-4 flex items-center gap-2 cursor-pointer list-none hover:text-ink-secondary transition-colors">
+                  <Archive weight="bold" className="w-3.5 h-3.5" />
+                  <span>MEMÓRIAS ({archivedTrips.length})</span>
+                  <span className="ml-auto text-ink-utility/50 group-open:rotate-90 transition-transform">
+                    ▶
+                  </span>
+                </summary>
+
+                <div className="stagger-item">
+                  {archivedTrips.map((trip, index) => (
+                    <div key={trip.id}>
+                      <TripTimelineCard
+                        emoji={getCountryEmoji(trip.name)}
+                        title={trip.name}
+                        dateRange={formatDateRange(trip.startDate, trip.endDate)}
+                        duration={getTripDuration(trip)}
+                        statusLabel="Concluída"
+                        state="archived"
+                        position={getTimelinePosition(index, archivedTrips.length)}
+                        onClick={() => navigate(`/itinerary/${trip.id}`)}
+                      />
+
+                      {/* Actions for archived trips */}
+                      <div className="flex gap-2 justify-end -mt-1 mb-4 ml-9">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            restoreTrip(trip.id)
+                          }}
+                          className="px-3 py-1.5 text-xs font-mono text-ink-utility hover:bg-paper-line rounded-lg btn-press focus-ring flex items-center gap-1.5"
+                        >
+                          <ArrowCounterClockwise weight="bold" className="w-3.5 h-3.5" />
+                          Restaurar
+                        </button>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setDeleteConfirm({ open: true, tripId: trip.id })
+                          }}
+                          className="px-3 py-1.5 text-xs font-mono text-stamp-brick hover:bg-stamp-brick/10 rounded-lg btn-press focus-ring flex items-center gap-1.5"
+                        >
+                          <Trash weight="bold" className="w-3.5 h-3.5" />
+                          Deletar
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </details>
             </div>
           )}
 
-          {/* Archived Trips */}
-          {archivedTrips.length > 0 && (
-            <div className="stagger-item" style={{ animationDelay: "200ms" }}>
-              <h3 className="font-mono text-[10px] text-ink-utility tracking-widest mb-3">
-                ARQUIVADAS
-              </h3>
-              <div className="space-y-3">
-                {archivedTrips.map((trip) => (
-                  <TicketStub
-                    key={trip.id}
-                    emoji={getCountryEmoji(trip.name)}
-                    dateLabel={trip.startDate ? formatMonthYear(trip.startDate) : "—"}
-                    title={trip.name}
-                    meta={`${trip.days.length} dias · ${trip.items.length} itens`}
-                    completed
-                    onClick={() => {
-                      // Show options for archived trips
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="mt-3 flex gap-2 justify-end">
-                {archivedTrips.length > 0 && (
-                  <>
-                    <button
-                      onClick={() => restoreTrip(archivedTrips[0].id)}
-                      className="px-3 py-1.5 text-xs font-mono text-ink-utility hover:bg-paper-line rounded-lg btn-press focus-ring flex items-center gap-1.5"
-                    >
-                      <Archive weight="bold" className="w-3.5 h-3.5" />
-                      Restaurar
-                    </button>
-                    <button
-                      onClick={() => setDeleteConfirm({ open: true, tripId: archivedTrips[0].id })}
-                      className="px-3 py-1.5 text-xs font-mono text-stamp-brick hover:bg-stamp-brick/10 rounded-lg btn-press focus-ring flex items-center gap-1.5"
-                    >
-                      <Trash weight="bold" className="w-3.5 h-3.5" />
-                      Deletar
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
+          {/* Create Trip Button (when there are trips) */}
+          {hasAnyTrips && (
+            <button
+              onClick={() => setShowCreateDialog(true)}
+              className="w-full mt-6 py-4 bg-paper-card border-2 border-dashed border-paper-line rounded-xl hover:border-action-blue hover:bg-action-blue/5 btn-press focus-ring flex items-center justify-center gap-2 group"
+              data-testid="create-trip-button"
+            >
+              <Plus
+                weight="bold"
+                className="w-5 h-5 text-ink-utility group-hover:text-action-blue transition-colors"
+              />
+              <span className="font-body font-medium text-ink-primary group-hover:text-action-blue transition-colors">
+                Planejar Nova Viagem
+              </span>
+            </button>
           )}
         </section>
 
@@ -303,13 +264,6 @@ export default function ItineraryIndex() {
           cancelLabel="Cancelar"
           variant="danger"
           onConfirm={handleDeleteConfirm}
-        />
-
-        <InstallInstructions
-          open={showInstallInstructions}
-          onClose={() => setShowInstallInstructions(false)}
-          isIOS={isIOS}
-          isMobile={isMobile}
         />
       </div>
     </div>
