@@ -21,6 +21,8 @@ export { NextActivityCard } from "./NextActivityCard"
 export { QuickActions } from "./QuickActions"
 export { TripTimelineCard } from "./TripTimelineCard"
 export { TripsEmptyState } from "./TripsEmptyState"
+export { SegmentEmptyState } from "./SegmentEmptyState"
+export { AddItemButton } from "./AddItemButton"
 
 // Layout
 export { BottomNav } from "./BottomNav"

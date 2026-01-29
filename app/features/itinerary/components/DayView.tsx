@@ -6,7 +6,7 @@ import { ItineraryCard } from "./ItineraryCard"
 import { ItemDrawer } from "./ItemDrawer"
 import { TripActionsMenu } from "./TripActionsMenu"
 import type { Segment } from "~/features/itinerary"
-import { DayViewSkeleton, GateHeader, SegmentTabs, FAB } from "~/components/ui/folio"
+import { DayViewSkeleton, GateHeader, SegmentTabs, SegmentEmptyState, AddItemButton } from "~/components/ui/folio"
 
 interface DayViewProps {
   initialDayIndex?: number
@@ -55,7 +55,7 @@ export function DayView({ initialDayIndex = 0, tripId }: DayViewProps) {
   }))
 
   return (
-    <div className="space-y-4 pb-32 px-4">
+    <div className="space-y-4 pb-24 px-4">
       {/* Gate Header */}
       <div className="stagger-item">
         <GateHeader
@@ -87,38 +87,45 @@ export function DayView({ initialDayIndex = 0, tripId }: DayViewProps) {
       {/* Items list */}
       <div className="space-y-4">
         {segmentItems.length === 0 ? (
-          <div className="text-center py-12 stagger-item" style={{ animationDelay: "100ms" }}>
-            <p className="text-ink-secondary text-sm font-body">Nenhum item neste período</p>
-            <p className="text-ink-utility text-xs font-mono mt-1">
-              Toque no + para adicionar
-            </p>
+          <div className="stagger-item" style={{ animationDelay: "100ms" }}>
+            <SegmentEmptyState
+              segment={selectedSegment}
+              onAdd={() => setDrawerOpen(true)}
+            />
           </div>
         ) : (
-          segmentItems.map((item, index) => (
+          <>
+            {segmentItems.map((item, index) => (
+              <div
+                key={getRenderableItemKey(item, index)}
+                className="stagger-item"
+                style={{ animationDelay: `${100 + index * 50}ms` }}
+              >
+                <ItineraryCard
+                  item={item}
+                  reorderMode={false}
+                  dayIndex={selectedDayIndex}
+                  segment={selectedSegment}
+                  isFirst={index === 0}
+                  isLast={index === segmentItems.length - 1}
+                />
+              </div>
+            ))}
+
+            {/* Inline add button */}
             <div
-              key={getRenderableItemKey(item, index)}
               className="stagger-item"
-              style={{ animationDelay: `${100 + index * 50}ms` }}
+              style={{ animationDelay: `${100 + segmentItems.length * 50}ms` }}
             >
-              <ItineraryCard
-                item={item}
-                reorderMode={false}
-                dayIndex={selectedDayIndex}
-                segment={selectedSegment}
-                isFirst={index === 0}
-                isLast={index === segmentItems.length - 1}
+              <AddItemButton
+                onClick={() => setDrawerOpen(true)}
+                label="Adicionar atividade"
+                data-testid="add-item-button"
               />
             </div>
-          ))
+          </>
         )}
       </div>
-
-      {/* FAB */}
-      <FAB
-        onClick={() => setDrawerOpen(true)}
-        label="Adicionar atividade"
-        data-testid="add-item-button"
-      />
 
       {/* Add/Edit drawer */}
       <ItemDrawer
