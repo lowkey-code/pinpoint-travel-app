@@ -42,13 +42,16 @@ export function DepartureBoard({
   return (
     <div
       className={cn(
-        "bg-[#0E1A2B] rounded-2xl overflow-hidden shadow-lg card-interactive",
+        // Light mode: dark navy board (contrasts with light paper-base)
+        // Dark mode: elevated card with border (contrasts with dark paper-base)
+        "rounded-2xl overflow-hidden shadow-lg card-interactive",
+        "bg-[#0E1A2B] dark:bg-paper-card dark:border dark:border-paper-line",
         className
       )}
     >
       {/* Header */}
-      <div className="px-4 py-2.5 bg-black/20 border-b border-white/10 flex items-center justify-between">
-        <span className="font-mono text-[10px] text-white/60 tracking-widest">
+      <div className="px-4 py-2.5 bg-black/20 dark:bg-black/30 border-b border-white/10 dark:border-paper-line flex items-center justify-between">
+        <span className="font-mono text-[10px] text-white/60 dark:text-ink-utility tracking-widest">
           {isOngoing ? "VIAGEM EM ANDAMENTO" : "PRÓXIMA PARTIDA"}
         </span>
         <span
@@ -71,31 +74,31 @@ export function DepartureBoard({
       <div className="p-4">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
-            <p className="font-mono text-[10px] text-white/50 mb-1">
+            <p className="font-mono text-[10px] text-white/50 dark:text-ink-utility mb-1">
               {isOngoing ? "VOCÊ ESTÁ EM" : "DESTINO"}
             </p>
-            <h2 className="font-sans font-bold text-3xl text-white leading-none tracking-tight uppercase truncate">
+            <h2 className="font-sans font-bold text-3xl text-white dark:text-ink-primary leading-none tracking-tight uppercase truncate">
               {destination}
             </h2>
             {route && (
-              <p className="font-body text-sm text-white/70 mt-1 truncate">{route}</p>
+              <p className="font-body text-sm text-white/70 dark:text-ink-secondary mt-1 truncate">{route}</p>
             )}
           </div>
           <div className="text-right shrink-0 ml-4">
             {isOngoing ? (
               <>
-                <p className="font-mono text-[10px] text-white/50 mb-1">DIA</p>
+                <p className="font-mono text-[10px] text-white/50 dark:text-ink-utility mb-1">DIA</p>
                 <div className="flex items-baseline gap-1 justify-end">
                   <FlipCounter value={currentDay || 1} size="lg" className="text-action-blue" />
-                  <span className="font-mono text-lg text-white/50">/</span>
-                  <span className="font-mono text-lg text-white/70">{totalDays}</span>
+                  <span className="font-mono text-lg text-white/50 dark:text-ink-utility">/</span>
+                  <span className="font-mono text-lg text-white/70 dark:text-ink-secondary">{totalDays}</span>
                 </div>
               </>
             ) : (
               <>
-                <p className="font-mono text-[10px] text-white/50 mb-1">EMBARQUE EM</p>
+                <p className="font-mono text-[10px] text-white/50 dark:text-ink-utility mb-1">EMBARQUE EM</p>
                 <FlipCounter value={daysUntil || 0} size="lg" className="text-stamp-amber" />
-                <p className="font-mono text-xs text-white/70">
+                <p className="font-mono text-xs text-white/70 dark:text-ink-secondary">
                   {daysUntil === 1 ? "DIA" : "DIAS"}
                 </p>
               </>
@@ -105,21 +108,21 @@ export function DepartureBoard({
 
         {/* Data pills */}
         <div className="flex gap-3">
-          <div className="bg-white/10 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15">
-            <p className="font-mono text-[9px] text-white/50">PARTIDA</p>
-            <p className="font-mono text-sm text-white font-medium tabular-nums">
+          <div className="bg-white/10 dark:bg-paper-base/50 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15 dark:hover:bg-paper-base/70">
+            <p className="font-mono text-[9px] text-white/50 dark:text-ink-utility">PARTIDA</p>
+            <p className="font-mono text-sm text-white dark:text-ink-primary font-medium tabular-nums">
               {departureDate}
             </p>
           </div>
-          <div className="bg-white/10 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15">
-            <p className="font-mono text-[9px] text-white/50">RETORNO</p>
-            <p className="font-mono text-sm text-white font-medium tabular-nums">
+          <div className="bg-white/10 dark:bg-paper-base/50 rounded-lg px-3 py-2.5 flex-1 transition-colors duration-150 hover:bg-white/15 dark:hover:bg-paper-base/70">
+            <p className="font-mono text-[9px] text-white/50 dark:text-ink-utility">RETORNO</p>
+            <p className="font-mono text-sm text-white dark:text-ink-primary font-medium tabular-nums">
               {returnDate}
             </p>
           </div>
-          <div className="bg-white/10 rounded-lg px-3 py-2.5 transition-colors duration-150 hover:bg-white/15">
-            <p className="font-mono text-[9px] text-white/50">DURAÇÃO</p>
-            <p className="font-mono text-sm text-white font-medium tabular-nums">
+          <div className="bg-white/10 dark:bg-paper-base/50 rounded-lg px-3 py-2.5 transition-colors duration-150 hover:bg-white/15 dark:hover:bg-paper-base/70">
+            <p className="font-mono text-[9px] text-white/50 dark:text-ink-utility">DURAÇÃO</p>
+            <p className="font-mono text-sm text-white dark:text-ink-primary font-medium tabular-nums">
               {duration}
             </p>
           </div>
@@ -127,13 +130,13 @@ export function DepartureBoard({
 
         {/* Progress bar */}
         <div className="mt-4">
-          <div className="flex justify-between text-[10px] font-mono text-white/50 mb-1.5">
+          <div className="flex justify-between text-[10px] font-mono text-white/50 dark:text-ink-utility mb-1.5">
             <span>{isOngoing ? "PROGRESSO" : "PLANEJAMENTO"}</span>
             <span className="tabular-nums">
               {progress.current}/{progress.total} itens
             </span>
           </div>
-          <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-white/10 dark:bg-paper-base/50 rounded-full overflow-hidden">
             <div
               className={cn(
                 "h-full rounded-full progress-animated progress-glow",
