@@ -200,6 +200,210 @@ colors: {
 
 ---
 
+## Performance & Optimization
+
+### React Patterns
+
+```typescript
+// Memoize expensive computations
+const sortedItems = useMemo(() =>
+  items.sort((a, b) => a.date - b.date),
+  [items]
+)
+
+// Memoize callbacks passed to children
+const handleClick = useCallback(() => {
+  doSomething(id)
+}, [id])
+
+// Memo for components receiving object/array props
+const MemoizedCard = memo(Card)
+```
+
+### When to Memoize
+
+| Scenario | Action |
+|----------|--------|
+| List items (>10) | `memo()` on item component |
+| Expensive filters/sorts | `useMemo()` |
+| Callbacks to memoized children | `useCallback()` |
+| Simple components | **Don't memoize** (overhead > benefit) |
+
+### Code Splitting
+
+```typescript
+// Lazy load routes (already handled by React Router)
+// Lazy load heavy components
+const HeavyChart = lazy(() => import('./HeavyChart'))
+
+// Use Suspense with fallback
+<Suspense fallback={<Skeleton />}>
+  <HeavyChart />
+</Suspense>
+```
+
+### Bundle Optimization
+
+- Keep `@phosphor-icons/react` imports specific: `import { Icon } from "@phosphor-icons/react"`
+- Avoid barrel file re-exports for large modules
+- Check bundle with `npm run build` → analyze output
+
+### Core Web Vitals Targets
+
+| Metric | Target | How |
+|--------|--------|-----|
+| **LCP** | < 2.5s | Optimize images, preload fonts |
+| **FID** | < 100ms | Minimize JS, defer non-critical |
+| **CLS** | < 0.1 | Set explicit dimensions, skeleton loaders |
+
+---
+
+## PWA Guidelines
+
+### Offline-First Architecture
+
+```
+User Action → Local State → localStorage → UI Update
+                              ↓
+                    (Future: Background Sync)
+```
+
+### Service Worker Strategy
+
+- **App Shell:** Cache HTML, CSS, JS on install
+- **Data:** localStorage (no network dependency)
+- **Assets:** Cache-first for images/fonts
+- **API (future):** Stale-while-revalidate
+
+### Install Experience
+
+- Show `InstallBanner` when `beforeinstallprompt` fires
+- Provide iOS-specific instructions (Add to Home Screen)
+- Never block or annoy — dismissible, shows once per session
+
+### Manifest Requirements
+
+```json
+{
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "icons": [
+    { "sizes": "192x192", "purpose": "any" },
+    { "sizes": "512x512", "purpose": "any" },
+    { "sizes": "192x192", "purpose": "maskable" },
+    { "sizes": "512x512", "purpose": "maskable" }
+  ]
+}
+```
+
+### Offline Indicators
+
+- No "you're offline" blocking modals
+- Subtle indicator if needed (e.g., icon in header)
+- App should work identically offline
+
+---
+
+## UI States Pattern
+
+Every data-driven component must handle **4 states**:
+
+### 1. Loading State
+
+```tsx
+if (isLoading) return <Skeleton />
+```
+
+- Use skeleton loaders matching content shape
+- Never show spinners for < 300ms operations
+- Animate with `shimmer` effect
+
+### 2. Empty State
+
+```tsx
+if (items.length === 0) return <EmptyState onAction={...} />
+```
+
+- Friendly illustration/icon
+- Clear message explaining the state
+- Primary CTA to resolve (e.g., "Create first trip")
+- Never just "No data"
+
+### 3. Error State
+
+```tsx
+if (error) return <ErrorState onRetry={...} />
+```
+
+- Human-readable message (not technical)
+- Retry action when applicable
+- Fallback to cached data if available
+
+### 4. Success/Data State
+
+- The normal rendered content
+- Consider partial states (some data loaded, some pending)
+
+### State Components Location
+
+```
+app/components/ui/folio/
+  Skeleton.tsx        # Loading skeletons
+  EmptyState.tsx      # Generic empty state
+  TripsEmptyState.tsx # Feature-specific empty
+  SegmentEmptyState.tsx
+```
+
+---
+
+## Motion & Animation
+
+### Timing Tokens
+
+```css
+--duration-fast: 150ms    /* Micro-interactions */
+--duration-normal: 200ms  /* Standard transitions */
+--duration-slow: 300ms    /* Enter/exit, emphasis */
+```
+
+### Easing
+
+```css
+--ease-out: cubic-bezier(0, 0, 0.2, 1)      /* Elements entering */
+--ease-in-out: cubic-bezier(0.4, 0, 0.2, 1) /* Elements moving */
+```
+
+### Animation Rules
+
+| Do | Don't |
+|----|-------|
+| Animate `transform`, `opacity` | Animate `width`, `height`, `top`, `left` |
+| Use GPU-accelerated properties | Trigger layout recalculations |
+| Respect `prefers-reduced-motion` | Force animations on all users |
+| Stagger list items (50ms delay) | Animate everything at once |
+
+### Reduced Motion
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+### Common Animations (defined in app.css)
+
+- `stagger-item` — Fade-up for lists
+- `card-interactive` — Hover lift
+- `btn-press` — Click feedback
+- `shimmer` — Skeleton loading
+- `pulse-live` — Live indicators
+- `fab-animated` — FAB entrance
+
+---
+
 ## Output Rules (Token-Saving)
 
 After changes, output ONLY:
