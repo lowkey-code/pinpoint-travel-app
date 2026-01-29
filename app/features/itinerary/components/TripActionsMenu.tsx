@@ -1,9 +1,11 @@
 import { useState, useRef } from "react"
+import { useNavigate } from "react-router"
 import { Dialog, Portal } from "@ark-ui/react"
 import { useTrips, useItinerary, CURRENT_SCHEMA_VERSION, exportTrip as exportTripToJson } from "~/features/itinerary"
 import { X, FileJs, Check, WarningCircle } from "@phosphor-icons/react"
 import { useToast } from "~/hooks/use-toast"
 import { BookmarkMenu } from "~/components/ui/folio"
+import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
 
 interface TripActionsMenuProps {
   tripId: string
@@ -21,7 +23,8 @@ interface ImportPreview {
 }
 
 export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
-  const { importTrip, trips } = useTrips()
+  const navigate = useNavigate()
+  const { importTrip, trips, archiveTrip, deleteTrip, duplicateTrip } = useTrips()
   const { trip: currentTrip, canUndo, canRedo, undo, redo } = useItinerary()
   const toast = useToast()
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -31,6 +34,7 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
   const [importPreview, setImportPreview] = useState<ImportPreview | null>(null)
   const [importData, setImportData] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string>("")
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const handleExport = () => {
     if (!currentTrip || currentTrip.id !== tripId) {
@@ -115,6 +119,34 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
     }, 200)
   }
 
+  const handleDuplicate = () => {
+    const duplicated = duplicateTrip(tripId)
+    if (duplicated) {
+      toast.success(`Viagem duplicada: "${duplicated.name}"`)
+      navigate(`/itinerary/${duplicated.id}`)
+    } else {
+      toast.error("Erro ao duplicar viagem")
+    }
+  }
+
+  const handleArchive = () => {
+    const tripName = currentTrip?.name ?? "Viagem"
+    archiveTrip(tripId)
+    toast.success(`"${tripName}" movida para Memórias`)
+    navigate("/itinerary")
+  }
+
+  const handleDelete = () => {
+    setDeleteDialogOpen(true)
+  }
+
+  const handleConfirmDelete = () => {
+    const tripName = currentTrip?.name ?? "Viagem"
+    deleteTrip(tripId)
+    toast.success(`"${tripName}" excluída permanentemente`)
+    navigate("/itinerary")
+  }
+
   return (
     <>
       <BookmarkMenu
@@ -124,6 +156,20 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
         canRedo={canRedo}
         onUndo={undo}
         onRedo={redo}
+        onDuplicate={handleDuplicate}
+        onArchive={handleArchive}
+        onDelete={handleDelete}
+      />
+
+      <ConfirmDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        title="Excluir viagem"
+        description={`Tem certeza que deseja excluir "${currentTrip?.name ?? "esta viagem"}"? Todos os dias e itens serão perdidos permanentemente.`}
+        confirmLabel="Excluir viagem"
+        cancelLabel="Cancelar"
+        variant="danger"
+        onConfirm={handleConfirmDelete}
       />
 
       <input

@@ -8,6 +8,9 @@ import {
   ArrowCounterClockwise,
   ArrowClockwise,
   House,
+  Copy,
+  Archive,
+  Trash,
 } from "@phosphor-icons/react"
 import { cn } from "~/lib/utils"
 import { useTheme } from "~/hooks/use-theme"
@@ -19,6 +22,9 @@ interface BookmarkMenuProps {
   canRedo: boolean
   onUndo: () => void
   onRedo: () => void
+  onDuplicate?: () => void
+  onArchive?: () => void
+  onDelete?: () => void
 }
 
 export function BookmarkMenu({
@@ -28,6 +34,9 @@ export function BookmarkMenu({
   canRedo,
   onUndo,
   onRedo,
+  onDuplicate,
+  onArchive,
+  onDelete,
 }: BookmarkMenuProps) {
   const navigate = useNavigate()
   const { theme, setTheme } = useTheme()
@@ -179,6 +188,44 @@ export function BookmarkMenu({
               delay={200}
               isOpen={isOpen}
             />
+
+            {/* Trip management actions */}
+            {(onDuplicate || onArchive || onDelete) && (
+              <>
+                <Divider />
+
+                {onDuplicate && (
+                  <MenuItem
+                    icon={<Copy weight="bold" />}
+                    label="Duplicar viagem"
+                    onClick={() => handleAction(onDuplicate)}
+                    delay={240}
+                    isOpen={isOpen}
+                  />
+                )}
+
+                {onArchive && (
+                  <MenuItem
+                    icon={<Archive weight="bold" />}
+                    label="Arquivar viagem"
+                    onClick={() => handleAction(onArchive)}
+                    delay={280}
+                    isOpen={isOpen}
+                  />
+                )}
+
+                {onDelete && (
+                  <MenuItem
+                    icon={<Trash weight="bold" className="text-stamp-brick" />}
+                    label="Excluir viagem"
+                    onClick={() => handleAction(onDelete)}
+                    delay={320}
+                    isOpen={isOpen}
+                    variant="danger"
+                  />
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -193,9 +240,10 @@ interface MenuItemProps {
   disabled?: boolean
   delay: number
   isOpen: boolean
+  variant?: "default" | "danger"
 }
 
-function MenuItem({ icon, label, onClick, disabled, delay, isOpen }: MenuItemProps) {
+function MenuItem({ icon, label, onClick, disabled, delay, isOpen, variant = "default" }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
@@ -206,7 +254,9 @@ function MenuItem({ icon, label, onClick, disabled, delay, isOpen }: MenuItemPro
         "transition-all duration-150",
         disabled
           ? "opacity-40 cursor-not-allowed"
-          : "hover:bg-paper-line/50 active:bg-paper-line",
+          : variant === "danger"
+            ? "hover:bg-stamp-brick/10 active:bg-stamp-brick/20"
+            : "hover:bg-paper-line/50 active:bg-paper-line",
         isOpen && "animate-in fade-in slide-in-from-right-2",
       )}
       style={{
@@ -218,7 +268,9 @@ function MenuItem({ icon, label, onClick, disabled, delay, isOpen }: MenuItemPro
       <span className="w-5 h-5 flex items-center justify-center text-ink-utility shrink-0">
         {icon}
       </span>
-      <span className="text-ink-primary">{label}</span>
+      <span className={cn("text-ink-primary", variant === "danger" && "text-stamp-brick")}>
+        {label}
+      </span>
     </button>
   )
 }
