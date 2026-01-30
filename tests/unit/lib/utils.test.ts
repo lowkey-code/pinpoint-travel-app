@@ -24,6 +24,13 @@ import {
   getItemsForDaySegment,
   getDayTripsForSegment,
   createGhostItems,
+  getArrivingTransports,
+  getDepartingTransports,
+  createTransportGhost,
+  getRenderableItemsForSegment,
+  createItem,
+  createDay,
+  createTrip,
 } from "~/features/itinerary/lib/utils"
 
 // Helper to create mock items
@@ -544,6 +551,301 @@ describe("utils", () => {
         primarySegment: "morning",
       })
       expect(createGhostItems(dayTrip)).toHaveLength(0)
+    })
+  })
+
+  describe("getArrivingTransports", () => {
+    it("returns multi-day transports arriving on the given day", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          dayIndex: 0,
+          arrivalDayIndex: 1,
+        }),
+        createMockItem({
+          id: "transport-2",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          dayIndex: 0,
+          arrivalDayIndex: 2,
+        }),
+        createMockItem({ id: "activity-1", itemType: "activity", dayIndex: 1 }),
+      ]
+      const result = getArrivingTransports(items, 1)
+      expect(result).toHaveLength(1)
+      expect(result[0].id).toBe("transport-1")
+    })
+
+    it("excludes non-multi-day transports", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          itemType: "transport",
+          isMultiDayTransport: false,
+          arrivalDayIndex: 1,
+        }),
+      ]
+      expect(getArrivingTransports(items, 1)).toHaveLength(0)
+    })
+
+    it("returns empty when no transports arrive", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          arrivalDayIndex: 2,
+        }),
+      ]
+      expect(getArrivingTransports(items, 1)).toHaveLength(0)
+    })
+  })
+
+  describe("getDepartingTransports", () => {
+    it("returns multi-day transports departing on the given day", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          dayIndex: 0,
+        }),
+        createMockItem({
+          id: "transport-2",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          dayIndex: 1,
+        }),
+      ]
+      const result = getDepartingTransports(items, 0)
+      expect(result).toHaveLength(1)
+      expect(result[0].id).toBe("transport-1")
+    })
+
+    it("excludes non-multi-day transports", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          itemType: "transport",
+          isMultiDayTransport: false,
+          dayIndex: 0,
+        }),
+      ]
+      expect(getDepartingTransports(items, 0)).toHaveLength(0)
+    })
+  })
+
+  describe("createTransportGhost", () => {
+    it("creates ghost with transport properties", () => {
+      const transport = createMockItem({
+        id: "transport-1",
+        title: "Flight to Paris",
+        destinationCity: "Paris",
+      })
+      const ghost = createTransportGhost(transport, "afternoon")
+
+      expect(ghost.parentId).toBe("transport-1")
+      expect(ghost.segment).toBe("afternoon")
+      expect(ghost.title).toBe("Flight to Paris")
+      expect(ghost.isTransportGhost).toBe(true)
+      expect(ghost.arrivalCity).toBe("Paris")
+    })
+  })
+
+  describe("getRenderableItemsForSegment", () => {
+    it("returns regular items for the segment", () => {
+      const items = [
+        createMockItem({ id: "1", dayIndex: 0, segment: "morning" }),
+        createMockItem({ id: "2", dayIndex: 0, segment: "afternoon" }),
+      ]
+      const result = getRenderableItemsForSegment(items, 0, "morning")
+      expect(result).toHaveLength(1)
+      expect((result[0] as ItineraryItem).id).toBe("1")
+    })
+
+    it("includes dayTrip at its primary segment", () => {
+      const items = [
+        createMockItem({
+          id: "daytrip-1",
+          dayIndex: 0,
+          segment: "morning",
+          isDayTrip: true,
+          primarySegment: "morning",
+          coversSegments: ["morning", "afternoon"],
+        }),
+      ]
+      const result = getRenderableItemsForSegment(items, 0, "morning")
+      expect(result).toHaveLength(1)
+      expect((result[0] as ItineraryItem).id).toBe("daytrip-1")
+    })
+
+    it("creates ghost for dayTrip at covered non-primary segment", () => {
+      const items = [
+        createMockItem({
+          id: "daytrip-1",
+          dayIndex: 0,
+          segment: "morning",
+          isDayTrip: true,
+          primarySegment: "morning",
+          coversSegments: ["morning", "afternoon"],
+        }),
+      ]
+      const result = getRenderableItemsForSegment(items, 0, "afternoon")
+      expect(result).toHaveLength(1)
+      expect("isDayTripGhost" in result[0]).toBe(true)
+    })
+
+    it("creates transport ghost for departing transport after departure segment", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          dayIndex: 0,
+          segment: "morning",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          departureDateTime: "2026-03-15T09:00",
+          arrivalDayIndex: 1,
+          destinationCity: "Paris",
+        }),
+      ]
+      // Transport departs in morning (09:00), ghost should appear in afternoon
+      const result = getRenderableItemsForSegment(items, 0, "afternoon")
+      expect(result.some((r) => "isTransportGhost" in r && r.isTransportGhost)).toBe(true)
+    })
+
+    it("creates transport ghost for arriving transport before arrival segment", () => {
+      const items = [
+        createMockItem({
+          id: "transport-1",
+          dayIndex: 0,
+          segment: "morning",
+          itemType: "transport",
+          isMultiDayTransport: true,
+          departureDateTime: "2026-03-15T09:00",
+          arrivalDateTime: "2026-03-16T14:00",
+          arrivalDayIndex: 1,
+          destinationCity: "Paris",
+        }),
+      ]
+      // Transport arrives in afternoon (14:00), ghost should appear in morning
+      const result = getRenderableItemsForSegment(items, 1, "morning")
+      expect(result.some((r) => "isTransportGhost" in r && r.isTransportGhost)).toBe(true)
+    })
+  })
+
+  describe("createItem", () => {
+    it("creates item with required fields", () => {
+      const item = createItem("trip-1", 0, "morning")
+
+      expect(item.tripId).toBe("trip-1")
+      expect(item.dayIndex).toBe(0)
+      expect(item.segment).toBe("morning")
+      expect(item.itemType).toBe("activity")
+      expect(item.title).toBe("")
+      expect(item.status).toBe("planned")
+      expect(item.priority).toBe(0)
+      expect(item.id).toBeDefined()
+      expect(item.createdAt).toBeDefined()
+      expect(item.updatedAt).toBeDefined()
+    })
+
+    it("merges partial overrides", () => {
+      const item = createItem("trip-1", 0, "morning", {
+        title: "Custom Title",
+        itemType: "transport",
+        priority: 2,
+      })
+
+      expect(item.title).toBe("Custom Title")
+      expect(item.itemType).toBe("transport")
+      expect(item.priority).toBe(2)
+    })
+
+    it("generates unique IDs", () => {
+      const item1 = createItem("trip-1", 0, "morning")
+      const item2 = createItem("trip-1", 0, "morning")
+
+      expect(item1.id).not.toBe(item2.id)
+    })
+  })
+
+  describe("createDay", () => {
+    it("creates day with index and label", () => {
+      const day = createDay(0)
+
+      expect(day.index).toBe(0)
+      expect(day.label).toBe("Dia 1")
+      expect(day.date).toBeUndefined()
+    })
+
+    it("creates day with date", () => {
+      const day = createDay(2, "2026-03-17")
+
+      expect(day.index).toBe(2)
+      expect(day.label).toBe("Dia 3")
+      expect(day.date).toBe("2026-03-17")
+    })
+
+    it("generates correct label for different indices", () => {
+      expect(createDay(0).label).toBe("Dia 1")
+      expect(createDay(4).label).toBe("Dia 5")
+      expect(createDay(9).label).toBe("Dia 10")
+    })
+  })
+
+  describe("createTrip", () => {
+    it("creates trip with name and default day", () => {
+      const trip = createTrip("My Trip")
+
+      expect(trip.name).toBe("My Trip")
+      expect(trip.days).toHaveLength(1)
+      expect(trip.days[0].index).toBe(0)
+      expect(trip.items).toEqual([])
+      expect(trip.archived).toBe(false)
+      expect(trip.id).toBeDefined()
+      expect(trip.createdAt).toBeDefined()
+      expect(trip.updatedAt).toBeDefined()
+    })
+
+    it("creates days from date range", () => {
+      const trip = createTrip("My Trip", {
+        startDate: "2026-03-15",
+        endDate: "2026-03-18",
+      })
+
+      expect(trip.days).toHaveLength(4) // 15, 16, 17, 18
+      expect(trip.days[0].date).toBe("2026-03-15")
+      expect(trip.days[1].date).toBe("2026-03-16")
+      expect(trip.days[2].date).toBe("2026-03-17")
+      expect(trip.days[3].date).toBe("2026-03-18")
+    })
+
+    it("creates single day when only startDate is provided", () => {
+      const trip = createTrip("My Trip", {
+        startDate: "2026-03-15",
+      })
+
+      expect(trip.days).toHaveLength(1)
+      expect(trip.days[0].date).toBe("2026-03-15")
+    })
+
+    it("merges partial overrides", () => {
+      const trip = createTrip("My Trip", {
+        description: "A great trip",
+        archived: true,
+      })
+
+      expect(trip.description).toBe("A great trip")
+      expect(trip.archived).toBe(true)
+    })
+
+    it("generates unique IDs", () => {
+      const trip1 = createTrip("Trip 1")
+      const trip2 = createTrip("Trip 2")
+
+      expect(trip1.id).not.toBe(trip2.id)
     })
   })
 })
