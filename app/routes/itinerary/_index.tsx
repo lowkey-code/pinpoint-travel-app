@@ -188,23 +188,14 @@ export default function ItineraryIndex() {
             <h1 className="font-sans font-bold text-xl text-ink-primary">
               Minhas Jornadas
             </h1>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleImportClick}
-                className="p-2 border border-paper-line rounded-lg hover:bg-secondary btn-press focus-ring"
-                aria-label="Importar viagem"
-                title="Importar viagem"
-              >
-                <UploadSimple weight="bold" className="w-5 h-5 text-ink-utility" />
-              </button>
-              <button
-                onClick={() => setShowCreateDialog(true)}
-                className="p-2 bg-action-blue text-white rounded-lg hover:bg-action-hover btn-press focus-ring"
-                aria-label="Criar viagem"
-              >
-                <Plus weight="bold" className="w-5 h-5" />
-              </button>
-            </div>
+            <button
+              onClick={handleImportClick}
+              className="p-2 border border-paper-line rounded-lg hover:bg-secondary btn-press focus-ring"
+              aria-label="Importar viagem"
+              title="Importar viagem"
+            >
+              <UploadSimple weight="bold" className="w-5 h-5 text-ink-utility" />
+            </button>
           </div>
         </header>
 
