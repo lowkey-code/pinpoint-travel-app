@@ -32,6 +32,10 @@ export { InstallBanner, InstallInstructions, IOSInstallInstructions } from "./In
 // Loading states
 export { Skeleton, CardSkeleton, DayViewSkeleton, TripCardSkeleton, TripListSkeleton, GridViewSkeleton } from "./Skeleton"
 
+// Onboarding
+export { OnboardingDialog } from "./OnboardingDialog"
+export { OnboardingSteps } from "./OnboardingSteps"
+
 // Types
 export type { StampVariant, ButtonVariant, ButtonSize } from "./types"
 export type { BadgeVariant, BadgeSize } from "./Badge"

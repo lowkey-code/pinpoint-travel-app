@@ -13,7 +13,9 @@ import {
   Greeting,
   NextActivityCard,
   QuickActions,
+  OnboardingDialog,
 } from "~/components/ui/folio"
+import { useOnboarding } from "~/hooks/use-onboarding"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
 import { usePWAInstall } from "~/hooks/use-pwa-install"
 import type { Trip, ItineraryItem } from "~/features/itinerary/lib/types"
@@ -107,6 +109,8 @@ export default function Home() {
 
   const { canInstall, isIOS, isMobile, hasNativePrompt, install, dismiss } = usePWAInstall()
 
+  const { hasCompleted: hasCompletedOnboarding, complete: completeOnboarding } = useOnboarding()
+
   const handleInstall = async () => {
     if (hasNativePrompt && !isIOS) {
       await install()
@@ -163,6 +167,7 @@ export default function Home() {
   }
 
   const hasAnyTrips = activeTrips.length > 0 || archivedTrips.length > 0
+  const showOnboarding = !hasCompletedOnboarding && !hasAnyTrips && !isLoading
 
   // Quick actions config
   const quickActions = [
@@ -188,7 +193,9 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-paper-base">
+    <>
+      <OnboardingDialog open={showOnboarding} onComplete={completeOnboarding} />
+      <div className="min-h-screen bg-paper-base">
       <div className="max-w-md mx-auto pb-24">
         <section className="p-4 space-y-6">
           {/* Header */}
@@ -292,5 +299,6 @@ export default function Home() {
         />
       </div>
     </div>
+    </>
   )
 }
