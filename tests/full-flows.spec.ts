@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test"
 import type { Page } from "@playwright/test"
+import path from "path"
+import fs from "fs"
 
 // ============================================
 // TEST SETUP
@@ -438,6 +440,141 @@ test.describe("Flow 7: Export/Import", () => {
     const download = await downloadPromise
     expect(download.suggestedFilename()).toContain("viagem-export-test")
     expect(download.suggestedFilename()).toMatch(/\.json$/)
+  })
+
+  test("7.2 - Import trip from JSON file", async ({ page }) => {
+    // Create a test JSON file
+    const testTrip = {
+      exportVersion: 1,
+      schemaVersion: 1,
+      exportedAt: Date.now(),
+      trip: {
+        id: "test-import-123",
+        name: "Viagem Importada",
+        description: "Teste de importação",
+        startDate: "2025-06-01",
+        endDate: "2025-06-05",
+        days: [
+          { id: "day-1", date: "2025-06-01", dayIndex: 0, label: "Dia 1" },
+        ],
+        items: [
+          {
+            id: "item-import-1",
+            tripId: "test-import-123",
+            dayIndex: 0,
+            segment: "morning",
+            type: "activity",
+            title: "Atividade Importada",
+            status: "planned",
+            priority: 0,
+            order: 0,
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+          },
+        ],
+        archived: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    }
+
+    const tmpDir = "/tmp"
+    const testFilePath = path.join(tmpDir, "test-import.json")
+    fs.writeFileSync(testFilePath, JSON.stringify(testTrip, null, 2))
+
+    try {
+      // Go to trips list
+      await page.goto("/itinerary", { waitUntil: "networkidle" })
+
+      // Click import button and upload file
+      const fileInput = page.locator('input[type="file"]')
+      await fileInput.setInputFiles(testFilePath)
+
+      // Wait for import dialog preview
+      await expect(page.getByText("Viagem Importada")).toBeVisible()
+      await expect(page.getByText(/1 dias.*1 itens/)).toBeVisible()
+
+      // Confirm import - click the button inside the dialog footer
+      const dialog = page.locator('[data-scope="dialog"]')
+      await dialog.getByRole("button", { name: /^importar$/i }).click()
+
+      // Wait for success state
+      await expect(page.getByText(/foi importada com sucesso/i)).toBeVisible()
+
+      // Close dialog - click the button inside the dialog
+      const importDialog = page.getByRole("dialog", { name: /importação concluída/i })
+      await importDialog.getByRole("button", { name: /fechar/i }).first().click()
+
+      // Verify trip appears in list
+      await expect(page.locator("section").getByText("Viagem Importada")).toBeVisible()
+    } finally {
+      // Cleanup
+      if (fs.existsSync(testFilePath)) {
+        fs.unlinkSync(testFilePath)
+      }
+    }
+  })
+
+  test("7.3 - Import shows error for invalid JSON", async ({ page }) => {
+    // Create an invalid JSON file
+    const tmpDir = "/tmp"
+    const testFilePath = path.join(tmpDir, "invalid-import.json")
+    fs.writeFileSync(testFilePath, "{ invalid json }")
+
+    try {
+      await page.goto("/itinerary", { waitUntil: "networkidle" })
+
+      const fileInput = page.locator('input[type="file"]')
+      await fileInput.setInputFiles(testFilePath)
+
+      // Should show error dialog
+      await expect(page.getByRole("heading", { name: /erro na importação/i })).toBeVisible()
+      await expect(page.getByText(/json inválido/i)).toBeVisible()
+    } finally {
+      if (fs.existsSync(testFilePath)) {
+        fs.unlinkSync(testFilePath)
+      }
+    }
+  })
+
+  test("7.4 - Import shows warning for duplicate name", async ({ page }) => {
+    // First create a trip with specific name
+    await createTrip(page, "Viagem Duplicada")
+
+    // Go back to list
+    await page.goto("/itinerary", { waitUntil: "networkidle" })
+
+    // Create JSON with same name
+    const testTrip = {
+      exportVersion: 1,
+      schemaVersion: 1,
+      exportedAt: Date.now(),
+      trip: {
+        id: "test-dup-123",
+        name: "Viagem Duplicada",
+        days: [],
+        items: [],
+        archived: false,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      },
+    }
+
+    const tmpDir = "/tmp"
+    const testFilePath = path.join(tmpDir, "test-duplicate.json")
+    fs.writeFileSync(testFilePath, JSON.stringify(testTrip, null, 2))
+
+    try {
+      const fileInput = page.locator('input[type="file"]')
+      await fileInput.setInputFiles(testFilePath)
+
+      // Should show warning about duplicate name
+      await expect(page.getByText(/já existe uma viagem com este nome/i)).toBeVisible()
+    } finally {
+      if (fs.existsSync(testFilePath)) {
+        fs.unlinkSync(testFilePath)
+      }
+    }
   })
 })
 

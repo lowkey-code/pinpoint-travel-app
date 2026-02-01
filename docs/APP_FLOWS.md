@@ -9,10 +9,11 @@ Documentação de todos os fluxos e ações possíveis no aplicativo.
 | ID | Ação | Descrição |
 |----|------|-----------|
 | 1.1 | Visualizar home | Página inicial com título e navegação |
-| 1.2 | Criar nova viagem | Botão para iniciar criação de viagem |
-| 1.3 | Acessar configurações | Link para página de ajustes |
-| 1.4 | Ver viagens existentes | Lista de viagens criadas |
-| 1.5 | Abrir viagem | Clicar em uma viagem para visualizar |
+| 1.2 | Criar nova viagem | Botão "+" para iniciar criação de viagem |
+| 1.3 | Importar viagem | Botão "↑" para carregar arquivo JSON |
+| 1.4 | Acessar configurações | Link para página de ajustes |
+| 1.5 | Ver viagens existentes | Lista de viagens criadas |
+| 1.6 | Abrir viagem | Clicar em uma viagem para visualizar |
 
 ---
 
@@ -23,10 +24,10 @@ Documentação de todos os fluxos e ações possíveis no aplicativo.
 | 2.1 | Criar viagem simples | Apenas com nome obrigatório |
 | 2.2 | Criar viagem completa | Com nome, descrição, datas |
 | 2.3 | Editar viagem | Alterar dados da viagem |
-| 2.4 | Arquivar viagem | Mover para arquivados |
-| 2.5 | Exportar viagem | Gerar arquivo JSON |
-| 2.6 | Importar viagem | Carregar de arquivo JSON |
-| 2.7 | Duplicar viagem | Criar cópia da viagem |
+| 2.4 | Arquivar viagem | Mover para arquivados (via menu bookmark) |
+| 2.5 | Exportar viagem | Gerar arquivo JSON (via menu bookmark) |
+| 2.6 | Importar viagem | Carregar de arquivo JSON (via header da lista) |
+| 2.7 | Duplicar viagem | Criar cópia da viagem (via menu bookmark) |
 | 2.8 | Deletar viagem | Remover permanentemente |
 
 ---

@@ -4,7 +4,6 @@ import {
   Sun,
   Moon,
   Export,
-  DownloadSimple,
   ArrowCounterClockwise,
   ArrowClockwise,
   House,
@@ -17,7 +16,6 @@ import { useTheme } from "~/hooks/use-theme"
 
 interface BookmarkMenuProps {
   onExport: () => void
-  onImportClick: () => void
   canUndo: boolean
   canRedo: boolean
   onUndo: () => void
@@ -29,7 +27,6 @@ interface BookmarkMenuProps {
 
 export function BookmarkMenu({
   onExport,
-  onImportClick,
   canUndo,
   canRedo,
   onUndo,
@@ -157,15 +154,6 @@ export function BookmarkMenu({
               delay={80}
               isOpen={isOpen}
               testId="export-button"
-            />
-
-            {/* Import */}
-            <MenuItem
-              icon={<DownloadSimple weight="bold" />}
-              label="Importar"
-              onClick={() => handleAction(onImportClick)}
-              delay={120}
-              isOpen={isOpen}
             />
 
             <Divider />
