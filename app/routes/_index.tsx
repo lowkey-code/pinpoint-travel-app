@@ -18,34 +18,7 @@ import { ThemeToggle } from "~/components/ui/ThemeToggle"
 import { usePWAInstall } from "~/hooks/use-pwa-install"
 import type { Trip, ItineraryItem } from "~/features/itinerary/lib/types"
 import { ITEM_TYPE_ICONS } from "~/features/itinerary"
-
-function formatDateShort(dateStr: string): string {
-  const date = new Date(dateStr + "T00:00:00")
-  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).toUpperCase()
-}
-
-function getDaysUntil(dateStr: string): number {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const target = new Date(dateStr + "T00:00:00")
-  const diff = target.getTime() - today.getTime()
-  return Math.ceil(diff / (1000 * 60 * 60 * 24))
-}
-
-function getTripDuration(trip: Trip): number {
-  if (trip.startDate && trip.endDate) {
-    const start = new Date(trip.startDate + "T00:00:00")
-    const end = new Date(trip.endDate + "T00:00:00")
-    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-  }
-  return trip.days.length
-}
-
-function getTripProgress(trip: Trip): { current: number; total: number } {
-  const total = trip.items.length
-  const current = trip.items.filter(item => item.status === "done").length
-  return { current, total }
-}
+import { formatDateShort, getDaysUntil, getTripDuration, getTripProgress } from "~/features/itinerary/lib/utils"
 
 type TripStatus = "upcoming" | "ongoing" | "completed"
 

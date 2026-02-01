@@ -83,7 +83,7 @@ export function GateHeader({
       <div className="p-4 text-center">
         <div className="inline-flex items-center gap-4">
           {/* Day number */}
-          <div className="relative">
+          <div className="relative" data-testid="current-day-label">
             <span className="font-mono text-6xl font-bold text-action-blue leading-none tabular-nums">
               {String(dayNumber).padStart(2, "0")}
             </span>

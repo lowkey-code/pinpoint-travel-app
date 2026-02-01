@@ -37,6 +37,7 @@ export function TripsEmptyState({ onCreateTrip, className }: TripsEmptyStateProp
       <button
         onClick={onCreateTrip}
         className="inline-flex items-center gap-2 px-5 py-2.5 bg-action-blue text-white font-body font-medium rounded-xl hover:bg-action-hover btn-press focus-ring"
+        data-testid="create-trip-button"
       >
         <Plus weight="bold" className="w-5 h-5" />
         <span>Criar Viagem</span>

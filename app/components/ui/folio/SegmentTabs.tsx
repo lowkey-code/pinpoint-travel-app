@@ -34,6 +34,7 @@ export function SegmentTabs({
           <button
             key={segment.id}
             onClick={() => onChange(segment.id)}
+            data-testid={`segment-tab-${segment.id}`}
             className={cn(
               "rounded-xl p-3 text-center focus-ring btn-press transition-colors duration-150",
               isActive

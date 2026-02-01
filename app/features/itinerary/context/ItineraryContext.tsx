@@ -53,7 +53,13 @@ export function ItineraryProvider({ tripId, children }: ItineraryProviderProps) 
     if (state && !isLoading) saveStateDebounced(state)
   }, [state, isLoading])
 
-  useEffect(() => () => flushPendingWrites(), [])
+  // Flush pending writes on unmount
+  useEffect(() => {
+    return () => {
+      flushPendingWrites()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const trip = useMemo(() => state?.trips.find((t) => t.id === tripId) ?? null, [state?.trips, tripId])
   const items = trip?.items ?? []
@@ -163,6 +169,7 @@ export function ItineraryProvider({ tripId, children }: ItineraryProviderProps) 
   }, [redoAction, trip, updateActiveTrip])
 
   const refresh = useCallback((): void => setState(loadState()), [])
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- loadState is a stable function from lib/storage
 
   const value = useMemo(() => ({
     trip,

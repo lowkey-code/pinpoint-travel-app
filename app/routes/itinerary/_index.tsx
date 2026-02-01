@@ -11,36 +11,7 @@ import {
   PerforatedDivider,
 } from "~/components/ui/folio"
 import type { Trip } from "~/features/itinerary/lib/types"
-
-function formatDateRange(startDate?: string, endDate?: string): string {
-  if (!startDate) return "Sem data"
-
-  const start = new Date(startDate + "T00:00:00")
-  const startStr = start.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
-
-  if (!endDate) return startStr
-
-  const end = new Date(endDate + "T00:00:00")
-  const endStr = end.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
-
-  return `${startStr} - ${endStr}`
-}
-
-function getTripDuration(trip: Trip): string {
-  if (trip.startDate && trip.endDate) {
-    const start = new Date(trip.startDate + "T00:00:00")
-    const end = new Date(trip.endDate + "T00:00:00")
-    const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
-    return `${days} dias`
-  }
-  return `${trip.days.length} dias`
-}
-
-function getTripProgress(trip: Trip): { current: number; total: number } {
-  const total = trip.items.length
-  const current = trip.items.filter(item => item.status === "done").length
-  return { current, total }
-}
+import { formatDateRange, getTripDuration, getTripProgress } from "~/features/itinerary/lib/utils"
 
 function getCountryEmoji(name: string): string {
   const lower = name.toLowerCase()
@@ -161,7 +132,7 @@ export default function ItineraryIndex() {
                     emoji={getCountryEmoji(trip.name)}
                     title={trip.name}
                     dateRange={formatDateRange(trip.startDate, trip.endDate)}
-                    duration={getTripDuration(trip)}
+                    duration={`${getTripDuration(trip)} dias`}
                     progress={trip.items.length > 0 ? getTripProgress(trip) : undefined}
                     statusLabel={getTripStatusLabel(trip)}
                     state="active"
@@ -194,7 +165,7 @@ export default function ItineraryIndex() {
                         emoji={getCountryEmoji(trip.name)}
                         title={trip.name}
                         dateRange={formatDateRange(trip.startDate, trip.endDate)}
-                        duration={getTripDuration(trip)}
+                        duration={`${getTripDuration(trip)} dias`}
                         statusLabel="Concluída"
                         state="archived"
                         position={getTimelinePosition(index, archivedTrips.length)}

@@ -25,8 +25,8 @@ test.beforeEach(async ({ page, context }) => {
 async function createTrip(page: import("@playwright/test").Page, name: string) {
   await page.goto("/itinerary", { waitUntil: "networkidle" })
 
-  // Wait for loading to complete (header appears after isLoading becomes false)
-  await expect(page.getByTestId("itinerary-header")).toBeVisible({ timeout: 10000 })
+  // Wait for page to load (header with "Minhas Jornadas" or empty state)
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible({ timeout: 10000 })
 
   await page.getByTestId("create-trip-button").click()
 
@@ -85,14 +85,23 @@ async function addItem(
   await expect(drawer).toBeHidden()
 }
 
+// Helper to open the BookmarkMenu
+async function openBookmarkMenu(page: import("@playwright/test").Page) {
+  const menuButton = page.getByLabel("Menu de ações")
+  await menuButton.click()
+  // Wait for menu animation to complete
+  await page.waitForTimeout(300)
+}
+
 test.describe("Itinerary E2E Tests", () => {
   test("1) Create trip with days", async ({ page }) => {
     await createTrip(page, "Viagem para Tóquio")
 
     await expect(page.getByText("Viagem para Tóquio")).toBeVisible()
 
+    // Day label shows "01" with "DIA" badge
     await expect(page.getByTestId("current-day-label")).toBeVisible()
-    await expect(page.getByTestId("current-day-label")).toContainText("Dia 1")
+    await expect(page.getByTestId("current-day-label")).toContainText("01")
 
     await expect(page.getByTestId("segment-tab-morning")).toBeVisible()
     await expect(page.getByTestId("segment-tab-afternoon")).toBeVisible()
@@ -129,15 +138,11 @@ test.describe("Itinerary E2E Tests", () => {
     await expect(itemCard).toBeVisible()
   })
 
-  test("4) Move item to another day and another segment", async ({ page }) => {
+  test("4) Change item status via menu", async ({ page }) => {
     await createTrip(page, "Viagem para Londres")
 
     await page.getByTestId("segment-tab-morning").click()
     await addItem(page, { title: "Big Ben" })
-
-    await expect(page.getByText("Big Ben")).toBeVisible()
-
-    await page.getByTestId("reorder-mode-toggle").click()
 
     const itemCard = page.locator('[data-testid^="itinerary-card-"]', { hasText: "Big Ben" })
     await expect(itemCard).toBeVisible()
@@ -146,8 +151,6 @@ test.describe("Itinerary E2E Tests", () => {
     const itemId = cardTestId?.replace("itinerary-card-", "")
 
     if (itemId) {
-      await page.getByTestId("reorder-mode-toggle").click()
-
       await page.getByTestId(`item-menu-${itemId}`).click()
 
       const menu = page.getByRole("menu")
@@ -198,6 +201,9 @@ test.describe("Itinerary E2E Tests", () => {
     await addItem(page, { title: "Palácio Real" })
     await expect(page.getByText("Palácio Real")).toBeVisible()
 
+    // Open menu to access undo/redo buttons
+    await openBookmarkMenu(page)
+
     const undoButton = page.getByTestId("undo-button")
     await expect(undoButton).toBeEnabled()
 
@@ -206,6 +212,9 @@ test.describe("Itinerary E2E Tests", () => {
     await expect(page.getByText("Palácio Real")).toBeHidden()
     await expect(page.getByText("Museu do Prado")).toBeVisible()
 
+    // Menu closes after action, reopen it
+    await openBookmarkMenu(page)
+
     const redoButton = page.getByTestId("redo-button")
     await expect(redoButton).toBeEnabled()
 
@@ -213,9 +222,12 @@ test.describe("Itinerary E2E Tests", () => {
 
     await expect(page.getByText("Palácio Real")).toBeVisible()
 
+    // Undo multiple times
     for (let i = 0; i < 3; i++) {
-      if (await undoButton.isEnabled()) {
-        await undoButton.click()
+      await openBookmarkMenu(page)
+      const undoBtn = page.getByTestId("undo-button")
+      if (await undoBtn.isEnabled()) {
+        await undoBtn.click()
       }
     }
   })
@@ -228,6 +240,9 @@ test.describe("Itinerary E2E Tests", () => {
 
     await expect(page.getByText("Torre de Belém")).toBeVisible()
     await expect(page.getByText("Pastéis de Belém")).toBeVisible()
+
+    // Open menu to access export button
+    await openBookmarkMenu(page)
 
     const downloadPromise = page.waitForEvent("download")
 

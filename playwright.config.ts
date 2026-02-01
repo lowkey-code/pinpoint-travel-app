@@ -4,6 +4,8 @@ const baseURL = process.env.E2E_BASE_URL || "http://localhost:5173"
 
 export default defineConfig({
   testDir: "./tests",
+  testMatch: "*.spec.ts",
+  testIgnore: ["**/unit/**", "**/integration/**"],
   timeout: 30_000,
   expect: {
     timeout: 5_000,

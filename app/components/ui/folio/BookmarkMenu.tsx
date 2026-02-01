@@ -156,6 +156,7 @@ export function BookmarkMenu({
               onClick={() => handleAction(onExport)}
               delay={80}
               isOpen={isOpen}
+              testId="export-button"
             />
 
             {/* Import */}
@@ -177,6 +178,7 @@ export function BookmarkMenu({
               disabled={!canUndo}
               delay={160}
               isOpen={isOpen}
+              testId="undo-button"
             />
 
             {/* Redo */}
@@ -187,6 +189,7 @@ export function BookmarkMenu({
               disabled={!canRedo}
               delay={200}
               isOpen={isOpen}
+              testId="redo-button"
             />
 
             {/* Trip management actions */}
@@ -241,13 +244,15 @@ interface MenuItemProps {
   delay: number
   isOpen: boolean
   variant?: "default" | "danger"
+  testId?: string
 }
 
-function MenuItem({ icon, label, onClick, disabled, delay, isOpen, variant = "default" }: MenuItemProps) {
+function MenuItem({ icon, label, onClick, disabled, delay, isOpen, variant = "default", testId }: MenuItemProps) {
   return (
     <button
       onClick={onClick}
       disabled={disabled}
+      data-testid={testId}
       className={cn(
         "w-full flex items-center gap-3 px-4 py-2.5",
         "text-left text-sm font-body",

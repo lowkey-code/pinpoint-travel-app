@@ -374,8 +374,8 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     try {
       await navigator.clipboard.writeText(text)
       return true
-    } catch (err) {
-      console.warn("Clipboard API failed, trying fallback", err)
+    } catch {
+      // Silently fail and try fallback
     }
   }
 
@@ -390,8 +390,54 @@ export async function copyToClipboard(text: string): Promise<boolean> {
     const success = document.execCommand("copy")
     document.body.removeChild(textarea)
     return success
-  } catch (err) {
-    console.error("Copy fallback failed", err)
+  } catch {
     return false
   }
+}
+
+// Format date for display (short format)
+export function formatDateShort(dateStr: string): string {
+  const date = new Date(dateStr + "T00:00:00")
+  return date.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).toUpperCase()
+}
+
+// Get days until a date
+export function getDaysUntil(dateStr: string): number {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const target = new Date(dateStr + "T00:00:00")
+  const diff = target.getTime() - today.getTime()
+  return Math.ceil(diff / (1000 * 60 * 60 * 24))
+}
+
+// Get trip duration in days
+export function getTripDuration(trip: Trip): number {
+  if (trip.startDate && trip.endDate) {
+    const start = new Date(trip.startDate + "T00:00:00")
+    const end = new Date(trip.endDate + "T00:00:00")
+    return Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+  }
+  return trip.days.length
+}
+
+// Get trip progress
+export function getTripProgress(trip: Trip): { current: number; total: number } {
+  const total = trip.items.length
+  const current = trip.items.filter((item) => item.status === "done").length
+  return { current, total }
+}
+
+// Format date range for display
+export function formatDateRange(startDate?: string, endDate?: string): string {
+  if (!startDate) return "Sem data"
+
+  const start = new Date(startDate + "T00:00:00")
+  const startStr = start.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
+
+  if (!endDate) return startStr
+
+  const end = new Date(endDate + "T00:00:00")
+  const endStr = end.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })
+
+  return `${startStr} - ${endStr}`
 }

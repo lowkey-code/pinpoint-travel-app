@@ -29,7 +29,6 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
   }
 
   const handleMenuSelect = (details: { value: string }) => {
-    console.log("Menu onSelect called with:", details)
     const { value } = details
 
     // Handle status changes

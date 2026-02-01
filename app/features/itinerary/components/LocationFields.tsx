@@ -59,6 +59,7 @@ export function LocationFields({
           onChange={(e) => onAddressChange(e.target.value)}
           className="w-full px-3 py-2 border border-paper-line rounded-lg bg-paper-card focus:ring-2 focus:ring-action-blue outline-none font-body text-sm"
           placeholder="Rua, número, bairro"
+          data-testid="item-address-input"
         />
       </div>
 

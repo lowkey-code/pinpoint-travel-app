@@ -17,6 +17,7 @@ export function AddItemButton({ onClick, label = "Adicionar", className }: AddIt
         "btn-press focus-ring flex items-center justify-center gap-2 group",
         className
       )}
+      data-testid="add-item-button"
     >
       <Plus
         weight="bold"

@@ -17,7 +17,7 @@ function safeParse<T>(json: string | null, fallback: T): T {
   try {
     return JSON.parse(json) as T
   } catch {
-    console.warn("[itinerary] Failed to parse localStorage, using fallback")
+    // Invalid JSON, return fallback
     return fallback
   }
 }
@@ -53,7 +53,7 @@ function migrate(state: ItineraryState): ItineraryState {
   while (current.schemaVersion < CURRENT_SCHEMA_VERSION) {
     const migration = migrations[current.schemaVersion]
     if (!migration) {
-      console.warn(`[itinerary] No migration for v${current.schemaVersion}`)
+      // No migration available, skip to current version
       current = { ...current, schemaVersion: CURRENT_SCHEMA_VERSION }
       break
     }
@@ -73,7 +73,7 @@ export function loadState(): ItineraryState {
 
   // Validate structure
   if (typeof parsed.schemaVersion !== "number" || !Array.isArray(parsed.trips)) {
-    console.warn("[itinerary] Invalid state structure, resetting")
+    // Invalid state structure, reset to empty
     return createEmptyState()
   }
 
@@ -92,8 +92,9 @@ export function saveStateImmediate(state: ItineraryState): void {
   if (typeof window === "undefined") return
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
-  } catch (e) {
-    console.error("[itinerary] Failed to save:", e)
+  } catch {
+    // Failed to save to localStorage (e.g., quota exceeded)
+    // Silently fail - data remains in memory
   }
 }
 
@@ -193,10 +194,8 @@ export function parseImportedTrip(json: string): ExportedTrip | null {
   try {
     const data = JSON.parse(json)
     if (validateExportedTrip(data)) return data
-    console.warn("[itinerary] Invalid import format")
     return null
   } catch {
-    console.warn("[itinerary] Failed to parse import")
     return null
   }
 }
