@@ -15,6 +15,7 @@ interface ItineraryCardProps {
   isFirst?: boolean
   isLast?: boolean
   compact?: boolean
+  onViewPrimary?: (parentId: string) => void
 }
 
 const STATUS_TO_STAMP: Record<ItemStatus, StampVariant> = {
@@ -31,6 +32,7 @@ export function ItineraryCard({
   isFirst = false,
   isLast = false,
   compact = false,
+  onViewPrimary,
 }: ItineraryCardProps) {
   // Ghost cards have different rendering
   if (isGhostItem(item)) {
@@ -53,10 +55,11 @@ export function ItineraryCard({
               {isTransport ? `Chegada em ${item.arrivalCity}` : "Dia Inteiro"}
             </span>
           </div>
-          {!compact && (
+          {!compact && onViewPrimary && (
             <button
               className="text-xs text-action-blue hover:underline font-body"
               aria-label="Ver item principal"
+              onClick={() => onViewPrimary(item.parentId)}
             >
               Ver principal →
             </button>
@@ -77,6 +80,9 @@ export function ItineraryCard({
   }
   if (item.costText) {
     dataItems.push({ label: "Custo", value: item.costText, mono: true })
+  }
+  if (item.addressText) {
+    dataItems.push({ label: "Endereço", value: item.addressText })
   }
   if (item.city) {
     dataItems.push({ label: "Cidade", value: item.city })

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Dialog, Portal } from "@ark-ui/react"
 import { useItinerary, SEGMENTS, SEGMENT_LABELS } from "~/features/itinerary"
-import { extractDate, daysBetween } from "../lib/dates"
+import { extractDate, daysBetween, addDays, createDateTime } from "../lib/dates"
 import type { Segment, ItineraryItem, ItemStatus, ItemPriority, ItemType } from "~/features/itinerary"
 import { X, ArrowRight, Clock, CurrencyDollar, CheckCircle } from "@phosphor-icons/react"
 import { cn } from "~/lib/utils"
@@ -163,13 +163,17 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       return
     }
 
+    // Calculate departure datetime for transport
+    let calculatedDepartureDateTime = ""
     if (itemType === "transport") {
-      if (!departureDateTime || !arrivalDateTime || !originCity.trim() || !destinationCity.trim()) {
-        setTransportError("Todos os campos de transporte são obrigatórios")
+      if (!currentDayDate || !timeLabel || !arrivalDateTime || !originCity.trim() || !destinationCity.trim()) {
+        setTransportError("Preencha o horário de partida, duração e cidades de origem/destino")
         return
       }
 
-      if (arrivalDateTime <= departureDateTime) {
+      calculatedDepartureDateTime = createDateTime(currentDayDate, timeLabel)
+
+      if (arrivalDateTime <= calculatedDepartureDateTime) {
         setTransportError("A chegada deve ser posterior à partida")
         return
       }
@@ -181,8 +185,8 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
     let arrivalDayIndex: number | undefined
     let isMultiDayTransport = false
 
-    if (itemType === "transport" && trip && departureDateTime && arrivalDateTime) {
-      const departureDate = extractDate(departureDateTime)
+    if (itemType === "transport" && trip && calculatedDepartureDateTime && arrivalDateTime) {
+      const departureDate = extractDate(calculatedDepartureDateTime)
       const arrivalDate = extractDate(arrivalDateTime)
 
       if (departureDate !== arrivalDate && trip.startDate) {
@@ -212,7 +216,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       coversSegments: isDayTrip && coversSegments.length > 0 ? coversSegments : undefined,
       breakfastIncluded: itemType === "stay" ? breakfastIncluded : undefined,
       isMultiDayTransport: isMultiDayTransport || undefined,
-      departureDateTime: itemType === "transport" ? departureDateTime : undefined,
+      departureDateTime: itemType === "transport" ? calculatedDepartureDateTime : undefined,
       arrivalDateTime: itemType === "transport" ? arrivalDateTime : undefined,
       originCity: itemType === "transport" ? originCity.trim() : undefined,
       destinationCity: itemType === "transport" ? destinationCity.trim() : undefined,
@@ -241,6 +245,9 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
   const isTitleRequired = itemType !== "quick"
   const canSave = !isTitleRequired || title.trim().length > 0
   const isQuickItem = item?.itemType === "quick"
+
+  // Calculate current day's date for transport
+  const currentDayDate = trip?.startDate ? addDays(trip.startDate, dayIndex) : ""
 
   const handleConvertToActivity = () => {
     if (!item || item.itemType !== "quick") return
@@ -469,11 +476,12 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
               {itemType === "transport" && (
                 <TransportFields
-                  departureDateTime={departureDateTime}
+                  departureDate={currentDayDate}
+                  departureTime={timeLabel}
+                  durationText={durationText}
                   arrivalDateTime={arrivalDateTime}
                   originCity={originCity}
                   destinationCity={destinationCity}
-                  onDepartureDateTimeChange={setDepartureDateTime}
                   onArrivalDateTimeChange={setArrivalDateTime}
                   onOriginCityChange={setOriginCity}
                   onDestinationCityChange={setDestinationCity}

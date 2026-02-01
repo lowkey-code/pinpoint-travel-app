@@ -152,3 +152,74 @@ export function formatTime(time: string): string {
 export function createDateTime(date: string, time: string): string {
   return `${date}T${time}`
 }
+
+/**
+ * Parse duration text to minutes (e.g., "2h 30min" → 150, "1h" → 60, "45min" → 45)
+ */
+export function parseDurationToMinutes(durationText: string): number | null {
+  if (!durationText) return null
+
+  const normalized = durationText.toLowerCase().trim()
+  let totalMinutes = 0
+
+  // Match hours (e.g., "2h", "2 h", "2 horas")
+  const hoursMatch = normalized.match(/(\d+)\s*h/)
+  if (hoursMatch) {
+    totalMinutes += parseInt(hoursMatch[1], 10) * 60
+  }
+
+  // Match minutes (e.g., "30min", "30 min", "30 minutos", "30m")
+  const minutesMatch = normalized.match(/(\d+)\s*m(?:in)?/)
+  if (minutesMatch) {
+    totalMinutes += parseInt(minutesMatch[1], 10)
+  }
+
+  // If no pattern matched but there's a number, assume minutes
+  if (totalMinutes === 0) {
+    const plainNumber = normalized.match(/^(\d+)$/)
+    if (plainNumber) {
+      totalMinutes = parseInt(plainNumber[1], 10)
+    }
+  }
+
+  return totalMinutes > 0 ? totalMinutes : null
+}
+
+/**
+ * Parse time string to hours and minutes (e.g., "09:00" → { hours: 9, minutes: 0 })
+ */
+export function parseTimeString(timeStr: string): { hours: number; minutes: number } | null {
+  if (!timeStr) return null
+
+  // Handle HH:mm format
+  const match = timeStr.match(/^(\d{1,2}):(\d{2})$/)
+  if (match) {
+    return { hours: parseInt(match[1], 10), minutes: parseInt(match[2], 10) }
+  }
+
+  return null
+}
+
+/**
+ * Calculate arrival datetime based on departure date, time and duration
+ */
+export function calculateArrival(
+  departureDate: string,
+  departureTime: string,
+  durationMinutes: number
+): { date: string; time: string } {
+  const time = parseTimeString(departureTime)
+  if (!time) {
+    return { date: departureDate, time: "00:00" }
+  }
+
+  const totalMinutes = time.hours * 60 + time.minutes + durationMinutes
+  const arrivalHours = Math.floor(totalMinutes / 60) % 24
+  const arrivalMinutes = totalMinutes % 60
+  const daysToAdd = Math.floor(totalMinutes / (24 * 60))
+
+  const arrivalDate = daysToAdd > 0 ? addDays(departureDate, daysToAdd) : departureDate
+  const arrivalTime = `${String(arrivalHours).padStart(2, "0")}:${String(arrivalMinutes).padStart(2, "0")}`
+
+  return { date: arrivalDate, time: arrivalTime }
+}

@@ -99,6 +99,9 @@ export {
   extractTime,
   formatTime,
   createDateTime,
+  parseDurationToMinutes,
+  parseTimeString,
+  calculateArrival,
 } from "./lib/dates"
 
 // Hooks

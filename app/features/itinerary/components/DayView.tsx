@@ -47,6 +47,14 @@ export function DayView({ initialDayIndex = 0, tripId }: DayViewProps) {
   const dayCities = getCitiesForDay(items, selectedDayIndex)
   const primaryCity = dayCities[0] || trip.name
 
+  const handleViewPrimary = (parentId: string) => {
+    const primaryItem = items.find(i => i.id === parentId)
+    if (primaryItem) {
+      setSelectedDayIndex(primaryItem.dayIndex)
+      setSelectedSegment(primaryItem.segment)
+    }
+  }
+
   // Segment data for tabs
   const segmentsData = SEGMENTS.map(seg => ({
     id: seg,
@@ -108,6 +116,7 @@ export function DayView({ initialDayIndex = 0, tripId }: DayViewProps) {
                   segment={selectedSegment}
                   isFirst={index === 0}
                   isLast={index === segmentItems.length - 1}
+                  onViewPrimary={handleViewPrimary}
                 />
               </div>
             ))}

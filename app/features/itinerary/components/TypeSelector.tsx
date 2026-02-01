@@ -11,7 +11,7 @@ interface TypeSelectorProps {
 export function TypeSelector({ value, onChange, disabled = false }: TypeSelectorProps) {
   return (
     <div>
-      <label className="block text-sm font-medium mb-2">Tipo</label>
+      <label className="block text-sm font-medium mb-2 font-body text-ink-primary">Tipo</label>
       <RadioGroup.Root
         value={value}
         onValueChange={(details) => onChange(details.value as ItemType)}
@@ -22,15 +22,15 @@ export function TypeSelector({ value, onChange, disabled = false }: TypeSelector
             <RadioGroup.Item
               key={type}
               value={type}
-              className={`px-3 py-2 rounded-lg border transition-colors text-sm flex items-center gap-2 cursor-pointer ${
+              className={`px-3 py-2 rounded-lg border transition-colors text-sm flex items-center gap-2 cursor-pointer font-body ${
                 value === type
-                  ? "bg-primary text-primary-foreground border-primary"
-                  : "border-border hover:bg-secondary"
+                  ? "bg-action-blue text-white border-action-blue"
+                  : "border-paper-line hover:bg-secondary text-ink-primary"
               }`}
               disabled={disabled}
               data-testid={`item-type-${type}`}
             >
-              <RadioGroup.ItemControl className="hidden" />
+              <RadioGroup.ItemHiddenInput />
               <span>{ITEM_TYPE_ICONS[type]}</span>
               <RadioGroup.ItemText>{ITEM_TYPE_LABELS[type]}</RadioGroup.ItemText>
             </RadioGroup.Item>
