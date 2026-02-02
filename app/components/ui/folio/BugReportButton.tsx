@@ -36,6 +36,7 @@ export function BugReportButton({ variant = "icon", errorDetails, className = ""
     return (
       <a
         href={url}
+        data-testid="bug-report-button-full"
         className={`inline-flex items-center gap-2 px-4 py-2 bg-paper-card border border-paper-line rounded-lg hover:bg-paper-line/50 transition-colors font-body text-sm text-ink-primary btn-press focus-ring ${className}`}
       >
         <Bug weight="bold" className="w-4 h-4 text-stamp-brick" />
@@ -47,6 +48,7 @@ export function BugReportButton({ variant = "icon", errorDetails, className = ""
   return (
     <a
       href={url}
+      data-testid="bug-report-button"
       className={`p-2 rounded-lg hover:bg-paper-line/50 transition-colors btn-press focus-ring ${className}`}
       aria-label="Reportar problema"
       title="Reportar problema"
