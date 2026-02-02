@@ -3,7 +3,10 @@ import { test, expect } from "@playwright/test"
 test.describe("Onboarding Flow", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" })
-    await page.evaluate(() => localStorage.clear())
+    await page.evaluate(() => {
+      localStorage.clear()
+      sessionStorage.setItem("folio_desktop_warning_dismissed", "true")
+    })
     await page.reload({ waitUntil: "networkidle" })
   })
 

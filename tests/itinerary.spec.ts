@@ -6,6 +6,7 @@ test.beforeEach(async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"])
   await page.addInitScript(() => {
     localStorage.clear()
+    sessionStorage.setItem("folio_desktop_warning_dismissed", "true")
 
     const clipboardStore = { value: "" }
     Object.defineProperty(navigator, "clipboard", {

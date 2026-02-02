@@ -2,10 +2,11 @@ import { test, expect } from "@playwright/test"
 
 test.describe("Bug Report Feature", () => {
   test.beforeEach(async ({ page }) => {
-    // Mark onboarding as completed to skip it
+    // Mark onboarding as completed and dismiss desktop warning
     await page.goto("/", { waitUntil: "networkidle" })
     await page.evaluate(() => {
       localStorage.setItem("folio_onboarding_completed", "true")
+      sessionStorage.setItem("folio_desktop_warning_dismissed", "true")
     })
     await page.reload({ waitUntil: "networkidle" })
   })

@@ -25,9 +25,13 @@ test.beforeEach(async ({ page, context }) => {
     })
   })
 
-  // Clear localStorage before the first navigation
+  // Clear localStorage, skip onboarding, and dismiss desktop warning
   await page.goto("/", { waitUntil: "networkidle" })
-  await page.evaluate(() => localStorage.clear())
+  await page.evaluate(() => {
+    localStorage.clear()
+    localStorage.setItem("folio_onboarding_completed", "true")
+    sessionStorage.setItem("folio_desktop_warning_dismissed", "true")
+  })
 })
 
 // ============================================
@@ -110,10 +114,10 @@ async function getItemId(page: Page, title: string): Promise<string | null> {
 
 test.describe("Flow 1: Home Page", () => {
   test("1.1 - Home page loads with greeting", async ({ page }) => {
-    await page.goto("/")
+    await page.goto("/", { waitUntil: "networkidle" })
 
     // Should show greeting based on time of day
-    const greeting = page.locator("text=/Bom dia|Boa tarde|Boa noite/")
+    const greeting = page.locator("text=/Bom dia|Boa tarde|Boa noite|Boas viagens/")
     await expect(greeting).toBeVisible({ timeout: 10000 })
   })
 
