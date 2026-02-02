@@ -11,7 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { ToastProvider } from "~/hooks/use-toast";
 import { ToastContainer } from "~/components/ui/Toast";
-import { BottomNav } from "~/components/ui/folio";
+import { BottomNav, BugReportButton } from "~/components/ui/folio";
 
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
@@ -89,17 +89,22 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = "Oops!";
   let details = "Ocorreu um erro inesperado.";
   let stack: string | undefined;
+  let is404 = false;
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Erro";
-    details =
-      error.status === 404
-        ? "A página solicitada não foi encontrada."
-        : error.statusText || details;
-  } else if (import.meta.env.DEV && error && error instanceof Error) {
+    is404 = error.status === 404;
+    message = is404 ? "404" : "Erro";
+    details = is404
+      ? "A página solicitada não foi encontrada."
+      : error.statusText || details;
+  } else if (error && error instanceof Error) {
     details = error.message;
-    stack = error.stack;
+    if (import.meta.env.DEV) {
+      stack = error.stack;
+    }
   }
+
+  const errorDetails = stack || (error instanceof Error ? error.message : details);
 
   return (
     <main className="min-h-screen bg-paper-base flex flex-col items-center justify-center p-6 text-center">
@@ -110,12 +115,17 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
       />
       <h1 className="font-sans font-bold text-4xl text-ink-primary mb-2">{message}</h1>
       <p className="text-ink-secondary font-body mb-6">{details}</p>
-      <a
-        href="/"
-        className="px-4 py-2 bg-action-blue text-white rounded-lg font-body font-medium hover:bg-action-hover btn-press focus-ring"
-      >
-        Voltar ao início
-      </a>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <a
+          href="/"
+          className="px-4 py-2 bg-action-blue text-white rounded-lg font-body font-medium hover:bg-action-hover btn-press focus-ring"
+        >
+          Voltar ao início
+        </a>
+        {!is404 && (
+          <BugReportButton variant="full" errorDetails={errorDetails} />
+        )}
+      </div>
       {stack && (
         <pre className="mt-8 p-4 bg-paper-card border border-paper-line rounded-lg text-left overflow-x-auto text-xs font-mono text-ink-utility max-w-full">
           <code>{stack}</code>

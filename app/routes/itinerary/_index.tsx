@@ -10,6 +10,7 @@ import {
   TripTimelineCard,
   TripsEmptyState,
   PerforatedDivider,
+  BugReportButton,
 } from "~/components/ui/folio"
 import { useToast } from "~/hooks/use-toast"
 import type { Trip } from "~/features/itinerary/lib/types"
@@ -188,14 +189,17 @@ export default function ItineraryIndex() {
             <h1 className="font-sans font-bold text-xl text-ink-primary">
               Minhas Jornadas
             </h1>
-            <button
-              onClick={handleImportClick}
-              className="p-2 border border-paper-line rounded-lg hover:bg-secondary btn-press focus-ring"
-              aria-label="Importar viagem"
-              title="Importar viagem"
-            >
-              <UploadSimple weight="bold" className="w-5 h-5 text-ink-utility" />
-            </button>
+            <div className="flex items-center gap-1">
+              <BugReportButton />
+              <button
+                onClick={handleImportClick}
+                className="p-2 border border-paper-line rounded-lg hover:bg-secondary btn-press focus-ring"
+                aria-label="Importar viagem"
+                title="Importar viagem"
+              >
+                <UploadSimple weight="bold" className="w-5 h-5 text-ink-utility" />
+              </button>
+            </div>
           </div>
         </header>
 

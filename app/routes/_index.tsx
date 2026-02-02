@@ -14,6 +14,7 @@ import {
   NextActivityCard,
   QuickActions,
   OnboardingDialog,
+  BugReportButton,
 } from "~/components/ui/folio"
 import { useOnboarding } from "~/hooks/use-onboarding"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
@@ -211,7 +212,10 @@ export default function Home() {
                 <p className="font-mono text-[10px] text-ink-utility tracking-widest">TRAVEL PLANNER</p>
               </div>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-1">
+              <BugReportButton />
+              <ThemeToggle />
+            </div>
           </header>
 
           {/* Install PWA Banner */}

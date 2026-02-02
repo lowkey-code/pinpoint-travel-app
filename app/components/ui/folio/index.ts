@@ -36,6 +36,9 @@ export { Skeleton, CardSkeleton, DayViewSkeleton, TripCardSkeleton, TripListSkel
 export { OnboardingDialog } from "./OnboardingDialog"
 export { OnboardingSteps } from "./OnboardingSteps"
 
+// Feedback
+export { BugReportButton, getBugReportUrl } from "./BugReportButton"
+
 // Types
 export type { StampVariant, ButtonVariant, ButtonSize } from "./types"
 export type { BadgeVariant, BadgeSize } from "./Badge"
