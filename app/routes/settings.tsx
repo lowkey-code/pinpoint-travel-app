@@ -22,7 +22,7 @@ export default function Settings() {
       `Navegador: ${navigator.userAgent}\n` +
       `Tela: ${window.innerWidth}x${window.innerHeight}`
     )
-    return `mailto:suporte@folio.app?subject=${subject}&body=${body}`
+    return `mailto:suporte@foliotravel.app?subject=${subject}&body=${body}`
   }
 
   const handleInstall = async () => {
