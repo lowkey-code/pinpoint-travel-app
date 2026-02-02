@@ -1,9 +1,10 @@
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import { CaretLeft, DeviceMobile, Check } from "@phosphor-icons/react"
+import { CaretLeft, DeviceMobile, Check, Bug, EnvelopeSimple } from "@phosphor-icons/react"
 import { ThemeToggle } from "~/components/ui/ThemeToggle"
 import { InstallInstructions } from "~/components/ui/folio"
 import { usePWAInstall } from "~/hooks/use-pwa-install"
+import { APP_VERSION } from "~/lib/version"
 
 export default function Settings() {
   const navigate = useNavigate()
@@ -11,6 +12,18 @@ export default function Settings() {
   const [showInstallInstructions, setShowInstallInstructions] = useState(false)
 
   const showInstallSection = !isInstalled && (canInstall || isDismissed)
+
+  const getBugReportUrl = () => {
+    const subject = encodeURIComponent(`[Folio ${APP_VERSION}] Bug Report`)
+    const body = encodeURIComponent(
+      `Descreva o problema:\n\n\n` +
+      `---\n` +
+      `Versão: ${APP_VERSION}\n` +
+      `Navegador: ${navigator.userAgent}\n` +
+      `Tela: ${window.innerWidth}x${window.innerHeight}`
+    )
+    return `mailto:suporte@folio.app?subject=${subject}&body=${body}`
+  }
 
   const handleInstall = async () => {
     if (hasNativePrompt && !isIOS) {
@@ -101,6 +114,26 @@ export default function Settings() {
           </div>
         </section>
 
+        {/* Feedback Section */}
+        <section className="bg-paper-card border border-paper-line rounded-xl p-4">
+          <h2 className="font-sans font-semibold mb-3">Feedback</h2>
+          <a
+            href={getBugReportUrl()}
+            className="flex items-center gap-3 p-3 -m-1 rounded-lg hover:bg-paper-base/50 transition-colors"
+          >
+            <div className="w-10 h-10 bg-stamp-brick/10 rounded-lg flex items-center justify-center">
+              <Bug weight="fill" className="text-stamp-brick" />
+            </div>
+            <div className="flex-1">
+              <p className="font-body text-ink-primary">Reportar Problema</p>
+              <p className="text-sm text-ink-secondary font-body">
+                Encontrou um bug? Nos avise
+              </p>
+            </div>
+            <EnvelopeSimple weight="bold" className="text-ink-utility" />
+          </a>
+        </section>
+
         {/* About Section */}
         <section className="bg-paper-card border border-paper-line rounded-xl p-4">
           <h2 className="font-sans font-semibold mb-4">Sobre</h2>
@@ -116,7 +149,7 @@ export default function Settings() {
                 Planejador de viagens offline-first
               </p>
               <p className="font-mono text-[10px] text-ink-utility tracking-wider">
-                VELLUM DESIGN SYSTEM
+                v{APP_VERSION}
               </p>
             </div>
           </div>

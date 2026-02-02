@@ -1,8 +1,11 @@
 {
-  "name": "remix",
+  "name": "folio",
+  "version": "1.0.0-beta.1",
   "private": true,
   "type": "module",
   "scripts": {
+    "release": "release-it",
+    "release:beta": "release-it --preRelease=beta",
     "build": "react-router build",
     "dev": "react-router dev",
     "start": "react-router-serve ./build/server/index.js",
@@ -39,6 +42,7 @@
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.18",
     "jsdom": "^27.4.0",
+    "release-it": "^19.2.4",
     "sharp": "^0.34.5",
     "tailwindcss": "^4.1.13",
     "tw-animate-css": "1.3.3",
