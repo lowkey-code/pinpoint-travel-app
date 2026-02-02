@@ -4,6 +4,12 @@ import { useItinerary } from "~/features/itinerary"
 import type { ItineraryItem, ItemStatus, ItemPriority } from "~/features/itinerary"
 import { DotsThreeVertical, PencilSimple, Trash, CheckCircle, Circle, ArrowsClockwise } from "@phosphor-icons/react"
 import { ItemDrawer } from "./ItemDrawer"
+import {
+  trackItemStatusChanged,
+  trackItemPriorityChanged,
+  trackItemDeleted,
+  trackItemConverted,
+} from "~/lib/analytics"
 
 interface ItineraryMenuProps {
   item: ItineraryItem
@@ -14,16 +20,19 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const isQuick = item.itemType === "quick"
 
-  const handleChangeStatus = (status: ItemStatus) => {
-    updateItem(item.id, { status })
+  const handleChangeStatus = (newStatus: ItemStatus) => {
+    trackItemStatusChanged(item.id, item.status, newStatus)
+    updateItem(item.id, { status: newStatus })
   }
 
-  const handleChangePriority = (priority: ItemPriority) => {
-    updateItem(item.id, { priority })
+  const handleChangePriority = (newPriority: ItemPriority) => {
+    trackItemPriorityChanged(item.id, item.priority, newPriority)
+    updateItem(item.id, { priority: newPriority })
   }
 
   const handleDelete = () => {
     if (confirm("Deletar este item?")) {
+      trackItemDeleted(item.id, item.itemType)
       deleteItem(item.id)
     }
   }
@@ -54,6 +63,7 @@ export function ItineraryMenu({ item }: ItineraryMenuProps) {
         setDrawerOpen(true)
         break
       case "convert":
+        trackItemConverted(item.id, "quick", "activity")
         convertQuickToActivity(item.id)
         break
       case "delete":

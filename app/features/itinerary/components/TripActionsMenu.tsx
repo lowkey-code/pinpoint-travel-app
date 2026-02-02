@@ -4,6 +4,12 @@ import { useTrips, useItinerary, exportTrip as exportTripToJson } from "~/featur
 import { useToast } from "~/hooks/use-toast"
 import { BookmarkMenu } from "~/components/ui/folio"
 import { ConfirmDialog } from "~/components/ui/ConfirmDialog"
+import {
+  trackTripExported,
+  trackTripArchived,
+  trackTripDeleted,
+  trackTripDuplicated,
+} from "~/lib/analytics"
 
 interface TripActionsMenuProps {
   tripId: string
@@ -33,12 +39,14 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
     a.click()
     URL.revokeObjectURL(url)
     toast.success("Viagem exportada com sucesso!")
+    trackTripExported(tripId, currentTrip.items.length)
   }
 
   const handleDuplicate = () => {
     const duplicated = duplicateTrip(tripId)
     if (duplicated) {
       toast.success(`Viagem duplicada: "${duplicated.name}"`)
+      trackTripDuplicated(tripId)
       navigate(`/itinerary/${duplicated.id}`)
     } else {
       toast.error("Erro ao duplicar viagem")
@@ -47,8 +55,10 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
 
   const handleArchive = () => {
     const tripName = currentTrip?.name ?? "Viagem"
+    const itemsCount = currentTrip?.items.length ?? 0
     archiveTrip(tripId)
     toast.success(`"${tripName}" movida para Memórias`)
+    trackTripArchived(tripId, itemsCount)
     navigate("/itinerary")
   }
 
@@ -58,8 +68,10 @@ export function TripActionsMenu({ tripId }: TripActionsMenuProps) {
 
   const handleConfirmDelete = () => {
     const tripName = currentTrip?.name ?? "Viagem"
+    const wasArchived = currentTrip?.archived ?? false
     deleteTrip(tripId)
     toast.success(`"${tripName}" excluída permanentemente`)
+    trackTripDeleted(tripId, wasArchived)
     navigate("/itinerary")
   }
 

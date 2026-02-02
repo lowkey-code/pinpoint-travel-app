@@ -15,6 +15,12 @@ import {
 import { useToast } from "~/hooks/use-toast"
 import type { Trip } from "~/features/itinerary/lib/types"
 import { formatDateRange, getTripDuration, getTripProgress } from "~/features/itinerary/lib/utils"
+import {
+  trackTripCreated,
+  trackTripDeleted,
+  trackTripRestored,
+  trackTripImported,
+} from "~/lib/analytics"
 
 function getCountryEmoji(name: string): string {
   const lower = name.toLowerCase()
@@ -100,12 +106,24 @@ export default function ItineraryIndex() {
       startDate: data.startDate,
       endDate: data.endDate,
     })
+
+    const hasDates = Boolean(data.startDate && data.endDate)
+    let durationDays: number | null = null
+    if (data.startDate && data.endDate) {
+      const start = new Date(data.startDate)
+      const end = new Date(data.endDate)
+      durationDays = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1
+    }
+    trackTripCreated(hasDates, durationDays)
+
     navigate(`/itinerary/${trip.id}`)
   }
 
   const handleDeleteConfirm = () => {
     if (deleteConfirm.tripId) {
+      const tripToDelete = archivedTrips.find((t) => t.id === deleteConfirm.tripId)
       deleteTrip(deleteConfirm.tripId)
+      trackTripDeleted(deleteConfirm.tripId, Boolean(tripToDelete?.archived))
     }
   }
 
@@ -152,12 +170,17 @@ export default function ItineraryIndex() {
   }
 
   const handleConfirmImport = () => {
-    if (!importData) return
+    if (!importData || !importPreview) return
 
     const imported = importTrip(importData)
     if (imported) {
       setImportState("success")
       toast.success(`Viagem "${imported.name}" importada!`)
+      trackTripImported(
+        importPreview.schemaVersion,
+        importPreview.itemsCount,
+        importPreview.needsMigration
+      )
     } else {
       setErrorMessage("Falha ao importar: formato de dados inválido")
       setImportState("error")
@@ -280,6 +303,7 @@ export default function ItineraryIndex() {
                           onClick={(e) => {
                             e.stopPropagation()
                             restoreTrip(trip.id)
+                            trackTripRestored(trip.id)
                           }}
                           className="px-3 py-1.5 text-xs font-mono text-ink-utility hover:bg-paper-line rounded-lg btn-press focus-ring flex items-center gap-1.5"
                         >

@@ -12,6 +12,7 @@ import "./app.css";
 import { ToastProvider } from "~/hooks/use-toast";
 import { ToastContainer } from "~/components/ui/Toast";
 import { BottomNav, BugReportButton, DesktopWarningDialog } from "~/components/ui/folio";
+import { AnalyticsProvider } from "~/lib/analytics";
 
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
@@ -63,10 +64,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <ToastProvider>
-      <Outlet />
-      <ToastContainer />
-      <BottomNav />
-      <DesktopWarningDialog />
+      <AnalyticsProvider>
+        <Outlet />
+        <ToastContainer />
+        <BottomNav />
+        <DesktopWarningDialog />
+      </AnalyticsProvider>
     </ToastProvider>
   );
 }
