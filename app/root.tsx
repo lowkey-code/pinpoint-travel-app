@@ -11,7 +11,7 @@ import type { Route } from "./+types/root";
 import "./app.css";
 import { ToastProvider } from "~/hooks/use-toast";
 import { ToastContainer } from "~/components/ui/Toast";
-import { BottomNav, BugReportButton } from "~/components/ui/folio";
+import { BottomNav, BugReportButton, DesktopWarningDialog } from "~/components/ui/folio";
 
 export const links: Route.LinksFunction = () => [
   { rel: "manifest", href: "/manifest.json" },
@@ -66,6 +66,7 @@ export default function App() {
       <Outlet />
       <ToastContainer />
       <BottomNav />
+      <DesktopWarningDialog />
     </ToastProvider>
   );
 }

@@ -39,6 +39,9 @@ export { OnboardingSteps } from "./OnboardingSteps"
 // Feedback
 export { BugReportButton, getBugReportUrl } from "./BugReportButton"
 
+// Desktop Warning
+export { DesktopWarningDialog } from "./DesktopWarningDialog"
+
 // Types
 export type { StampVariant, ButtonVariant, ButtonSize } from "./types"
 export type { BadgeVariant, BadgeSize } from "./Badge"
