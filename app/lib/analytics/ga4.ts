@@ -5,6 +5,11 @@
 
 const GA_MEASUREMENT_ID = "G-FZ7EYX0BHY";
 
+// Estado do GA4
+let isScriptLoaded = false;
+let isScriptLoading = false;
+const eventQueue: Array<{ type: "event" | "page_view" | "user_properties"; args: unknown[] }> = [];
+
 declare global {
   interface Window {
     dataLayer: unknown[];
@@ -13,7 +18,44 @@ declare global {
 }
 
 /**
- * Inicializa o script do GA4
+ * Log seguro para desenvolvimento
+ */
+function devLog(...args: unknown[]): void {
+  if (import.meta.env.DEV) {
+    console.log("[Analytics]", ...args);
+  }
+}
+
+/**
+ * Processa a fila de eventos pendentes
+ */
+function flushEventQueue(): void {
+  if (!isScriptLoaded || typeof window.gtag !== "function") return;
+
+  while (eventQueue.length > 0) {
+    const item = eventQueue.shift();
+    if (!item) continue;
+
+    try {
+      switch (item.type) {
+        case "event":
+          window.gtag("event", ...(item.args as [string, Record<string, unknown>?]));
+          break;
+        case "page_view":
+          window.gtag("event", "page_view", item.args[0]);
+          break;
+        case "user_properties":
+          window.gtag("set", "user_properties", item.args[0]);
+          break;
+      }
+    } catch (error) {
+      devLog("Error flushing queued event:", error);
+    }
+  }
+}
+
+/**
+ * Inicializa o dataLayer e a função gtag
  * Deve ser chamado uma vez no carregamento do app
  */
 export function initGA4(): void {
@@ -45,13 +87,33 @@ export function initGA4(): void {
  */
 export function injectGA4Script(): void {
   if (typeof window === "undefined") return;
+  if (isScriptLoading || isScriptLoaded) return;
 
-  // Verifica se já foi injetado
-  if (document.querySelector(`script[src*="gtag"]`)) return;
+  // Verifica se já foi injetado por outro meio
+  if (document.querySelector(`script[src*="gtag"]`)) {
+    isScriptLoaded = true;
+    flushEventQueue();
+    return;
+  }
+
+  isScriptLoading = true;
 
   const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+
+  script.onload = () => {
+    isScriptLoaded = true;
+    isScriptLoading = false;
+    devLog("GA4 script loaded, flushing", eventQueue.length, "queued events");
+    flushEventQueue();
+  };
+
+  script.onerror = () => {
+    isScriptLoading = false;
+    devLog("GA4 script failed to load");
+  };
+
   document.head.appendChild(script);
 }
 
@@ -62,32 +124,57 @@ export function sendGA4Event(
   eventName: string,
   params?: Record<string, unknown>
 ): void {
-  if (typeof window === "undefined" || !window.gtag) {
-    // Queue para quando o GA4 estiver pronto (em dev ou SSR)
-    if (import.meta.env.DEV) {
-      console.log("[Analytics]", eventName, params);
-    }
+  if (typeof window === "undefined") return;
+
+  // Se o script ainda não carregou, adiciona na fila
+  if (!isScriptLoaded) {
+    eventQueue.push({ type: "event", args: [eventName, params] });
+    devLog("Event queued:", eventName, params);
     return;
   }
 
-  window.gtag("event", eventName, params);
+  if (typeof window.gtag !== "function") {
+    devLog("gtag not available:", eventName, params);
+    return;
+  }
+
+  try {
+    window.gtag("event", eventName, params);
+    devLog("Event sent:", eventName, params);
+  } catch (error) {
+    devLog("Error sending event:", eventName, error);
+  }
 }
 
 /**
  * Envia um pageview para o GA4
  */
 export function sendGA4PageView(path: string, title?: string): void {
-  if (typeof window === "undefined" || !window.gtag) {
-    if (import.meta.env.DEV) {
-      console.log("[Analytics] page_view", { path, title });
-    }
+  if (typeof window === "undefined") return;
+
+  const params = {
+    page_path: path,
+    page_title: title || document.title,
+  };
+
+  // Se o script ainda não carregou, adiciona na fila
+  if (!isScriptLoaded) {
+    eventQueue.push({ type: "page_view", args: [params] });
+    devLog("Page view queued:", path);
     return;
   }
 
-  window.gtag("event", "page_view", {
-    page_path: path,
-    page_title: title || document.title,
-  });
+  if (typeof window.gtag !== "function") {
+    devLog("gtag not available for page view:", path);
+    return;
+  }
+
+  try {
+    window.gtag("event", "page_view", params);
+    devLog("Page view sent:", path);
+  } catch (error) {
+    devLog("Error sending page view:", path, error);
+  }
 }
 
 /**
@@ -96,9 +183,29 @@ export function sendGA4PageView(path: string, title?: string): void {
 export function setGA4UserProperties(
   properties: Record<string, unknown>
 ): void {
-  if (typeof window === "undefined" || !window.gtag) return;
+  if (typeof window === "undefined") return;
 
-  window.gtag("set", "user_properties", properties);
+  // Se o script ainda não carregou, adiciona na fila
+  if (!isScriptLoaded) {
+    eventQueue.push({ type: "user_properties", args: [properties] });
+    devLog("User properties queued:", properties);
+    return;
+  }
+
+  if (typeof window.gtag !== "function") return;
+
+  try {
+    window.gtag("set", "user_properties", properties);
+  } catch (error) {
+    devLog("Error setting user properties:", error);
+  }
+}
+
+/**
+ * Verifica se o GA4 está pronto
+ */
+export function isGA4Ready(): boolean {
+  return isScriptLoaded && typeof window.gtag === "function";
 }
 
 export { GA_MEASUREMENT_ID };
