@@ -11,6 +11,7 @@ import { LocationFields } from "./LocationFields"
 import { NotesLinksSection } from "./NotesLinksSection"
 import { StayFields } from "./StayFields"
 import { TransportFields } from "./TransportFields"
+import { trackItemCreated, trackItemConverted } from "~/lib/analytics"
 
 interface ItemDrawerProps {
   open: boolean
@@ -227,6 +228,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
       updateItem(item.id, data)
     } else {
       addItem(dayIndex, segment, data)
+      trackItemCreated(itemType, segment, dayIndex)
     }
 
     handleClose()
@@ -251,6 +253,7 @@ export function ItemDrawer({ open, onOpenChange, dayIndex, segment, item }: Item
 
   const handleConvertToActivity = () => {
     if (!item || item.itemType !== "quick") return
+    trackItemConverted(item.id, "quick", "activity")
     convertQuickToActivity(item.id)
     handleClose()
   }
