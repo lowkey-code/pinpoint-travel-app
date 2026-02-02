@@ -90,31 +90,45 @@ export function injectGA4Script(): void {
   if (isScriptLoading || isScriptLoaded) return;
 
   // Verifica se já foi injetado por outro meio
-  if (document.querySelector(`script[src*="gtag"]`)) {
-    isScriptLoaded = true;
-    flushEventQueue();
+  const existingScript = document.querySelector<HTMLScriptElement>(`script[src*="googletagmanager"]`);
+  if (existingScript) {
+    // Script existe - verifica se já carregou
+    if (existingScript.dataset.loaded === "true") {
+      isScriptLoaded = true;
+      flushEventQueue();
+      return;
+    }
+    // Aguarda o script existente carregar
+    existingScript.addEventListener("load", handleScriptLoad);
+    existingScript.addEventListener("error", handleScriptError);
+    isScriptLoading = true;
     return;
   }
 
   isScriptLoading = true;
+  devLog("Injecting GA4 script...");
 
   const script = document.createElement("script");
   script.async = true;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
 
-  script.onload = () => {
-    isScriptLoaded = true;
-    isScriptLoading = false;
-    devLog("GA4 script loaded, flushing", eventQueue.length, "queued events");
-    flushEventQueue();
-  };
-
-  script.onerror = () => {
-    isScriptLoading = false;
-    devLog("GA4 script failed to load");
-  };
+  script.addEventListener("load", handleScriptLoad);
+  script.addEventListener("error", handleScriptError);
 
   document.head.appendChild(script);
+  devLog("GA4 script element added to head");
+}
+
+function handleScriptLoad(): void {
+  isScriptLoaded = true;
+  isScriptLoading = false;
+  devLog("GA4 script loaded, flushing", eventQueue.length, "queued events");
+  flushEventQueue();
+}
+
+function handleScriptError(): void {
+  isScriptLoading = false;
+  devLog("GA4 script failed to load");
 }
 
 /**
