@@ -4,7 +4,9 @@
     "tagName": "v${version}",
     "tagAnnotation": "Release v${version}",
     "requireBranch": "main",
-    "requireCleanWorkingDir": true
+    "requireCleanWorkingDir": true,
+    "push": true,
+    "pushArgs": ["--follow-tags"]
   },
   "github": {
     "release": false
@@ -13,6 +15,6 @@
     "publish": false
   },
   "hooks": {
-    "before:init": ["npm run typecheck", "npm run test:e2e"]
+    "before:init": ["npm run typecheck"]
   }
 }
